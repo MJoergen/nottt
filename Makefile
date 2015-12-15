@@ -1,5 +1,6 @@
 sources  = main.cpp
 sources += NTTTPlayerMike.cpp
+sources += NTTTPlayerIce.cpp
 objects = $(sources:.cpp=.o)
 depends = $(sources:.cpp=.d)
 CC = gcc
