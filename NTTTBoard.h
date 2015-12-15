@@ -2,6 +2,7 @@
 #define _NTTTBOARD_H_
 
 #include <vector>
+#include <iostream>
 
 class NTTTBoard {
     public:
@@ -57,6 +58,25 @@ class NTTTBoard {
                 {
                     square = UNMARKED;
                 }
+            }
+        }
+
+        /**
+         */
+        void Dump() const
+        {
+            for (const std::vector<SquareState>& row : m_squareStates)
+            {
+                for (const SquareState& square : row)
+                {
+                    switch (square)
+                    {
+                        case UNMARKED : std::cout << "."; break;
+                        case BLUE     : std::cout << "x"; break;
+                        case RED      : std::cout << "X"; break;
+                    }
+                }
+                std::cout << std::endl;
             }
         }
 

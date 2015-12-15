@@ -9,7 +9,7 @@ DEFINES  = -Wall -O3 -std=c++11
 #DEFINES += -DNDEBUG
 DEFINES += -D__USE_STD_IOSTREAM
 
-puzzle: $(objects) Makefile
+nottt: $(objects) Makefile
 	$(CC) -o $@ $(DEFINES) $(objects) -lstdc++
 	mv $@ /home/mike/bin
 

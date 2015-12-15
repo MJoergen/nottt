@@ -2,6 +2,7 @@
 #define _NTTTGAME_H_
 
 #include "NTTTBoard.h"
+#include "NTTTMove.h"
 
 class NTTTGame {
     public:
@@ -37,6 +38,29 @@ class NTTTGame {
                 it->reset(boardSize);
             }
             m_lineSize = lineSize;
+        }
+
+        /**
+         * Make a move
+         */
+        void makeMove(const NTTTMove& move, const NTTTBoard::SquareState& state)
+        {
+            int boardNumber = move.getBoardNumber();
+            int squareX = move.getSquareX();
+            int squareY = move.getSquareY();
+            m_boards[boardNumber].makeMove(squareX, squareY, state);
+        }
+
+        /**
+         * ASCII dump the board configuration
+         */
+        void Dump() const
+        {
+            for (const NTTTBoard& board : m_boards)
+            {
+                board.Dump();
+                std::cout << std::endl;
+            }
         }
 
     private:
