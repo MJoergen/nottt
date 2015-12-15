@@ -25,7 +25,7 @@ class NTTTGame {
         /**
          * @return An array of Board objects representing the current setting of the game.
          */
-        std::vector<NTTTBoard> getBoards() const {return m_boards;}
+        const std::vector<NTTTBoard>& getBoards() const {return m_boards;}
 
         /**
          * Start a new game
@@ -54,13 +54,13 @@ class NTTTGame {
         /**
          * ASCII dump the board configuration
          */
-        void Dump() const
+        friend std::ostream& operator <<(std::ostream &os, const NTTTGame &rhs)
         {
-            for (const NTTTBoard& board : m_boards)
+            for (const NTTTBoard& board : rhs.m_boards)
             {
-                board.Dump();
-                std::cout << std::endl;
+                os << board << std::endl;
             }
+            return os;
         }
 
     private:

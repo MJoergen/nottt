@@ -18,6 +18,32 @@ NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game)
  */
 NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
 {
-    return NTTTMove(0, 0, 0);
+    int boardCount = game.getBoardCount();
+    int boardSize  = game.getBoardSize();
+
+    while (true)
+    {
+        int boardNum = rand()%boardCount;
+        const std::vector<NTTTBoard>& boards = game.getBoards();
+        const NTTTBoard& board = boards[boardNum];
+        NTTTBoard::State state = board.getCurrentState();
+        if (state != NTTTBoard::ALIVE)
+            continue;
+
+        const std::vector< std::vector<NTTTBoard::SquareState> >& squareStates = board.getSquareStates();
+
+        while (true)
+        {
+            int squareX = rand()%boardSize;
+            int squareY = rand()%boardSize;
+
+            if (squareStates[squareX][squareY] != NTTTBoard::UNMARKED)
+                continue;
+
+            return NTTTMove(boardNum, squareX, squareY);
+        }
+    }
+
+    return NTTTMove(0, 0, 0); // Never used
 } // end of performMove
 

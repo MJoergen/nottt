@@ -34,7 +34,7 @@ class NTTTBoard {
         /**
          * @return A two-dimensional array representing the states of the squares.
          */
-        std::vector< std::vector<SquareState> > getSquareStates() const
+        const std::vector< std::vector<SquareState> >& getSquareStates() const
         {
             return m_squareStates;
         }
@@ -59,25 +59,27 @@ class NTTTBoard {
                     square = UNMARKED;
                 }
             }
+            m_state = ALIVE;
         }
 
         /**
          */
-        void Dump() const
+        friend std::ostream& operator <<(std::ostream &os, const NTTTBoard &rhs)
         {
-            for (const std::vector<SquareState>& row : m_squareStates)
+            for (const std::vector<SquareState>& row : rhs.m_squareStates)
             {
                 for (const SquareState& square : row)
                 {
                     switch (square)
                     {
-                        case UNMARKED : std::cout << "."; break;
-                        case BLUE     : std::cout << "x"; break;
-                        case RED      : std::cout << "X"; break;
+                        case UNMARKED : os << "."; break;
+                        case BLUE     : os << "x"; break;
+                        case RED      : os << "X"; break;
                     }
                 }
-                std::cout << std::endl;
+                os << std::endl;
             }
+            return os;
         }
 
     private:

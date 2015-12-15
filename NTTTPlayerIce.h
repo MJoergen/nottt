@@ -14,7 +14,7 @@
  *
  */
 
-class NTTTPlayerIce : NTTTPlayer {
+class NTTTPlayerIce : public NTTTPlayer {
     public:
 
         /**

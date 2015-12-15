@@ -66,6 +66,14 @@ class NTTTMove {
             m_squareY = squareY;
         }
 
+        /**
+         * Make an ASCII dump
+         */
+        friend std::ostream& operator <<(std::ostream &os, const NTTTMove &rhs)
+        {
+            return os << "(" << rhs.m_boardNumber << ":" << rhs.m_squareX << "," << rhs.m_squareY << ")";
+        }
+
 }; // end of class NTTTMove 
 
 #endif // _NTTPMOVE_H_
