@@ -45,6 +45,21 @@ class NTTTBoard {
             m_squareStates[squareX][squareY] = state;
         }
 
+        /**
+         */
+        void reset(int boardSize)
+        {
+            m_squareStates.resize(boardSize);
+            for (std::vector<SquareState>& row : m_squareStates)
+            {
+                row.resize(boardSize);
+                for (SquareState& square : row)
+                {
+                    square = UNMARKED;
+                }
+            }
+        }
+
     private:
         State m_state;
         std::vector< std::vector<SquareState> > m_squareStates;

@@ -4,7 +4,7 @@ objects = $(sources:.cpp=.o)
 depends = $(sources:.cpp=.d)
 CC = gcc
 #DEFINES  = -Wall -O3 -g -pg
-DEFINES  = -Wall -O3 
+DEFINES  = -Wall -O3 -std=c++11
 #DEFINES += -DNDEBUG
 DEFINES += -D__USE_STD_IOSTREAM
 
