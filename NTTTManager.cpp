@@ -33,7 +33,7 @@ bool isStarted = false; //Boolean used to indicate if the game is started
 /*
 
 REMEMBER to insert a valid font path before running the program.
-Dependencies: SDL, SDL_image, SDL_ttf
+Dependencies: SDL2, SDL2_image, SDL2_ttf
 
 int main(int argc, char *argv[]) {
 	if (!init()){ //Initializes SDL, SDL_image, SDL_ttf and global variables. If something went wrong. The program is terminated.
