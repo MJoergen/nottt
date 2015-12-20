@@ -92,6 +92,62 @@ void NTTTPlayerMike::genMoves(const NTTTGame& game)
 
 
 /**
+ * Calculate a bit mask of the current position.
+ * @param game An instance of the NTTTGame.
+ * @return The bit mask
+ */
+std::vector<uint64_t> NTTTPlayerMike::genMask(const NTTTGame& game)
+{
+    std::vector<uint64_t> res;
+
+    const std::vector<NTTTBoard>& boards = game.getBoards();
+
+    for (int boardNum = 0; boardNum < m_boardCount; ++boardNum)
+    {
+        const NTTTBoard& board = boards[boardNum];
+        NTTTBoard::State state = board.getCurrentState();
+        if (state != NTTTBoard::ALIVE)
+        {
+            res.push_back(0UL);
+            continue;
+        }
+
+        uint64_t val = 0;
+        const std::vector< std::vector<NTTTBoard::SquareState> >& squareStates = board.getSquareStates();
+        for (int x = 0; x < m_boardSize; ++x)
+        {
+            for (int y = 0; y < m_boardSize; ++y)
+            {
+                if (squareStates[x][y] != NTTTBoard::UNMARKED)
+                    continue;
+                val |= 1UL << (x*8+y);
+            }
+        }
+        std::cout << std::hex << std::setw(16) << std::setfill('0') << val << "  ";
+        res.push_back(val);
+    }
+    std::cout << std::endl;
+
+    return res;
+
+} // end of genMask
+
+
+
+/**
+ * Calculate a static evaluation of the current position.
+ * @param game An instance of the NTTTGame.
+ * @return The evaluation.
+ */
+/*
+int NTTTPlayerMike::evaluate(const NTTTGame& game)
+{
+    return 0;
+} // end of evaluate
+*/
+
+
+/**
  * Run continually as the game progresses.
  * @param game An instance of the NTTTGame.
  * @return The player's/bot's move.
@@ -99,6 +155,7 @@ void NTTTPlayerMike::genMoves(const NTTTGame& game)
 NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
 {
     genMoves(game);
+    genMask(game);
 
     int boardCount = game.getBoardCount();
     int boardSize  = game.getBoardSize();

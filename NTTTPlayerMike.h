@@ -49,6 +49,7 @@ class NTTTPlayerMike : public NTTTPlayer {
         int m_lineSize;
 
         void genMoves(const NTTTGame& game);
+        std::vector<uint64_t> genMask(const NTTTGame& game);
 }; // end of class NTTTPlayerMike
 
 #endif // _NTTTPLAYERMIKE_H_
