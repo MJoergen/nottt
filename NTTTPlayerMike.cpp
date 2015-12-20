@@ -10,6 +10,13 @@ NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game)
     return UNDECIDED;
 } // end of chooseOrder
 
+/**
+ * Initializes the player with the new board configuration.
+ */
+void NTTTPlayerMike::NewGame(int boardCount, int boardSize, int lineSize)
+{
+} // end of NewGame
+
 
 /**
  * Run continually as the game progresses.
