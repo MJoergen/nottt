@@ -40,6 +40,15 @@ class NTTTPlayerMike : public NTTTPlayer {
          * The destructor must always be made virtual
          */
         virtual ~NTTTPlayerMike() {}
+
+    private:
+        std::vector<uint64_t> m_lines;
+        std::vector<NTTTMove> m_moves;
+        int m_boardCount;
+        int m_boardSize;
+        int m_lineSize;
+
+        void genMoves(const NTTTGame& game);
 }; // end of class NTTTPlayerMike
 
 #endif // _NTTTPLAYERMIKE_H_
