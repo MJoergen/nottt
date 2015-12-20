@@ -1,6 +1,12 @@
 sources  = main.cpp
 sources += NTTTPlayerMike.cpp
 sources += NTTTPlayerIce.cpp
+sources += NTTTManager.cpp
+sources += GUI/Button.cpp
+sources += GUI/Text.cpp
+sources += GUI/TextField.cpp
+sources += GUI/Texture.cpp
+
 objects = $(sources:.cpp=.o)
 depends = $(sources:.cpp=.d)
 CC = gcc
@@ -14,12 +20,14 @@ DEFINES += -g -pg
 #DEFINES += -O3 
 
 nottt: $(objects) Makefile
-	$(CC) -o $@ $(DEFINES) $(objects) -lstdc++
+	$(CC) -o $@ $(DEFINES) $(objects) -lstdc++ -lSDL2 -lSDL2_image -lSDL2_ttf
 	mv $@ /home/mike/bin
 
+INCLUDE_DIRS = -I/usr/include/SDL2
+
 %.d: %.cpp
-	set -e; $(CC) -M $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
-		| sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; \
+	set -e; $(CC) -M -MT $*.o $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
+		| sed 's#\($*\)\.o[ :]*#\1.o $@ : #g' > $@; \
 		[ -s $@ ] || rm -f $@
 
 include $(depends)

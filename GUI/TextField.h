@@ -19,8 +19,8 @@ public:
 		TEXT, NUMBER
 	};
 private:
-	unsigned int m_x, m_y;
-	unsigned int m_width;
+	/* unsigned */ int m_x, m_y;
+	/* unsigned */ int m_width;
 	
 	int m_limit = -1;
 	unsigned int m_cursor = 0;
@@ -50,7 +50,7 @@ public:
 	void renderTextField(const int& time) const;
 	
 	void onKeyPress(const SDL_Keysym& keysym, const std::string& text);
-	const bool isInside(const unsigned int& x, const unsigned int& y) const;
+	const bool isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const;
 
 	void getSize(unsigned int& width, unsigned int& height) const { width = getWidth(); height = getHeight(); };
 	const unsigned int getWidth() const;

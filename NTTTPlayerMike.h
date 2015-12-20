@@ -32,6 +32,11 @@ class NTTTPlayerMike : public NTTTPlayer {
         virtual NTTTMove performMove(const NTTTGame& game);
 
         /**
+         * Initializes the player with the new board configuration.
+         */
+        virtual void NewGame(int boardCount, int boardSize, int lineSize);
+
+        /**
          * The destructor must always be made virtual
          */
         virtual ~NTTTPlayerMike() {}

@@ -1,3 +1,5 @@
+#include <limits>
+
 #include "NTTTBoard.h"
 #include "NTTTGame.h"
 #include "NTTTMove.h"
@@ -22,8 +24,14 @@ static void test()
 
 int PlayGame(NTTTPlayer *player1, NTTTPlayer *player2)
 {
+    unsigned int boardCount = 3;
+    unsigned int boardSize = 4;
+    unsigned int lineSize = 3;
+
     NTTTGame game;
-    game.NewGame(3, 4, 3);
+    game.NewGame(boardCount, boardSize, lineSize);
+    player1->NewGame(boardCount, boardSize, lineSize);
+    player2->NewGame(boardCount, boardSize, lineSize);
     std::cout << game;
 
     int player = 1;
