@@ -1,3 +1,5 @@
+#include <limits>
+
 #include "NTTTBoard.h"
 #include "NTTTGame.h"
 #include "NTTTMove.h"
