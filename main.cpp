@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 
 	std::cout << "Program starts" << std::endl;
 
-	if (!init()){ //Initializes SDL, SDL_image, SDL_ttf and global variables. If something went wrong. The program is terminated.
+	if (!init()){ //Initializes SDL2, SDL2_image, SDL2_ttf and global variables. If something went wrong. The program is terminated.
 		std::cout << "Press ENTER to continue..." << std::endl;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		return 1;
