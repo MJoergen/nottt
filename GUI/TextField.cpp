@@ -52,7 +52,7 @@ void TextField::renderTextField(const int& time) const {
 
 }
 
-const bool TextField::isInside(const unsigned int& x, const unsigned int& y) const{
+const bool TextField::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const{
 	return m_x <= x && m_x + m_width >= x && m_y <= y && m_y + g_textHeight + PADDING_X * 2 >= y;
 }
 
@@ -105,7 +105,7 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
 		}
 	}
 	else{
-		if (m_limit < 0 || !(m_content.length() + text.length() <= m_limit)){
+		if (m_limit < 0 || !(m_content.length() + text.length() <= (unsigned) m_limit)){
 			m_content.append(text);
 			m_cursor += text.length();
 			calculateCursorPPos(m_cursor_ppos);
