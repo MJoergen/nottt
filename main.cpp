@@ -5,6 +5,10 @@
 #include "NTTTPlayerMike.h"
 #include "NTTTPlayerIce.h"
 
+extern bool init();
+extern void loop();
+extern void close();
+
 static void test()
 {
     NTTTPlayerMike mike;
@@ -45,6 +49,34 @@ int PlayGame(NTTTPlayer *player1, NTTTPlayer *player2)
     return 0; // The winner.
 } // end of PlayGame
 
+
+/*
+
+Dependencies: SDL2, SDL2_image, SDL2_ttf
+
+*/
+
+
+int main(int argc, char *argv[]) {
+
+	std::cout << "Program starts" << std::endl;
+
+	if (!init()){ //Initializes SDL, SDL_image, SDL_ttf and global variables. If something went wrong. The program is terminated.
+		std::cout << "Press ENTER to continue..." << std::endl;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		return 1;
+	}
+
+	loop();
+	close();
+
+	std::cout << "Press ENTER to continue..." << std::endl;
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	return 0;
+}
+
+
+/*
 int main()
 {
     NTTTPlayerMike mike;
@@ -54,4 +86,4 @@ int main()
     test(); // To be removed
     return 0;
 }
-
+*/

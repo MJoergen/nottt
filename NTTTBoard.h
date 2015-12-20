@@ -3,6 +3,11 @@
 
 #include <vector>
 #include <iostream>
+#include <SDL.h>
+#include "GUI/Texture.h"
+
+extern SDL_Renderer *g_renderer;
+extern Texture *g_redCross, *g_blueCross;
 
 class NTTTBoard {
     public:
@@ -81,6 +86,24 @@ class NTTTBoard {
             }
             return os;
         }
+
+		void renderBoard(const unsigned int x, const unsigned int y, const unsigned int size) const {
+			unsigned int boardSize = m_squareStates.size();
+			unsigned int squareSize = size / boardSize;
+			SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, 255);
+			for (unsigned int index = 0; index < boardSize - 1; index++){
+				SDL_RenderDrawLine(g_renderer, x + squareSize * (index + 1), y, x + squareSize * (index + 1), y + size);
+				SDL_RenderDrawLine(g_renderer, x + size, y + squareSize * (index + 1), x, y + squareSize * (index + 1));
+			}
+			for (unsigned int x_i = 0; x_i < boardSize; x_i++){
+				for (unsigned int y_i = 0; y_i < boardSize; y_i++){
+					if (m_squareStates[x_i][y_i] == RED)
+						g_redCross->renderTexture(x + x_i * squareSize, y + y_i * squareSize, squareSize, squareSize);
+					else if (m_squareStates[x_i][y_i] == BLUE)
+						g_blueCross->renderTexture(x + x_i * squareSize, y + y_i * squareSize, squareSize, squareSize);
+				}
+			}
+		}
 
     private:
         State m_state;

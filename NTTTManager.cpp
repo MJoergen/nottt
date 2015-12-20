@@ -7,6 +7,7 @@
 #include <vector>
 #include "GUI/Text.h"
 #include "GUI/Button.h"
+#include "NTTTGame.h"
 
 bool init();
 void loop();
@@ -16,7 +17,7 @@ const char* TITLE = "No Tic Tac Toe";			//The title of the window
 const int WINDOW_WIDTH = 800;					//The width of the window
 const int WINDOW_HEIGHT = 600;					//The height of the window
 const int FONT_SIZE = 30;						//The size of the font
-const char* FONT_PATH = "<insert-path-here>";	//The path to the font
+const char* FONT_PATH = "Junicode-Regular.ttf";	//The path to the font
 extern const int PADDING_X = 3, PADDING_Y = 5;	//The padding along the axises
 
 SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
@@ -24,32 +25,15 @@ SDL_Renderer* g_renderer = NULL;		//Pointer pointing to a struct representing th
 TTF_Font* g_font = NULL;				//Pointer pointing to the representation of the font
 int g_textHeight = 0;					//The 'maximum' text height used with the font
 
+Texture *g_redCross, *g_blueCross;
+NTTTGame *g_game;
+
 Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr;						//Text-elements in the GUI
 TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;	//TextField-elements in the GUI
 Button *startGameButton = nullptr;																		//The button to start the game in the GUI
 
 bool isStarted = false; //Boolean used to indicate if the game is started
 
-/*
-
-REMEMBER to insert a valid font path before running the program.
-Dependencies: SDL2, SDL2_image, SDL2_ttf
-
-int main(int argc, char *argv[]) {
-	if (!init()){ //Initializes SDL, SDL_image, SDL_ttf and global variables. If something went wrong. The program is terminated.
-		std::cout << "Press ENTER to continue..." << std::endl;
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		return 1;
-	}
-
-	loop(); 
-	close();
-
-	std::cout << "Press ENTER to continue..." << std::endl;
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	return 0;
-}
-*/
 
 /**
 * Initializes SDL, SDL_image, SDL_ttf and defines global variables.
@@ -110,7 +94,11 @@ bool init(){
 	Texture heightMeasureTexture("|,.-gWjIi", { 0, 0, 0 });
 
 	g_textHeight = heightMeasureTexture.getHeight(); //Measures the height of the texture to create an estimate on the max height (from the lowest point to the highest) of the font
-	
+
+	g_redCross = new Texture("RedCross.png");
+	g_blueCross = new Texture("BlueCross.png");
+	g_game = new NTTTGame();
+
 	return true;
 }
 
@@ -125,6 +113,8 @@ void onClick(){ //Function called when the start game button is pressed
 	std::cout << "Starts the game with the following settings: { BoardCount: "
 		<< boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << " }" << std::endl;
 	isStarted = true;
+
+	g_game->NewGame(boardCount, boardSize, lineSize);
 
 	//TODO
 }
@@ -197,15 +187,20 @@ void loop(){
 		SDL_SetRenderDrawColor(g_renderer, 255, 255, 255, 255);
 		SDL_RenderClear(g_renderer); //Clears the screen
 
-		boardCountText->renderText();
-		boardSizeText->renderText();
-		lineSizeText->renderText();
+		if (isStarted){
+			//TODO
+		}
+		else {
+			boardCountText->renderText();
+			boardSizeText->renderText();
+			lineSizeText->renderText();
 
-		boardCountTextField->renderTextField(SDL_GetTicks());
-		boardSizeTextField->renderTextField(SDL_GetTicks());
-		lineSizeTextField->renderTextField(SDL_GetTicks());
+			boardCountTextField->renderTextField(SDL_GetTicks());
+			boardSizeTextField->renderTextField(SDL_GetTicks());
+			lineSizeTextField->renderTextField(SDL_GetTicks());
 
-		startGameButton->renderButton();
+			startGameButton->renderButton();
+		}
 
 		SDL_RenderPresent(g_renderer); //Updates the screen
 
@@ -217,6 +212,14 @@ void loop(){
 * Deletes the used pointers. Quits SDL, SDL_image and SDL_ttf.
 */
 void close(){
+	
+	delete g_game;
+	g_game = nullptr;
+
+	delete g_redCross;
+	g_redCross = nullptr;
+	delete g_blueCross;
+	g_blueCross = nullptr;
 
 	delete boardCountText;
 	boardCountText = nullptr;
