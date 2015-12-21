@@ -157,20 +157,30 @@ int manageGame( void* data){
 
 	int player = 1;
 	NTTTMove move(0, 0, 0);
-	for (int i = 0; i<10 && !quit; ++i)
+    bool gameActive = true;
+    while (!quit)
 	{
-		switch (player)
-		{
-		case 1:
-			move = player1->performMove(*g_game);
-			g_game->makeMove(move, NTTTBoard::RED);
-			break;
-		case 2:
-			move = player2->performMove(*g_game);
-			g_game->makeMove(move, NTTTBoard::BLUE);
-			break;
-		}
-		player = 3 - player;
+        if (gameActive)
+        {
+            switch (player)
+            {
+                case 1:
+                    move = player1->performMove(*g_game);
+                    g_game->makeMove(move, NTTTBoard::RED);
+                    break;
+                case 2:
+                    move = player2->performMove(*g_game);
+                    g_game->makeMove(move, NTTTBoard::BLUE);
+                    break;
+            }
+            player = 3 - player;
+
+            if (!g_game->isActive())
+            {
+                std::cout << "Player " << player << " won!" << std::endl;
+                gameActive = false;
+            }
+        }
 		SDL_Delay(500);
 	}
 	

@@ -28,6 +28,20 @@ class NTTTGame {
         const std::vector<NTTTBoard>& getBoards() const {return m_boards;}
 
         /**
+         * @return An array of Board objects representing the current setting of the game.
+         */
+        bool isActive() const
+        {
+            for (const NTTTBoard& board : m_boards)
+            {
+                if (board.getCurrentState() == NTTTBoard::ALIVE)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /**
          * Start a new game
          */
         void NewGame(int boardCount, int boardSize, int lineSize)
@@ -35,7 +49,7 @@ class NTTTGame {
             m_boards.resize(boardCount);
             for (auto it=m_boards.begin(); it != m_boards.end(); ++it)
             {
-                it->reset(boardSize);
+                it->reset(boardSize, lineSize);
             }
             m_lineSize = lineSize;
         }

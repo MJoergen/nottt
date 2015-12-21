@@ -44,16 +44,60 @@ class NTTTBoard {
             return m_squareStates;
         }
 
+        bool checkLine(int x, int y, int dx, int dy) const
+        {
+            for (int i=0; i<m_lineSize; ++i)
+            {
+                if (m_squareStates[x][y] == UNMARKED)
+                    return false;
+                x += dx;
+                y += dy;
+            }
+            return true;
+        } // end of checkLine
+
         /**
          */
         void makeMove(int squareX, int squareY, SquareState state)
         {
             m_squareStates[squareX][squareY] = state;
-        }
+
+			int boardSize = m_squareStates.size();
+            for (int x=0; x<boardSize; ++x)
+            {
+                for (int y=0; y<boardSize; ++y)
+                {
+                    if (x+m_lineSize <= boardSize) // Horizontal
+                        if (checkLine(x, y, 1, 0))
+                        {
+                            m_state = DEAD;
+                            return;
+                        }
+                    if (y+m_lineSize <= boardSize) // Vertical
+                        if (checkLine(x, y, 0, 1))
+                        {
+                            m_state = DEAD;
+                            return;
+                        }
+                    if (x+m_lineSize <= boardSize && y+m_lineSize <= boardSize) // Diagonal
+                        if (checkLine(x, y, 1, 1))
+                        {
+                            m_state = DEAD;
+                            return;
+                        }
+                    if (x >= m_lineSize-1 && y+m_lineSize <= boardSize) // Diagonal
+                        if (checkLine(x, y, -1, 1))
+                        {
+                            m_state = DEAD;
+                            return;
+                        }
+                }
+            }
+        } // end of makeMove
 
         /**
          */
-        void reset(int boardSize)
+        void reset(int boardSize, int lineSize)
         {
             m_squareStates.resize(boardSize);
             for (std::vector<SquareState>& row : m_squareStates)
@@ -65,6 +109,7 @@ class NTTTBoard {
                 }
             }
             m_state = ALIVE;
+            m_lineSize = lineSize;
         }
 
         /**
@@ -106,6 +151,7 @@ class NTTTBoard {
 		}
 
     private:
+        int m_lineSize;
         State m_state;
         std::vector< std::vector<SquareState> > m_squareStates;
 }; // end of class NTTTBoard
