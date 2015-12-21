@@ -4,10 +4,6 @@
 #include <SDL.h>
 #include "Texture.h"
 
-extern SDL_Renderer* g_renderer;
-extern const int PADDING_X, PADDING_Y;
-extern int g_textHeight;
-
 class Button {
 private:
 	/* unsigned */ int m_x, m_y;

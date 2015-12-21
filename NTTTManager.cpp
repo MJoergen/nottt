@@ -74,7 +74,8 @@ bool NTTTManager::init(){
 
 static int manageGameStatic( void* data)
 {
-    return g_NtttManager.manageGame(data);
+    NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
+    return pNtttManager->manageGame(data);
 }
 
 int NTTTManager::manageGame( void* data)
@@ -173,7 +174,7 @@ void NTTTManager::onClick()
 
 	g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
 	isGameThreadRunning = true;
-	gameThread = SDL_CreateThread(manageGameStatic, "Game Thread", NULL);
+	gameThread = SDL_CreateThread(manageGameStatic, "Game Thread", this);
 	if (gameThread == NULL){
 		std::cout << "Failed to create thread: " << SDL_GetError() << std::endl;
 		isGameThreadRunning = false;
