@@ -2,23 +2,20 @@
 
 #include "NTTTPlayerMike.h"
 #include "NTTTPlayerIce.h"
-
-extern bool init();
-extern void loop();
-extern void close();
+#include "NTTTManager.h"
 
 int main(int argc, char *argv[]) {
 
 	std::cout << "Program starts" << std::endl;
 
-	if (!init()){ //Initializes SDL2, SDL2_image, SDL2_ttf and global variables. If something went wrong. The program is terminated.
+	if (!g_NtttManager.init()){ //Initializes SDL2, SDL2_image, SDL2_ttf and global variables. If something went wrong. The program is terminated.
 		std::cout << "Press ENTER to continue..." << std::endl;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		return 1;
 	}
 
-	loop();
-	close();
+	g_NtttManager.loop();
+	g_NtttManager.close();
 
 	std::cout << "Press ENTER to continue..." << std::endl;
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

@@ -1,4 +1,5 @@
 #include "TextField.h"
+#include "../NTTTManager.h"
 
 TextField::TextField(const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit) {
 	m_fieldType = fieldType;
@@ -24,36 +25,41 @@ void TextField::genTexture(){
 }
 
 void TextField::renderTextField(const int& time) const {
-	SDL_Rect rect = { m_x, m_y, m_width, g_textHeight + PADDING_Y * 2 };
+	SDL_Rect rect = { m_x, m_y, m_width, g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2 };
 
 	if (m_selected)
-		SDL_SetRenderDrawColor(g_renderer, 255, 255, 255, 255);
+		SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 255, 255, 255, 255);
 	else
-		SDL_SetRenderDrawColor(g_renderer, 230, 230, 230, 255);
+		SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 230, 230, 230, 255);
 
-	SDL_RenderFillRect(g_renderer, &rect);
+	SDL_RenderFillRect(g_NtttManager.g_renderer, &rect);
 
-	SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 0, 0, 0, 255);
 
-	SDL_RenderDrawRect(g_renderer, &rect);
+	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
 
 	if (m_content.length() <= 0){
 		if (m_selected && time % 2000 >= 1000) {
-			SDL_RenderDrawLine(g_renderer, m_x + PADDING_X, m_y + PADDING_Y, m_x + PADDING_X, m_y + g_textHeight + PADDING_Y);
+			SDL_RenderDrawLine(g_NtttManager.g_renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y);
 		}
 	}
 	else{
-		m_texture->renderTexture(m_x + PADDING_X, m_y + PADDING_Y);
+		m_texture->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
 		if (m_selected && time % 2000 >= 1000) {
-			SDL_RenderDrawLine(g_renderer, m_x + PADDING_X + m_cursor_ppos, m_y + g_textHeight + PADDING_Y,
-				m_x + PADDING_X + m_cursor_ppos, m_y + PADDING_Y);
+			SDL_RenderDrawLine(g_NtttManager.g_renderer, m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y,
+				m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + g_NtttManager.PADDING_Y);
 		}
 	}
 
 }
 
 const bool TextField::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const{
-	return m_x <= x && m_x + m_width >= x && m_y <= y && m_y + g_textHeight + PADDING_X * 2 >= y;
+	return m_x <= x && m_x + m_width >= x && m_y <= y && m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_X * 2 >= y;
+}
+
+bool is_number(const std::string& s) //Checks if a string is a number
+{
+	return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
 }
 
 void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
@@ -124,7 +130,7 @@ void TextField::calculateCursorPPos(unsigned int& cursorPPos){
 	int w, h;
 	std::string content = m_content;
 	content.resize(m_cursor);
-	TTF_SizeText(g_font, content.c_str(), &w, &h);
+	TTF_SizeText(g_NtttManager.g_font, content.c_str(), &w, &h);
 	cursorPPos = w;
 }
 
@@ -133,5 +139,5 @@ const unsigned int TextField::getWidth() const{
 }
 
 const unsigned int TextField::getHeight() const{
-	return g_textHeight + PADDING_Y * 2;
+	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
 }

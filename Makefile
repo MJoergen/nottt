@@ -1,4 +1,5 @@
 sources  = main.cpp
+sources += NTTTBoard.cpp
 sources += NTTTPlayerMike.cpp
 sources += NTTTPlayerIce.cpp
 sources += NTTTManager.cpp

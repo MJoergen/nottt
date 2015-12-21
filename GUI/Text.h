@@ -1,11 +1,8 @@
 #ifndef _TEXT_H_
 #define _TEXT_H_
 
-#include "Texture.h"
 #include <string>
-
-extern const int PADDING_X, PADDING_Y;
-extern int g_textHeight;
+#include "Texture.h"
 
 class Text {
 private:

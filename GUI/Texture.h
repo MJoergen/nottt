@@ -7,9 +7,6 @@
 #include <string>
 #include <iostream>
 
-extern SDL_Renderer* g_renderer;
-extern TTF_Font* g_font;
-
 class Texture {
 private:
 	SDL_Texture* m_texture = NULL;

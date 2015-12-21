@@ -1,3 +1,4 @@
+#if 0
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -6,43 +7,14 @@
 #include "GUI/TextField.h"
 #include "GUI/Texture.h"
 #include "NTTTGame.h"
+#endif
+
+#include "NTTTGame.h"
 #include "NTTTPlayerIce.h"
 #include "NTTTPlayerMike.h"
+#include "NTTTManager.h"
 
-bool init();
-void loop();
-void close();
-
-const char* TITLE = "No Tic Tac Toe";			//The title of the window
-const int WINDOW_WIDTH = 800;					//The width of the window
-const int WINDOW_HEIGHT = 600;					//The height of the window
-const int FONT_SIZE = 30;						//The size of the font
-const char* FONT_PATH = "Junicode-Regular.ttf";	//The path to the font
-extern const int PADDING_X = 3, PADDING_Y = 5;	//The padding along the axises
-const int BOARD_PADDING = 10;
-
-SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
-SDL_Renderer* g_renderer = NULL;		//Pointer pointing to a struct representing the renderer
-TTF_Font* g_font = NULL;				//Pointer pointing to the representation of the font
-int g_textHeight = 0;					//The 'maximum' text height used with the font
-
-Texture *g_redCross, *g_blueCross;
-NTTTGame *g_game;
-
-Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr;						//Text-elements in the GUI
-TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;	//TextField-elements in the GUI
-Button *startGameButton = nullptr;																		//The button to start the game in the GUI
-
-SDL_Thread* gameThread;
-
-bool isGameThreadRunning = false;
-bool isStarted = false; //Boolean used to indicate if the game is started
-bool quit = false;
-
-
-const int windowSize = std::min(WINDOW_WIDTH, WINDOW_HEIGHT);
-int gridSize;
-int boardRenderSize;
+NTTTManager g_NtttManager;
 
 /**
 * Initializes SDL, SDL_image, SDL_ttf and defines global variables.
@@ -50,7 +22,7 @@ int boardRenderSize;
 *  If true everything is correctly initialized.
 *  If false something went wrong in the initialization process.
 */
-bool init(){
+bool NTTTManager::init(){
 	
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0){ //Initializes every part of SDL2
 		std::cout << "Failed initializing SDL: " << SDL_GetError() << std::endl;
@@ -124,8 +96,8 @@ int manageGame( void* data){
 	NTTTPlayer* player2;
 
 	NTTTPlayer::OrderChoice iceOrderChoice, mikeOrderChoice;
-	iceOrderChoice = ice.chooseOrder(*g_game);
-	mikeOrderChoice = mike.chooseOrder(*g_game);
+	iceOrderChoice = ice.chooseOrder(*g_NtttManager.g_game);
+	mikeOrderChoice = mike.chooseOrder(*g_NtttManager.g_game);
 
 	if (iceOrderChoice == mikeOrderChoice){
 		if (rand() % 2 == 0){ //TODO: Make this random by srand() or other method.
@@ -154,24 +126,24 @@ int manageGame( void* data){
 	int player = 1;
 	NTTTMove move(0, 0, 0);
     bool gameActive = true;
-    while (!quit)
+    while (!g_NtttManager.quit)
 	{
         if (gameActive)
         {
             switch (player)
             {
                 case 1:
-                    move = player1->performMove(*g_game);
-                    g_game->makeMove(move, NTTTBoard::RED);
+                    move = player1->performMove(*g_NtttManager.g_game);
+                    g_NtttManager.g_game->makeMove(move, NTTTBoard::RED);
                     break;
                 case 2:
-                    move = player2->performMove(*g_game);
-                    g_game->makeMove(move, NTTTBoard::BLUE);
+                    move = player2->performMove(*g_NtttManager.g_game);
+                    g_NtttManager.g_game->makeMove(move, NTTTBoard::BLUE);
                     break;
             }
             player = 3 - player;
 
-            if (!g_game->isActive())
+            if (!g_NtttManager.g_game->isActive())
             {
                 std::cout << "Player " << player << " won!" << std::endl;
                 gameActive = false;
@@ -181,39 +153,39 @@ int manageGame( void* data){
 	}
 	
 	//isGameThreadRunning must be set to false just before the end.
-	isGameThreadRunning = false;
+	g_NtttManager.isGameThreadRunning = false;
 
 	return 0;
 }
 
 void onClick(){ //Function called when the start game button is pressed
-	if (isStarted){ //Returns if the game already is started
+	if (g_NtttManager.isStarted){ //Returns if the game already is started
 		std::cout << "Failed to start game: A game is already in progress." << std::endl;
 		return;
 	}
-	const unsigned int boardCount = std::stoi(boardCountTextField->getContent());
-	const unsigned int boardSize = std::stoi(boardSizeTextField->getContent());
-	const unsigned int lineSize = std::stoi(lineSizeTextField->getContent());
+	const unsigned int boardCount = std::stoi(g_NtttManager.boardCountTextField->getContent());
+	const unsigned int boardSize = std::stoi(g_NtttManager.boardSizeTextField->getContent());
+	const unsigned int lineSize = std::stoi(g_NtttManager.lineSizeTextField->getContent());
 	std::cout << "Starts the game with the following settings: { BoardCount: "
 		<< boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << " }" << std::endl;
 
-	g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
-	isGameThreadRunning = true;
-	gameThread = SDL_CreateThread(manageGame, "Game Thread", NULL);
-	if (gameThread == NULL){
+	g_NtttManager.g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
+	g_NtttManager.isGameThreadRunning = true;
+	g_NtttManager.gameThread = SDL_CreateThread(manageGame, "Game Thread", NULL);
+	if (g_NtttManager.gameThread == NULL){
 		std::cout << "Failed to create thread: " << SDL_GetError() << std::endl;
-		isGameThreadRunning = false;
+		g_NtttManager.isGameThreadRunning = false;
 	} else
-		isStarted = true;
+		g_NtttManager.isStarted = true;
 
-	gridSize = (int)ceil(sqrt(g_game->getBoardCount()));
-	boardRenderSize = (windowSize - (1 + gridSize) * BOARD_PADDING) / gridSize;
+	g_NtttManager.gridSize = (int)ceil(sqrt(g_NtttManager.g_game->getBoardCount()));
+	g_NtttManager.boardRenderSize = (g_NtttManager.windowSize - (1 + g_NtttManager.gridSize) * g_NtttManager.BOARD_PADDING) / g_NtttManager.gridSize;
 }
 
 /**
 * Runs the main loop and responds to event calls.
 */
-void loop(){
+void NTTTManager::loop(){
 	
 	boardCountText = new Text("BoardCount: ", PADDING_X, PADDING_Y);
 	boardCountTextField = new TextField(TextField::NUMBER, "3", PADDING_X + boardCountText->getWidth() + boardCountText->getX(), PADDING_Y, 60, -1);
@@ -320,7 +292,7 @@ void loop(){
 /**
 * Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
 */
-void close(){
+void NTTTManager::close(){
 	
 	delete g_game;
 	g_game = nullptr;
@@ -360,7 +332,3 @@ void close(){
 	SDL_Quit();
 }
 
-bool is_number(const std::string& s) //Checks if a string is a number
-{
-	return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
-}

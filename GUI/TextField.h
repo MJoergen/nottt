@@ -4,14 +4,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "Texture.h"
 #include <string>
-
-extern SDL_Renderer* g_renderer;
-extern TTF_Font* g_font;
-extern const int PADDING_X, PADDING_Y;
-extern int g_textHeight;
-extern bool is_number(const std::string& s);
+#include "Texture.h"
 
 class TextField {
 public:

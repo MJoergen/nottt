@@ -1,4 +1,5 @@
 #include "Button.h"
+#include "../NTTTManager.h"
 
 Button::Button(const std::string text, unsigned int x, const unsigned int y){
 	m_x = x;
@@ -11,9 +12,9 @@ Button::~Button(){
 }
 
 void Button::renderButton() const {
-	m_texture->renderTexture(m_x + PADDING_X, m_y + PADDING_Y);
+	m_texture->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
 	SDL_Rect rect = { m_x, m_y, getWidth(), getHeight() };
-	SDL_RenderDrawRect(g_renderer, &rect);
+	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
 }
 
 void Button::getSize(unsigned int& width, unsigned int& height) const{
@@ -22,11 +23,11 @@ void Button::getSize(unsigned int& width, unsigned int& height) const{
 }
 
 const /* unsigned */ int Button::getWidth() const{
-	return m_texture->getWidth() + PADDING_X * 2;
+	return m_texture->getWidth() + g_NtttManager.PADDING_X * 2;
 }
 
 const /* unsigned */ int Button::getHeight() const{
-	return g_textHeight + PADDING_Y * 2;
+	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
 }
 
 void Button::registerClickFunc(void(*action)()) {
