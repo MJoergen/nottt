@@ -30,13 +30,13 @@ int PlayGame(NTTTPlayer *player1, NTTTPlayer *player2)
 
     NTTTGame game;
     game.NewGame(boardCount, boardSize, lineSize);
-    player1->NewGame(boardCount, boardSize, lineSize);
-    player2->NewGame(boardCount, boardSize, lineSize);
+    player1->chooseOrder(game);
+    player2->chooseOrder(game);
     std::cout << game;
 
     int player = 1;
     NTTTMove move(0, 0, 0);
-    for (int i=0; i<10; ++i)
+    for (int i=0; i<30; ++i)
     {
         switch (player)
         {
@@ -87,8 +87,9 @@ int main(int argc, char *argv[]) {
 /*
 int main()
 {
+    srand(time(0));
     NTTTPlayerMike mike;
-    NTTTPlayerIce ice;
+    NTTTPlayerMike ice;
     PlayGame(&mike, &ice);
 
     test(); // To be removed

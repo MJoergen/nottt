@@ -4,15 +4,61 @@
 #include "NTTTPlayer.h"
 
 /**
- * This is an abstract base class that is to be derived from.
- * To implement a player, you should write something like:
- *
- * #include "NTTTPlayer.h"
- * class HTTPPlayerMike : HTTPPlayer 
- * {
- * }
- *
+ * A representation of the board using bitmasks
  */
+class Board
+{
+    public:
+        /**
+         * Run in the initialization phase of the game.
+         */
+        void init(const NTTTGame& game);
+
+        /**
+         */
+        bool isBoardDead(uint64_t bits) const;
+
+        /**
+         * Converts to internal representation
+         */
+        void makeBits(const NTTTGame& game);
+
+        /**
+         * Make a move.
+         */
+        void makeMove(int board, int bit);
+
+        /**
+         * Undo a move.
+         */
+        void undoMove(int board, int bit);
+
+        /**
+         * Return an estimate of the current position
+         */
+        int evaluate() const;
+    
+        /**
+         * Perform an alpha beta search
+         * Returns a value
+         */
+        int alphaBeta(int alpha, int beta, int level);
+
+        /**
+         * Return the best move.
+         */
+        NTTTMove findMove();
+
+    private:
+        int m_boardCount;
+        int m_boardSize;
+        int m_lineSize;
+        int m_maxBits;
+        int m_nodes;
+        std::vector<uint64_t> m_bits;
+        std::vector<uint64_t> m_lines;
+}; // end of class Board
+
 
 class NTTTPlayerMike : public NTTTPlayer {
     public:
@@ -32,24 +78,12 @@ class NTTTPlayerMike : public NTTTPlayer {
         virtual NTTTMove performMove(const NTTTGame& game);
 
         /**
-         * Initializes the player with the new board configuration.
-         */
-        virtual void NewGame(int boardCount, int boardSize, int lineSize);
-
-        /**
          * The destructor must always be made virtual
          */
         virtual ~NTTTPlayerMike() {}
 
     private:
-        std::vector<uint64_t> m_lines;
-        std::vector<NTTTMove> m_moves;
-        int m_boardCount;
-        int m_boardSize;
-        int m_lineSize;
-
-        void genMoves(const NTTTGame& game);
-        std::vector<uint64_t> genMask(const NTTTGame& game);
+        Board m_board;
 }; // end of class NTTTPlayerMike
 
 #endif // _NTTTPLAYERMIKE_H_

@@ -1,17 +1,7 @@
 #include <iomanip>
+#include <assert.h>
 
 #include "NTTTPlayerMike.h"
-
-/**
- * Run in the initialization phase of the game.
- * @param game An instance of the NTTTGame.
- * @return The player's/bot's choice of order.
- */
-NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game)
-{
-    return UNDECIDED;
-} // end of chooseOrder
-
 
 /**
  * Converts a given line segment (start, direction, length)
@@ -31,74 +21,57 @@ static uint64_t makeLine(int x, int y, int dx, int dy, int size)
 
 
 /**
- * Initializes the player with the new board configuration.
+ * Initializes data structures, particularly bit masks for lines.
+ * Called once at beginning of each new game.
  */
-void NTTTPlayerMike::NewGame(int boardCount, int boardSize, int lineSize)
+void Board::init(const NTTTGame& game)
 {
-    m_boardCount = boardCount;
-    m_boardSize = boardSize;
-    m_lineSize = lineSize;
+    m_boardCount = game.getBoardCount();
+    m_boardSize  = game.getBoardSize();
+    m_lineSize   = game.getLineSize();
+    m_maxBits    = m_boardSize * m_boardSize;
 
     m_lines.clear();
 
-    for (int x=0; x<boardSize; ++x)
+    for (int x=0; x<m_boardSize; ++x)
     {
-        for (int y=0; y<boardSize; ++y)
+        for (int y=0; y<m_boardSize; ++y)
         {
-            if (x+lineSize <= boardSize) // Horizontal
-                m_lines.push_back(makeLine(x, y, 1, 0, lineSize));
-            if (y+lineSize <= boardSize) // Vertical
-                m_lines.push_back(makeLine(x, y, 0, 1, lineSize));
-            if (x+lineSize <= boardSize && y+lineSize <= boardSize) // Diagonal
-                m_lines.push_back(makeLine(x, y, 1, 1, lineSize));
-            if (x >= lineSize-1 && y+lineSize <= boardSize) // Diagonal
-                m_lines.push_back(makeLine(x, y, -1, 1, lineSize));
+            if (x+m_lineSize <= m_boardSize) // Horizontal
+                m_lines.push_back(makeLine(x, y, 1, 0, m_lineSize));
+            if (y+m_lineSize <= m_boardSize) // Vertical
+                m_lines.push_back(makeLine(x, y, 0, 1, m_lineSize));
+            if (x+m_lineSize <= m_boardSize && y+m_lineSize <= m_boardSize) // Diagonal
+                m_lines.push_back(makeLine(x, y, 1, 1, m_lineSize));
+            if (x >= m_lineSize-1 && y+m_lineSize <= m_boardSize) // Diagonal
+                m_lines.push_back(makeLine(x, y, -1, 1, m_lineSize));
         }
     }
-} // end of NewGame
+} // end of init
 
 
 /**
- * Generates a list of all legal moves in the current position.
  */
-void NTTTPlayerMike::genMoves(const NTTTGame& game)
+bool Board::isBoardDead(uint64_t bits) const
 {
-    m_moves.clear();
-
-    const std::vector<NTTTBoard>& boards = game.getBoards();
-
-    for (int boardNum = 0; boardNum < m_boardCount; ++boardNum)
+    for (uint64_t lineMask : m_lines)
     {
-        const NTTTBoard& board = boards[boardNum];
-        NTTTBoard::State state = board.getCurrentState();
-        if (state != NTTTBoard::ALIVE)
-            continue;
-
-        const std::vector< std::vector<NTTTBoard::SquareState> >& squareStates = board.getSquareStates();
-        for (int x = 0; x < m_boardSize; ++x)
+        if (!(bits & lineMask))
         {
-            for (int y = 0; y < m_boardSize; ++y)
-            {
-                if (squareStates[x][y] != NTTTBoard::UNMARKED)
-                    continue;
-                m_moves.push_back(NTTTMove(boardNum, x, y));
-            }
+            return true;
         }
     }
-
-    std::cout << m_moves.size() << " legal moves." << std::endl;
-
-} // end of genMoves
+    return false;
+} // end of isBoardDead
 
 
 /**
- * Calculate a bit mask of the current position.
- * @param game An instance of the NTTTGame.
- * @return The bit mask
+ * Converts to internal bitmask representation
+ * Called every time we are to make a move.
  */
-std::vector<uint64_t> NTTTPlayerMike::genMask(const NTTTGame& game)
+void Board::makeBits(const NTTTGame& game)
 {
-    std::vector<uint64_t> res;
+    m_bits.clear();
 
     const std::vector<NTTTBoard>& boards = game.getBoards();
 
@@ -108,7 +81,7 @@ std::vector<uint64_t> NTTTPlayerMike::genMask(const NTTTGame& game)
         NTTTBoard::State state = board.getCurrentState();
         if (state != NTTTBoard::ALIVE)
         {
-            res.push_back(0UL);
+            m_bits.push_back(0UL);
             continue;
         }
 
@@ -123,28 +96,160 @@ std::vector<uint64_t> NTTTPlayerMike::genMask(const NTTTGame& game)
                 val |= 1UL << (x*8+y);
             }
         }
-        std::cout << std::hex << std::setw(16) << std::setfill('0') << val << "  ";
-        res.push_back(val);
+
+        if (isBoardDead(val))
+            val = 0;
+
+        std::cout << std::hex << std::setw(16) << std::setfill('0') << val << " ";
+        m_bits.push_back(val);
     }
     std::cout << std::endl;
-
-    return res;
-
-} // end of genMask
-
+} // end of makeBits
 
 
 /**
- * Calculate a static evaluation of the current position.
- * @param game An instance of the NTTTGame.
- * @return The evaluation.
+ * Make a move.
  */
-/*
-int NTTTPlayerMike::evaluate(const NTTTGame& game)
+void Board::makeMove(int board, int bit)
 {
-    return 0;
+    uint64_t mask = 1UL << bit;
+    assert (m_bits[board] & mask);
+    m_bits[board] &= ~mask;
+
+} // end of makeMove
+
+
+/**
+ * Undo a move.
+ */
+void Board::undoMove(int board, int bit)
+{
+    uint64_t mask = 1UL << bit;
+    assert ((~m_bits[board]) & mask);
+    m_bits[board] |= mask;
+} // end of makeMove
+
+
+/**
+ * Return an estimate of the current position
+ */
+int Board::evaluate() const
+{
+    int numActive = 0;
+    for (int board=0; board<m_boardCount; ++board)
+    {
+        if (!isBoardDead(m_bits[board]))
+            numActive++;
+    }
+
+    if (numActive == 0)
+        return 9999;
+
+    return (rand() % 201) - 100;
 } // end of evaluate
-*/
+
+
+/**
+ * Perform an alpha beta search
+ * Returns a value
+ */
+int Board::alphaBeta(int alpha, int beta, int level)
+{
+    m_nodes++;
+    if (level == 0)
+    {
+        return evaluate();
+    }
+
+
+    int bestVal = -999;
+
+    for (int board=0; board<m_boardCount; ++board)
+    {
+        if (isBoardDead(m_bits[board]))
+            continue;
+
+        for (int x=0; x<m_boardSize; ++x)
+        {
+            for (int y=0; y<m_boardSize; ++y)
+            {
+                int bit = x*8+y;
+                uint64_t mask = 1UL << bit;
+                if (m_bits[board] & mask)
+                {
+                    makeMove(board, bit);
+                    int val = -alphaBeta(-beta, -alpha, level-1);
+                    undoMove(board, bit);
+
+                    NTTTMove move(board, bit/8, bit%8);
+                    std::cout << "  " << move << " -> " << val;
+
+                    if (val > bestVal)
+                    {
+                        bestVal = val;
+                    }
+                }
+            }
+        }
+    }
+
+    if (bestVal == -999) // No legal moves
+        return 999; // I've won
+
+    return bestVal;
+} // end of alphaBeta
+
+
+/**
+ * Return the best move.
+ */
+NTTTMove Board::findMove()
+{
+    m_nodes = 0;
+    int bestVal = -99999;
+    NTTTMove bestMove(0, 0, 0);
+
+    for (int board=0; board<m_boardCount; ++board)
+    {
+        for (int x=0; x<m_boardSize; ++x)
+        {
+            for (int y=0; y<m_boardSize; ++y)
+            {
+                int bit = x*8+y;
+                uint64_t mask = 1UL << bit;
+                if (m_bits[board] & mask)
+                {
+                    makeMove(board, bit);
+                    int val = -alphaBeta(-999, 999, 0);
+                    undoMove(board, bit);
+
+                    NTTTMove move(board, bit/8, bit%8);
+                    std::cout << "Move " << move << " => " << std::dec << val << std::endl;
+
+                    if (val > bestVal)
+                    {
+                        bestVal = val;
+                        bestMove = move;
+                    }
+                }
+            }
+        }
+    }
+    std::cout << "nodes=" << m_nodes << std::endl;
+    return bestMove;
+} // end of findMove
+
+
+/**
+ * Run in the initialization phase of the game.
+ * @param game An instance of the NTTTGame.
+ * @return The player's/bot's choice of order.
+ */
+NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game)
+{
+    m_board.init(game);
+    return UNDECIDED;
+} // end of chooseOrder
 
 
 /**
@@ -154,35 +259,8 @@ int NTTTPlayerMike::evaluate(const NTTTGame& game)
  */
 NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
 {
-    genMoves(game);
-    genMask(game);
-
-    int boardCount = game.getBoardCount();
-    int boardSize  = game.getBoardSize();
-
-    while (true)
-    {
-        int boardNum = rand()%boardCount;
-        const std::vector<NTTTBoard>& boards = game.getBoards();
-        const NTTTBoard& board = boards[boardNum];
-        NTTTBoard::State state = board.getCurrentState();
-        if (state != NTTTBoard::ALIVE)
-            continue;
-
-        const std::vector< std::vector<NTTTBoard::SquareState> >& squareStates = board.getSquareStates();
-
-        while (true)
-        {
-            int squareX = rand()%boardSize;
-            int squareY = rand()%boardSize;
-
-            if (squareStates[squareX][squareY] != NTTTBoard::UNMARKED)
-                continue;
-
-            return NTTTMove(boardNum, squareX, squareY);
-        }
-    }
-
-    return NTTTMove(0, 0, 0); // Never used
+    std::cout << game;
+    m_board.makeBits(game);
+    return m_board.findMove();
 } // end of performMove
 
