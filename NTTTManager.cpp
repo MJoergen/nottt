@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_thread.h>
 #include "GUI/Texture.h"
 #include "GUI/TextField.h"
 #include <iostream>
@@ -8,6 +9,9 @@
 #include "GUI/Text.h"
 #include "GUI/Button.h"
 #include "NTTTGame.h"
+#include "NTTTPlayerIce.h"
+#include "NTTTPlayerMike.h"
+#include <algorithm>
 
 bool init();
 void loop();
@@ -19,6 +23,7 @@ const int WINDOW_HEIGHT = 600;					//The height of the window
 const int FONT_SIZE = 30;						//The size of the font
 const char* FONT_PATH = "Junicode-Regular.ttf";	//The path to the font
 extern const int PADDING_X = 3, PADDING_Y = 5;	//The padding along the axises
+const int BOARD_PADDING = 10;
 
 SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
 SDL_Renderer* g_renderer = NULL;		//Pointer pointing to a struct representing the renderer
@@ -32,8 +37,16 @@ Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullpt
 TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;	//TextField-elements in the GUI
 Button *startGameButton = nullptr;																		//The button to start the game in the GUI
 
-bool isStarted = false; //Boolean used to indicate if the game is started
+SDL_Thread* gameThread;
 
+bool isGameThreadRunning = false;
+bool isStarted = false; //Boolean used to indicate if the game is started
+bool quit = false;
+
+
+const int windowSize = std::min(WINDOW_WIDTH, WINDOW_HEIGHT);
+int gridSize;
+int boardRenderSize;
 
 /**
 * Initializes SDL, SDL_image, SDL_ttf and defines global variables.
@@ -43,26 +56,26 @@ bool isStarted = false; //Boolean used to indicate if the game is started
 */
 bool init(){
 	
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0){ //Initializes every part of SDL
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0){ //Initializes every part of SDL2
 		std::cout << "Failed initializing SDL: " << SDL_GetError() << std::endl;
 		return false;
 	}
 
 	int initFlags = IMG_INIT_PNG;
-	if (!(IMG_Init(initFlags) & initFlags)){ //Initializes the PNG part of SDL_image
+	if (!(IMG_Init(initFlags) & initFlags)){ //Initializes the PNG part of SDL2_image
 		std::cout << "Failed initializing SDL_image: " << IMG_GetError() << std::endl;
 		SDL_Quit();
 		return false;
 	}
 
-	if (TTF_Init() == -1){ //Initializes SDL_ttf
+	if (TTF_Init() == -1){ //Initializes SDL2_ttf
 		std::cout << "Failed initializing SDL_ttf: " << TTF_GetError() << std::endl;
 		IMG_Quit();
 		SDL_Quit();
 		return false;
 	}
 
-	g_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_WIDTH, SDL_WINDOW_SHOWN); //Creates a window
+	g_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN); //Creates a window
 	if (g_window == NULL){
 		std::cout << "Failed creating window: " << SDL_GetError() << std::endl;
 		TTF_Quit();
@@ -98,8 +111,76 @@ bool init(){
 	g_redCross = new Texture("RedCross.png");
 	g_blueCross = new Texture("BlueCross.png");
 	g_game = new NTTTGame();
-
+	
 	return true;
+}
+
+int manageGame( void* data){
+
+	//This is where the game goes.
+
+	//Some test code
+
+	NTTTPlayerIce ice;
+	NTTTPlayerMike mike;
+
+	NTTTPlayer* player1;
+	NTTTPlayer* player2;
+
+	NTTTPlayer::OrderChoice iceOrderChoice, mikeOrderChoice;
+	iceOrderChoice = ice.chooseOrder(*g_game);
+	mikeOrderChoice = mike.chooseOrder(*g_game);
+
+	if (iceOrderChoice == mikeOrderChoice){
+		if (rand() % 2 == 0){ //TODO: Make this random by srand() or other method.
+			std::cout << "Ice starts" << std::endl;
+			player1 = &ice;
+			player2 = &mike;
+		}
+		else {
+			std::cout << "Mike starts" << std::endl;
+			player1 = &mike;
+			player2 = &ice;
+		}
+	}
+	else if (iceOrderChoice == NTTTPlayer::FIRST || mikeOrderChoice == NTTTPlayer::LAST){
+		std::cout << "Ice starts" << std::endl;
+		player1 = &ice;
+		player2 = &mike;
+	}
+	else{
+		std::cout << "Mike starts" << std::endl;
+		player1 = &mike;
+		player2 = &ice;
+	}
+
+
+	ice.NewGame(g_game->getBoardCount(), g_game->getBoardSize(), g_game->getLineSize());
+	mike.NewGame(g_game->getBoardCount(), g_game->getBoardSize(), g_game->getLineSize());
+
+	int player = 1;
+	NTTTMove move(0, 0, 0);
+	for (int i = 0; i<10 & !quit; ++i)
+	{
+		switch (player)
+		{
+		case 1:
+			move = player1->performMove(*g_game);
+			g_game->makeMove(move, NTTTBoard::RED);
+			break;
+		case 2:
+			move = player2->performMove(*g_game);
+			g_game->makeMove(move, NTTTBoard::BLUE);
+			break;
+		}
+		player = 3 - player;
+		SDL_Delay(500);
+	}
+	
+	//isGameThreadRunning must be set to false just before the end.
+	isGameThreadRunning = false;
+
+	return 0;
 }
 
 void onClick(){ //Function called when the start game button is pressed
@@ -112,18 +193,24 @@ void onClick(){ //Function called when the start game button is pressed
 	const unsigned int lineSize = std::stoi(lineSizeTextField->getContent());
 	std::cout << "Starts the game with the following settings: { BoardCount: "
 		<< boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << " }" << std::endl;
-	isStarted = true;
 
-	g_game->NewGame(boardCount, boardSize, lineSize);
+	g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
+	isGameThreadRunning = true;
+	gameThread = SDL_CreateThread(manageGame, "Game Thread", NULL);
+	if (gameThread == NULL){
+		std::cout << "Failed to create thread: " << SDL_GetError() << std::endl;
+		isGameThreadRunning = false;
+	} else
+		isStarted = true;
 
-	//TODO
+	gridSize = (int)ceil(sqrt(g_game->getBoardCount()));
+	boardRenderSize = (windowSize - (1 + gridSize) * BOARD_PADDING) / gridSize;
 }
 
 /**
 * Runs the main loop and responds to event calls.
 */
 void loop(){
-	bool quit = false;
 	
 	boardCountText = new Text("BoardCount: ", PADDING_X, PADDING_Y);
 	boardCountTextField = new TextField(TextField::NUMBER, "3", PADDING_X + boardCountText->getWidth() + boardCountText->getX(), PADDING_Y, 60, -1);
@@ -142,7 +229,7 @@ void loop(){
 
 		SDL_Event event;
 
-		while (SDL_PollEvent(&event) != 0){ //Get the waiting events, if any
+		while (SDL_PollEvent(&event) != 0){ //Get the pending events, if any
 			if (event.type == SDL_QUIT){ //Quits the program, if a SDL_QUIT event has been triggered (e.g. when the window is closed)
 				quit = true;
 			}
@@ -188,7 +275,18 @@ void loop(){
 		SDL_RenderClear(g_renderer); //Clears the screen
 
 		if (isStarted){
-			//TODO
+
+			if (!isGameThreadRunning){
+				int status;
+
+				SDL_WaitThread(gameThread, &status);
+				isStarted = false;
+				std::cout << "Game ended: " << status << std::endl;
+			}
+			
+			for (int index = 0; index < g_game->getBoardCount(); index++){
+				g_game->getBoards()[index].renderBoard(BOARD_PADDING * (index % gridSize + 1) + boardRenderSize * (index % gridSize), BOARD_PADDING * (int)(index / gridSize + 1) + boardRenderSize * (int)(index / gridSize), boardRenderSize);
+			}
 		}
 		else {
 			boardCountText->renderText();
@@ -204,12 +302,20 @@ void loop(){
 
 		SDL_RenderPresent(g_renderer); //Updates the screen
 
-		SDL_Delay(10); //Sleeps for 10 milliseconds
+		SDL_Delay(50); //Sleeps for 10 milliseconds
+	}
+
+	if (isGameThreadRunning){ // Wait for the game thread to end and clean it up.
+		int status;
+
+		SDL_WaitThread(gameThread, &status);
+		isStarted = false;
+		std::cout << "Game ended: " << status << std::endl;
 	}
 }
 
 /**
-* Deletes the used pointers. Quits SDL, SDL_image and SDL_ttf.
+* Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
 */
 void close(){
 	

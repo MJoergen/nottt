@@ -15,26 +15,28 @@
  */
 
 class NTTTPlayerIce : public NTTTPlayer {
-    public:
+private:
+	int boardCount, boardSize, lineSize;
+	std::vector<NTTTMove> getPossibleMoves(const NTTTGame& game) const;
+public:
+	/**
+	 * Run in the initialization phase of the game.
+	 * @param game An instance of the NTTTGame.
+	 * @return The player's/bot's choice of order.
+	 */
+	virtual OrderChoice chooseOrder(const NTTTGame& game);
 
-        /**
-         * Run in the initialization phase of the game.
-         * @param game An instance of the NTTTGame.
-         * @return The player's/bot's choice of order.
-         */
-        virtual OrderChoice chooseOrder(const NTTTGame& game);
+	/**
+	 * Run continually as the game progresses.
+	 * @param game An instance of the NTTTGame.
+	 * @return The player's/bot's move.
+	 */
+	virtual NTTTMove performMove(const NTTTGame& game);
 
-        /**
-         * Run continually as the game progresses.
-         * @param game An instance of the NTTTGame.
-         * @return The player's/bot's move.
-         */
-        virtual NTTTMove performMove(const NTTTGame& game);
-
-        /**
-         * The destructor must always be made virtual
-         */
-        virtual ~NTTTPlayerIce() {}
+	/**
+	 * The destructor must always be made virtual
+	 */
+	virtual ~NTTTPlayerIce() {}
 }; // end of class NTTTPlayerIce
 
 #endif // _NTTTPLAYERICE_H_
