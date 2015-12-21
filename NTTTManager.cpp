@@ -155,9 +155,10 @@ int NTTTManager::manageGame( void* data)
 } // end of manageGame
 
 
-static void onClickStatic()
+static void onClickStatic(void *data)
 {
-    g_NtttManager.onClick();
+    NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
+    pNtttManager->onClick();
 }
 
 void NTTTManager::onClick()
@@ -201,7 +202,7 @@ void NTTTManager::loop(){
 
 	startGameButton = new Button("Start Game", PADDING_X + lineSizeTextField->getWidth() + lineSizeTextField->getX(), PADDING_Y);
 
-	startGameButton->registerClickFunc(onClickStatic);
+	startGameButton->registerClickFunc(onClickStatic, this);
 
 	while (!quit){ //Runs until the program quits
 

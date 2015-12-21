@@ -30,13 +30,14 @@ const /* unsigned */ int Button::getHeight() const{
 	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
 }
 
-void Button::registerClickFunc(void(*action)()) {
+void Button::registerClickFunc(void(*action)(void *), void *data) {
 	m_action = action;
+    m_data = data;
 }
 
 void Button::click() const{
 	if (m_action != nullptr)
-		m_action();
+		m_action(m_data);
 }
 
 const bool Button::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const{

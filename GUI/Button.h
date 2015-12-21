@@ -10,7 +10,8 @@ private:
 
 	Texture* m_texture = nullptr;
 	
-	void(*m_action)() = nullptr;
+	void(*m_action)(void *) = nullptr;
+    void *m_data;
 
 public:
 	Button(const std::string text, const unsigned int x, const unsigned int y);
@@ -25,7 +26,7 @@ public:
 	const /* unsigned */ int getY() const { return m_y; }
 	
 	void click() const;
-	void registerClickFunc(void(*action)());
+	void registerClickFunc(void(*action)(void*), void*);
 	const bool isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const;
 
 	friend std::ostream& operator <<(std::ostream &os, const Button &rhs){
