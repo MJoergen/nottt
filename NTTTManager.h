@@ -10,11 +10,6 @@
 
 #include "NTTTGame.h"
 
-#if 0
-#include "NTTTPlayerIce.h"
-#include "NTTTPlayerMike.h"
-#endif
-
 class NTTTManager
 {
     public:
