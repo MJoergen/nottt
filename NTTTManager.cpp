@@ -1,14 +1,3 @@
-#if 0
-#include <SDL.h>
-#include <SDL_ttf.h>
-
-#include "GUI/Button.h"
-#include "GUI/Text.h"
-#include "GUI/TextField.h"
-#include "GUI/Texture.h"
-#include "NTTTGame.h"
-#endif
-
 #include "NTTTGame.h"
 #include "NTTTPlayerIce.h"
 #include "NTTTPlayerMike.h"
@@ -83,7 +72,13 @@ bool NTTTManager::init(){
 	return true;
 }
 
-int manageGame( void* data){
+static int manageGameStatic( void* data)
+{
+    return g_NtttManager.manageGame(data);
+}
+
+int NTTTManager::manageGame( void* data)
+{
 
 	//This is where the game goes.
 
@@ -96,8 +91,8 @@ int manageGame( void* data){
 	NTTTPlayer* player2;
 
 	NTTTPlayer::OrderChoice iceOrderChoice, mikeOrderChoice;
-	iceOrderChoice = ice.chooseOrder(*g_NtttManager.g_game);
-	mikeOrderChoice = mike.chooseOrder(*g_NtttManager.g_game);
+	iceOrderChoice = ice.chooseOrder(*g_game);
+	mikeOrderChoice = mike.chooseOrder(*g_game);
 
 	if (iceOrderChoice == mikeOrderChoice){
 		if (rand() % 2 == 0){ //TODO: Make this random by srand() or other method.
@@ -126,24 +121,24 @@ int manageGame( void* data){
 	int player = 1;
 	NTTTMove move(0, 0, 0);
     bool gameActive = true;
-    while (!g_NtttManager.quit)
+    while (!quit)
 	{
         if (gameActive)
         {
             switch (player)
             {
                 case 1:
-                    move = player1->performMove(*g_NtttManager.g_game);
-                    g_NtttManager.g_game->makeMove(move, NTTTBoard::RED);
+                    move = player1->performMove(*g_game);
+                    g_game->makeMove(move, NTTTBoard::RED);
                     break;
                 case 2:
-                    move = player2->performMove(*g_NtttManager.g_game);
-                    g_NtttManager.g_game->makeMove(move, NTTTBoard::BLUE);
+                    move = player2->performMove(*g_game);
+                    g_game->makeMove(move, NTTTBoard::BLUE);
                     break;
             }
             player = 3 - player;
 
-            if (!g_NtttManager.g_game->isActive())
+            if (!g_game->isActive())
             {
                 std::cout << "Player " << player << " won!" << std::endl;
                 gameActive = false;
@@ -153,33 +148,40 @@ int manageGame( void* data){
 	}
 	
 	//isGameThreadRunning must be set to false just before the end.
-	g_NtttManager.isGameThreadRunning = false;
+	isGameThreadRunning = false;
 
 	return 0;
+} // end of manageGame
+
+
+static void onClickStatic()
+{
+    g_NtttManager.onClick();
 }
 
-void onClick(){ //Function called when the start game button is pressed
-	if (g_NtttManager.isStarted){ //Returns if the game already is started
+void NTTTManager::onClick()
+{ //Function called when the start game button is pressed
+	if (isStarted){ //Returns if the game already is started
 		std::cout << "Failed to start game: A game is already in progress." << std::endl;
 		return;
 	}
-	const unsigned int boardCount = std::stoi(g_NtttManager.boardCountTextField->getContent());
-	const unsigned int boardSize = std::stoi(g_NtttManager.boardSizeTextField->getContent());
-	const unsigned int lineSize = std::stoi(g_NtttManager.lineSizeTextField->getContent());
+	const unsigned int boardCount = std::stoi(boardCountTextField->getContent());
+	const unsigned int boardSize = std::stoi(boardSizeTextField->getContent());
+	const unsigned int lineSize = std::stoi(lineSizeTextField->getContent());
 	std::cout << "Starts the game with the following settings: { BoardCount: "
 		<< boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << " }" << std::endl;
 
-	g_NtttManager.g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
-	g_NtttManager.isGameThreadRunning = true;
-	g_NtttManager.gameThread = SDL_CreateThread(manageGame, "Game Thread", NULL);
-	if (g_NtttManager.gameThread == NULL){
+	g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
+	isGameThreadRunning = true;
+	gameThread = SDL_CreateThread(manageGameStatic, "Game Thread", NULL);
+	if (gameThread == NULL){
 		std::cout << "Failed to create thread: " << SDL_GetError() << std::endl;
-		g_NtttManager.isGameThreadRunning = false;
+		isGameThreadRunning = false;
 	} else
-		g_NtttManager.isStarted = true;
+		isStarted = true;
 
-	g_NtttManager.gridSize = (int)ceil(sqrt(g_NtttManager.g_game->getBoardCount()));
-	g_NtttManager.boardRenderSize = (g_NtttManager.windowSize - (1 + g_NtttManager.gridSize) * g_NtttManager.BOARD_PADDING) / g_NtttManager.gridSize;
+	gridSize = (int)ceil(sqrt(g_game->getBoardCount()));
+	boardRenderSize = (windowSize - (1 + gridSize) * BOARD_PADDING) / gridSize;
 }
 
 /**
@@ -198,7 +200,7 @@ void NTTTManager::loop(){
 
 	startGameButton = new Button("Start Game", PADDING_X + lineSizeTextField->getWidth() + lineSizeTextField->getX(), PADDING_Y);
 
-	startGameButton->registerClickFunc(onClick);
+	startGameButton->registerClickFunc(onClickStatic);
 
 	while (!quit){ //Runs until the program quits
 
