@@ -1,17 +1,13 @@
 #include <SDL.h>
-#include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <SDL_thread.h>
-#include "GUI/Texture.h"
-#include "GUI/TextField.h"
-#include <iostream>
-#include <vector>
-#include "GUI/Text.h"
+
 #include "GUI/Button.h"
+#include "GUI/Text.h"
+#include "GUI/TextField.h"
+#include "GUI/Texture.h"
 #include "NTTTGame.h"
 #include "NTTTPlayerIce.h"
 #include "NTTTPlayerMike.h"
-#include <algorithm>
 
 bool init();
 void loop();
