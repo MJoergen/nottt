@@ -20,7 +20,7 @@ DEFINES += -g -pg
 #DEFINES += -O3 
 
 nottt: $(objects) Makefile
-	$(CC) -o $@ $(DEFINES) $(objects) -lstdc++ -lSDL2 -lSDL2_image -lSDL2_ttf
+	$(CC) -o $@ $(DEFINES) $(objects) -lstdc++ -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 	mv $@ /home/mike/bin
 
 INCLUDE_DIRS = -I/usr/include/SDL2

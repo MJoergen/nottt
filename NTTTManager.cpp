@@ -155,12 +155,9 @@ int manageGame( void* data){
 	}
 
 
-	ice.NewGame(g_game->getBoardCount(), g_game->getBoardSize(), g_game->getLineSize());
-	mike.NewGame(g_game->getBoardCount(), g_game->getBoardSize(), g_game->getLineSize());
-
 	int player = 1;
 	NTTTMove move(0, 0, 0);
-	for (int i = 0; i<10 & !quit; ++i)
+	for (int i = 0; i<10 && !quit; ++i)
 	{
 		switch (player)
 		{
