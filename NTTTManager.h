@@ -22,7 +22,7 @@ class NTTTManager
         void loop();
         void close();
         void onClick();
-        int manageGame( void* data);
+        int manageGame();
 
 
         const char* TITLE = "No Tic Tac Toe";			//The title of the window

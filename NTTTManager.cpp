@@ -11,7 +11,8 @@ NTTTManager g_NtttManager;
 *  If true everything is correctly initialized.
 *  If false something went wrong in the initialization process.
 */
-bool NTTTManager::init(){
+bool NTTTManager::init()
+{
 	
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0){ //Initializes every part of SDL2
 		std::cout << "Failed initializing SDL: " << SDL_GetError() << std::endl;
@@ -75,10 +76,10 @@ bool NTTTManager::init(){
 static int manageGameStatic( void* data)
 {
     NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
-    return pNtttManager->manageGame(data);
+    return pNtttManager->manageGame();
 }
 
-int NTTTManager::manageGame( void* data)
+int NTTTManager::manageGame()
 {
 
 	//This is where the game goes.
