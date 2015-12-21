@@ -41,6 +41,7 @@ SDL_Thread* gameThread;
 
 bool isGameThreadRunning = false;
 bool isStarted = false; //Boolean used to indicate if the game is started
+bool quit = false;
 
 
 const int windowSize = std::min(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -110,7 +111,7 @@ bool init(){
 	g_redCross = new Texture("RedCross.png");
 	g_blueCross = new Texture("BlueCross.png");
 	g_game = new NTTTGame();
-
+	
 	return true;
 }
 
@@ -123,21 +124,52 @@ int manageGame( void* data){
 	NTTTPlayerIce ice;
 	NTTTPlayerMike mike;
 
+	NTTTPlayer* player1;
+	NTTTPlayer* player2;
+
+	NTTTPlayer::OrderChoice iceOrderChoice, mikeOrderChoice;
+	iceOrderChoice = ice.chooseOrder(*g_game);
+	mikeOrderChoice = mike.chooseOrder(*g_game);
+
+	if (iceOrderChoice == mikeOrderChoice){
+		if (rand() % 2 == 0){ //TODO: Make this random by srand() or other method.
+			std::cout << "Ice starts" << std::endl;
+			player1 = &ice;
+			player2 = &mike;
+		}
+		else {
+			std::cout << "Mike starts" << std::endl;
+			player1 = &mike;
+			player2 = &ice;
+		}
+	}
+	else if (iceOrderChoice == NTTTPlayer::FIRST || mikeOrderChoice == NTTTPlayer::LAST){
+		std::cout << "Ice starts" << std::endl;
+		player1 = &ice;
+		player2 = &mike;
+	}
+	else{
+		std::cout << "Mike starts" << std::endl;
+		player1 = &mike;
+		player2 = &ice;
+	}
+
+
 	ice.NewGame(g_game->getBoardCount(), g_game->getBoardSize(), g_game->getLineSize());
 	mike.NewGame(g_game->getBoardCount(), g_game->getBoardSize(), g_game->getLineSize());
 
 	int player = 1;
 	NTTTMove move(0, 0, 0);
-	for (int i = 0; i<10; ++i)
+	for (int i = 0; i<10 & !quit; ++i)
 	{
 		switch (player)
 		{
 		case 1:
-			move = ice.performMove(*g_game);
+			move = player1->performMove(*g_game);
 			g_game->makeMove(move, NTTTBoard::RED);
 			break;
 		case 2:
-			move = mike.performMove(*g_game);
+			move = player2->performMove(*g_game);
 			g_game->makeMove(move, NTTTBoard::BLUE);
 			break;
 		}
@@ -145,7 +177,9 @@ int manageGame( void* data){
 		SDL_Delay(500);
 	}
 	
+	//isGameThreadRunning must be set to false just before the end.
 	isGameThreadRunning = false;
+
 	return 0;
 }
 
@@ -177,7 +211,6 @@ void onClick(){ //Function called when the start game button is pressed
 * Runs the main loop and responds to event calls.
 */
 void loop(){
-	bool quit = false;
 	
 	boardCountText = new Text("BoardCount: ", PADDING_X, PADDING_Y);
 	boardCountTextField = new TextField(TextField::NUMBER, "3", PADDING_X + boardCountText->getWidth() + boardCountText->getX(), PADDING_Y, 60, -1);
