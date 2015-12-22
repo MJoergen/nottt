@@ -27,11 +27,6 @@ void RadioButton::renderRadioButton() const {
 	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
 }
 
-void RadioButton::getSize(int& width, int& height) const{
-	width = getWidth();
-	height = getHeight();
-}
-
 const bool RadioButton::isInside(const int& x, const int& y) const{
 	return m_x <= x && m_x + getWidth() >= x && m_y <= y && m_y + getHeight() >= y;
 }

@@ -36,6 +36,6 @@ void Button::click() const{
 		m_action(m_data);
 }
 
-const bool Button::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const{
+const bool Button::isInside(const int& x, const int& y) const{
 	return m_x <= x && m_x + getWidth() >= x && m_y <= y && m_y + getHeight() >= y;
 }

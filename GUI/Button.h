@@ -26,7 +26,7 @@ public:
 	
 	void click() const;
 	void registerClickFunc(void(*action)(void*), void*);
-	const bool isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const;
+	const bool isInside(const int& x, const int& y) const;
 
 	friend std::ostream& operator <<(std::ostream &os, const Button &rhs){
 		os << "Button: { X: " << rhs.m_x << ", Y: " << rhs.m_y << ", Width: " << rhs.getWidth()
