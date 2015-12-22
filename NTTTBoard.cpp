@@ -7,7 +7,7 @@
 
 /**
 */
-void NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
+bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
 {
     m_squareStates[squareX][squareY] = state;
 
@@ -21,31 +21,32 @@ void NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
 				{
 					m_line = { x, y, 1, 0 };
 					m_state = DEAD;
-                    return;
+					return false;
                 }
             if (y+m_lineSize <= boardSize) // Vertical
                 if (checkLine(x, y, 0, 1))
 				{
 					m_line = { x, y, 0, 1 };
 					m_state = DEAD;
-                    return;
+					return false;
                 }
             if (x+m_lineSize <= boardSize && y+m_lineSize <= boardSize) // Diagonal
                 if (checkLine(x, y, 1, 1))
 				{
 					m_line = { x, y, 1, 1 };
 					m_state = DEAD;
-                    return;
+                    return false;
                 }
             if (x >= m_lineSize-1 && y+m_lineSize <= boardSize) // Diagonal
                 if (checkLine(x, y, -1, 1))
 				{
 					m_line = { x, y, -1, 1 };
 					m_state = DEAD;
-                    return;
+					return false;
                 }
         }
     }
+	return true;
 } // end of makeMove
 
 /**

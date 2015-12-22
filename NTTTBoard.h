@@ -58,7 +58,7 @@ class NTTTBoard {
 
         /**
          */
-        void makeMove(int squareX, int squareY, SquareState state);
+        bool makeMove(int squareX, int squareY, SquareState state);
 
         /**
          */

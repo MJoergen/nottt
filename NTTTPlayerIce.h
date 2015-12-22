@@ -16,8 +16,16 @@
 
 class NTTTPlayerIce : public NTTTPlayer {
 private:
-	int boardCount, boardSize, lineSize;
+	int m_boardCount, m_boardSize, m_lineSize;
+	std::vector<int> m_almostDeadBoards, m_aliveBoards;
+	std::vector<int> m_almostDeadBoardsLegalMoves;
 	std::vector<NTTTMove> getPossibleMoves(const NTTTGame& game) const;
+	void transferAliveBoard(const NTTTGame game, const int boardIndex);
+	const bool isNumberEven(const int number) const;
+	NTTTMove playAliveMove(const NTTTGame game) const;
+	NTTTMove playAlmostDeadWithEvenLegalMoves(const NTTTGame game) const;
+	NTTTMove playAlmostDeadWithOddLegalMoves(const NTTTGame game) const;
+	NTTTMove playAlmostDeadLegalMove(const NTTTGame game) const;
 public:
 	/**
 	 * Run in the initialization phase of the game.
