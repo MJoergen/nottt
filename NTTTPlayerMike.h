@@ -4,6 +4,8 @@
 #include "NTTTPlayer.h"
 #include <SDL.h>
 
+#define DEBUG_MIKE false
+
 /**
  * A representation of the board using bitmasks
  */
@@ -58,6 +60,7 @@ class Board
         int m_nodes;
         std::vector<uint64_t> m_bits;
         std::vector<uint64_t> m_lines;
+        bool m_debug = DEBUG_MIKE;
 }; // end of class Board
 
 
@@ -87,6 +90,7 @@ class NTTTPlayerMike : public NTTTPlayer {
 
     private:
         Board m_board;
+        bool  m_debug = DEBUG_MIKE;
 }; // end of class NTTTPlayerMike
 
 #endif // _NTTTPLAYERMIKE_H_

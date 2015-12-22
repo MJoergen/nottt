@@ -102,7 +102,8 @@ void Board::makeBits(const NTTTGame& game)
         if (isBoardDead(val))
             val = 0;
 
-//        std::cout << std::hex << std::setw(16) << std::setfill('0') << val << " ";
+        if (m_debug)
+            std::cout << std::hex << std::setw(16) << std::setfill('0') << val << " ";
         m_bits.push_back(val);
     }
 //    std::cout << std::endl;
@@ -184,7 +185,8 @@ int Board::alphaBeta(int alpha, int beta, int level)
                     undoMove(board, bit);
 
                     NTTTMove move(board, bit/8, bit%8);
-//                    std::cout << "  " << move << " -> " << val;
+                    if (m_debug)
+                        std::cout << "  " << move << " -> " << val;
 
                     if (val > bestVal)
                     {
@@ -226,7 +228,8 @@ NTTTMove Board::findMove()
                     undoMove(board, bit);
 
                     NTTTMove move(board, bit/8, bit%8);
-//                    std::cout << "Move " << move << " => " << std::dec << val << std::endl;
+                    if (m_debug)
+                        std::cout << "Move " << move << " => " << std::dec << val << std::endl;
 
                     if (val > bestVal)
                     {
@@ -237,7 +240,11 @@ NTTTMove Board::findMove()
             }
         }
     }
-//    std::cout << "nodes=" << m_nodes << std::endl;
+    if (m_debug)
+    {
+        std::cout << "nodes=" << m_nodes << std::endl;
+        std::cout << "Best mode: " << bestMove << std::endl;
+    }
     return bestMove;
 } // end of findMove
 
@@ -261,7 +268,8 @@ NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game)
  */
 NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
 {
-//    std::cout << game;
+    if (m_debug)
+        std::cout << game;
     m_board.makeBits(game);
     return m_board.findMove();
 } // end of performMove
