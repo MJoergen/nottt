@@ -24,7 +24,6 @@ void GameInfoViewer::init(){
 	const int x = g_NtttManager.getPlayingFieldSize();
 	const int y = 0;
 	const int width = g_NtttManager.WINDOW_WIDTH - x;
-	const int height = g_NtttManager.WINDOW_HEIGHT;
 
 	m_vs = new Text(" vs ", m_headlineFont, {0, 0, 0}, x, y);
 	m_vs->set(x - m_vs->getWidth() / 2 + width / 2, g_NtttManager.PADDING_Y);
@@ -100,7 +99,7 @@ void GameInfoViewer::cleanUp() {
 	delete m_vs;
 	m_vs = nullptr;
 
-	for (int index = 0; index < m_moves.size(); index++){
+	for (unsigned int index = 0; index < m_moves.size(); index++){
 		delete m_moves[index];
 	}
 
@@ -131,7 +130,7 @@ void GameInfoViewer::renderGameInfoViewer() const{
 	if (m_winner != nullptr)
 		m_winner->renderText();
 
-	for (int index = 0; index < m_moves.size(); index++){
+	for (unsigned int index = 0; index < m_moves.size(); index++){
 		m_moves[index]->renderText();
 	}
 
