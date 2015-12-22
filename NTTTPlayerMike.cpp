@@ -310,6 +310,6 @@ NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
     if (m_debug)
         std::cout << game;
     int numAlive = m_board.makeBits(game);
-    return m_board.findMove(numAlive==1 ? 4 : 0);
+    return m_board.findMove(numAlive==1 ? 4 : (numAlive==2 ? 2 : 0));
 } // end of performMove
 
