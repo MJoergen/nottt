@@ -9,17 +9,7 @@
 class GameInfoViewer {
 
 private:
-
-	Text *m_player1 = nullptr, *m_player2 = nullptr, *m_vs = nullptr, *m_boardCount = nullptr, *m_boardSize = nullptr, *m_lineSize = nullptr;
-	Text *m_winnerText = nullptr, *m_winner = nullptr;
-
-	std::vector<Text*> m_moves;
-
-	TTF_Font *m_headlineFont = nullptr, *m_movesFont = nullptr;
-	int m_headlineHeight, m_movesHeight, m_movesWidth;
-
-	int m_amountInColumn;
-
+	
 public:
 	
 	GameInfoViewer();

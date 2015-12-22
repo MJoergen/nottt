@@ -58,7 +58,7 @@ bool NTTTManager::init()
 		return false;
 	}
 
-	g_font = TTF_OpenFont(FONT_PATH, FONT_SIZE); //Creates the font used in the application
+	g_font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE); //Creates the font used in the application
 	if (g_font == NULL){
 		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
 		SDL_DestroyRenderer(g_renderer);
@@ -69,6 +69,23 @@ bool NTTTManager::init()
 		return false;
 	}
 	g_textHeight = TTF_FontHeight(g_font);
+
+	g_headlineFont = TTF_OpenFont((g_NtttManager.FONT_PATH).c_str(), (int)(g_NtttManager.FONT_SIZE * 1.1));
+	if (g_headlineFont == NULL){
+		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
+		g_headlineFont = g_NtttManager.g_font;
+		g_failedFontInitHeadline = true;
+	}
+
+	g_movesFont = TTF_OpenFont((g_NtttManager.FONT_PATH).c_str(), (int)(g_NtttManager.FONT_SIZE * 0.5));
+	if (g_movesFont == NULL){
+		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
+		g_movesFont = g_NtttManager.g_font;
+		g_failedFontInitMoves = true;
+	}
+
+	g_headlineHeight = TTF_FontHeight(g_headlineFont);
+	g_movesHeight = TTF_FontHeight(g_movesFont);
 
 	g_redCross = new Texture("RedCross.png");
 	g_blueCross = new Texture("BlueCross.png");
@@ -142,8 +159,7 @@ int NTTTManager::manageGame()
 		m_player2 = &ice;
 	}
 
-	m_gameInfoViewer->init();
-	
+	initGraphics = true;
 
 	int player = 1;
 	NTTTMove move(0, 0, 0);
@@ -293,12 +309,38 @@ void NTTTManager::loop(){
 				isStarted = false;
 				std::cout << "Game ended: " << status << std::endl;
 			}
+
+			if (initGraphics){
+				initGameInfoViewer();
+				initGraphics = false;
+			}
 			
 			for (int index = 0; index < g_game->getBoardCount(); index++){
 				g_game->getBoards()[index].renderBoard(BOARD_PADDING * (index % gridSize + 1) + boardRenderSize * (index % gridSize), BOARD_PADDING * (int)(index / gridSize + 1) + boardRenderSize * (int)(index / gridSize), boardRenderSize);
 			}
 
-			m_gameInfoViewer->renderGameInfoViewer();
+			if (g_player1 != nullptr)
+				g_player1->renderText();
+			if (g_player2 != nullptr)
+				g_player2->renderText();
+			if (g_vs != nullptr)
+				g_vs->renderText();
+
+			if (g_boardCount != nullptr)
+				g_boardCount->renderText();
+			if (g_boardSize != nullptr)
+				g_boardSize->renderText();
+			if (g_lineSize != nullptr)
+				g_lineSize->renderText();
+
+			if (g_winnerText != nullptr)
+				g_winnerText->renderText();
+			if (g_winner != nullptr)
+				g_winner->renderText();
+
+			for (unsigned int index = 0; index < g_moves.size(); index++){
+				g_moves[index]->renderText();
+			}
 		}
 		else {
 			boardCountText->renderText();
@@ -332,11 +374,81 @@ void NTTTManager::loop(){
 	}
 }
 
+void NTTTManager::cleanUpGameInfoViewer(){
+
+	delete g_player1;
+	g_player1 = nullptr;
+	delete g_player2;
+	g_player2 = nullptr;
+
+	delete g_boardCount;
+	g_boardCount = nullptr;
+	delete g_boardSize;
+	g_boardSize = nullptr;
+	delete g_lineSize;
+	g_lineSize = nullptr;
+
+	delete g_winnerText;
+	g_winnerText = nullptr;
+	delete g_winner;
+	g_winner = nullptr;
+
+	delete g_vs;
+	g_vs = nullptr;
+
+	for (unsigned int index = 0; index < g_moves.size(); index++){
+		delete g_moves[index];
+	}
+
+	g_moves.resize(0);
+}
+
+void NTTTManager::initGameInfoViewer(){
+	cleanUpGameInfoViewer();
+
+	const int x = g_NtttManager.getPlayingFieldSize();
+	const int y = 0;
+	const int width = g_NtttManager.WINDOW_WIDTH - x;
+
+	g_vs = new Text(" vs ", g_NtttManager.g_headlineFont, { 0, 0, 0 }, x, y);
+	g_vs->set(x - g_vs->getWidth() / 2 + width / 2, g_NtttManager.PADDING_Y);
+
+	g_player1 = new Text(g_NtttManager.getPlayer1()->getName(), g_NtttManager.g_headlineFont, { 255, 0, 0 }, x, g_vs->getY());
+	g_player2 = new Text(g_NtttManager.getPlayer2()->getName(), g_NtttManager.g_headlineFont, { 0, 0, 255 }, g_vs->getX() + g_vs->getWidth(), g_vs->getY());
+	g_player1->setX(g_vs->getX() - g_player1->getWidth());
+
+	g_boardCount = new Text("BoardCount: " + std::to_string(g_NtttManager.g_game->getBoardCount()), x, g_vs->getY() + g_vs->getHeight() + g_NtttManager.PADDING_Y * 2);
+	g_boardCount->setX(x + width / 2 - g_boardCount->getWidth() / 2);
+
+	g_boardSize = new Text("BoardSize: " + std::to_string(g_NtttManager.g_game->getBoardSize()), x, g_boardCount->getY() + g_boardCount->getHeight() + g_NtttManager.PADDING_Y);
+	g_boardSize->setX(x + width / 2 - g_boardSize->getWidth() / 2);
+
+	g_lineSize = new Text("LineSize: " + std::to_string(g_NtttManager.g_game->getLineSize()), x, g_boardSize->getY() + g_boardSize->getHeight() + g_NtttManager.PADDING_Y);
+	g_lineSize->setX(x + width / 2 - g_lineSize->getWidth() / 2);
+
+	g_winnerText = new Text("Winner: ", x + g_NtttManager.PADDING_X, g_lineSize->getY() + g_lineSize->getHeight() + g_NtttManager.PADDING_Y);
+
+	int w, h;
+
+	TTF_SizeText(g_NtttManager.g_movesFont, (std::to_string(g_NtttManager.g_game->getBoardCount()) + "  : (8,8)").c_str(), &w, &h);
+
+	g_NtttManager.g_movesWidth = w + g_NtttManager.PADDING_X * 2; //Estimate
+
+	g_amountInColumn = (int)((g_NtttManager.WINDOW_HEIGHT - (g_winnerText->getY() + g_winnerText->getHeight() + 3 * g_NtttManager.PADDING_Y)) / g_NtttManager.g_movesHeight);
+}
+
 /**
 * Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
 */
 void NTTTManager::close(){
-	
+
+	cleanUpGameInfoViewer();
+
+	if (!g_failedFontInitHeadline)
+		TTF_CloseFont(g_headlineFont);
+	if (!g_failedFontInitMoves)
+		TTF_CloseFont(g_movesFont);
+
 	delete m_gameInfoViewer;
 	m_gameInfoViewer = nullptr;
 
