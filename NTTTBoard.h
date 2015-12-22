@@ -4,6 +4,11 @@
 #include <vector>
 #include <iostream>
 
+struct Line{
+	int x, y, dx, dy;
+};
+
+
 class NTTTBoard {
     public:
 
@@ -85,6 +90,9 @@ class NTTTBoard {
         int m_lineSize;
         State m_state;
         std::vector< std::vector<SquareState> > m_squareStates;
+		Line m_line;
+		void renderDiagonalLineRight(const int thickness, const int x, const int y, const int width) const;
+		void renderDiagonalLineLeft(const int thickness, const int x, const int y, const int width) const;
 }; // end of class NTTTBoard
 
 #endif // _NTTTBOARD_H_

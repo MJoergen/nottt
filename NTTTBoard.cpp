@@ -18,26 +18,30 @@ void NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
         {
             if (x+m_lineSize <= boardSize) // Horizontal
                 if (checkLine(x, y, 1, 0))
-                {
-                    m_state = DEAD;
+				{
+					m_line = { x, y, 1, 0 };
+					m_state = DEAD;
                     return;
                 }
             if (y+m_lineSize <= boardSize) // Vertical
                 if (checkLine(x, y, 0, 1))
-                {
-                    m_state = DEAD;
+				{
+					m_line = { x, y, 0, 1 };
+					m_state = DEAD;
                     return;
                 }
             if (x+m_lineSize <= boardSize && y+m_lineSize <= boardSize) // Diagonal
                 if (checkLine(x, y, 1, 1))
-                {
-                    m_state = DEAD;
+				{
+					m_line = { x, y, 1, 1 };
+					m_state = DEAD;
                     return;
                 }
             if (x >= m_lineSize-1 && y+m_lineSize <= boardSize) // Diagonal
                 if (checkLine(x, y, -1, 1))
-                {
-                    m_state = DEAD;
+				{
+					m_line = { x, y, -1, 1 };
+					m_state = DEAD;
                     return;
                 }
         }
@@ -59,8 +63,24 @@ void NTTTBoard::reset(int boardSize, int lineSize)
     }
     m_state = ALIVE;
     m_lineSize = lineSize;
+	m_line = {};
 }
 
+void NTTTBoard::renderDiagonalLineRight(const int thickness, const int x, const int y, const int width) const{
+	for (int index = 0; index < thickness / 2; index++){
+		SDL_RenderDrawLine(g_NtttManager.g_renderer, x, y + index, x - width + index, y + width);
+		SDL_RenderDrawLine(g_NtttManager.g_renderer, x - index, y, x - width, y + width - index);
+	}
+	SDL_RenderDrawLine(g_NtttManager.g_renderer, x, y, x - width, y + width);
+}
+
+void NTTTBoard::renderDiagonalLineLeft(const int thickness, const int x, const int y, const int width) const{
+	for (int index = 0; index < thickness / 2; index++){
+		SDL_RenderDrawLine(g_NtttManager.g_renderer, x, y + index, x + width - index, y + width);
+		SDL_RenderDrawLine(g_NtttManager.g_renderer, x + index, y, x + width, y + width - index);
+	}
+	SDL_RenderDrawLine(g_NtttManager.g_renderer, x, y, x + width, y + width);
+}
 
 void NTTTBoard::renderBoard(const unsigned int x, const unsigned int y, const unsigned int size) const 
 {
@@ -79,5 +99,21 @@ void NTTTBoard::renderBoard(const unsigned int x, const unsigned int y, const un
                 g_NtttManager.g_blueCross->renderTexture(x + x_i * squareSize, y + y_i * squareSize, squareSize, squareSize);
         }
     }
+	if (m_state == DEAD){
+		if (m_line.dx == m_line.dy){
+			renderDiagonalLineLeft(squareSize / 4, x + m_line.x * squareSize, y + m_line.y * squareSize, m_lineSize * squareSize);
+		}
+		else if (m_line.dx == -1){
+			renderDiagonalLineRight(squareSize / 4, x + (m_line.x + 1) * squareSize, y + m_line.y * squareSize, m_lineSize * squareSize);
+		}
+		else if (m_line.dx == 0){
+			SDL_Rect rect = { x + (m_line.x + 0.375) * squareSize, y + m_line.y * squareSize, squareSize / 4, m_lineSize * squareSize };
+			SDL_RenderFillRect(g_NtttManager.g_renderer, &rect);
+		}
+		else if (m_line.dx == 1){
+			SDL_Rect rect = { x + m_line.x * squareSize, y + (m_line.y + 0.375) * squareSize, m_lineSize * squareSize, squareSize / 4 };
+			SDL_RenderFillRect(g_NtttManager.g_renderer, &rect);
+		}
+	}
 }
 
