@@ -337,6 +337,9 @@ void NTTTManager::loop(){
 */
 void NTTTManager::close(){
 	
+	delete m_gameInfoViewer;
+	m_gameInfoViewer = nullptr;
+
 	delete g_game;
 	g_game = nullptr;
 
