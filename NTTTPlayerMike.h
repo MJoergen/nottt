@@ -2,6 +2,7 @@
 #define _NTTTPLAYERMIKE_H_
 
 #include "NTTTPlayer.h"
+#include <SDL.h>
 
 /**
  * A representation of the board using bitmasks

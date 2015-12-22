@@ -5,8 +5,14 @@
 
 NTTTManager g_NtttManager;
 
+static void onClickStatic(void *data)
+{
+	NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
+	pNtttManager->onClick();
+}
+
 /**
-* Initializes SDL, SDL_image, SDL_ttf and defines global variables.
+* Initializes SDL, SDL_image, SDL_ttf and defines static variables.
 * @return A boolean representing the whether the everything initialized correctly or not.
 *  If true everything is correctly initialized.
 *  If false something went wrong in the initialization process.
@@ -70,7 +76,23 @@ bool NTTTManager::init()
 	g_blueCross = new Texture("BlueCross.png");
 	g_checkMark = new Texture("CheckMark.png");
 	g_game = new NTTTGame();
-	
+
+	boardCountText = new Text("BoardCount: ", PADDING_X, PADDING_Y);
+	boardCountTextField = new TextField(TextField::NUMBER, "3", PADDING_X + boardCountText->getWidth() + boardCountText->getX(), PADDING_Y, 60, -1);
+
+	boardSizeText = new Text("BoardSize: ", PADDING_X + boardCountTextField->getWidth() + boardCountTextField->getX(), PADDING_Y);
+	boardSizeTextField = new TextField(TextField::NUMBER, "4", PADDING_X + boardSizeText->getWidth() + boardSizeText->getX(), PADDING_Y, 30, 8);
+
+	lineSizeText = new Text("LineSize: ", PADDING_X + boardSizeTextField->getWidth() + boardSizeTextField->getX(), PADDING_Y);
+	lineSizeTextField = new TextField(TextField::NUMBER, "3", PADDING_X + lineSizeText->getWidth() + lineSizeText->getX(), PADDING_Y, 30, 8);
+
+	startGameButton = new Button("Start Game", PADDING_X + lineSizeTextField->getWidth() + lineSizeTextField->getX(), PADDING_Y);
+
+	startGameButton->registerClickFunc(onClickStatic, this);
+
+	manualModeText = new Text("Manual Mode: ", PADDING_X, PADDING_Y * 2 + boardCountTextField->getHeight());
+	manualModeRadioButton = new RadioButton(false, PADDING_X + manualModeText->getX() + manualModeText->getWidth(), manualModeText->getY());
+
 	return true;
 }
 
@@ -147,7 +169,15 @@ int NTTTManager::manageGame()
                 gameActive = false;
             }
         }
-		SDL_Delay(500);
+		if (manualModeRadioButton->isChecked()){
+			do{
+				SDL_Delay(100);
+			}
+			while (!forward && !quit);
+			forward = false;
+		}
+		else
+			SDL_Delay(500);
 	}
 	
 	//isGameThreadRunning must be set to false just before the end.
@@ -156,12 +186,6 @@ int NTTTManager::manageGame()
 	return 0;
 } // end of manageGame
 
-
-static void onClickStatic(void *data)
-{
-    NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
-    pNtttManager->onClick();
-}
 
 void NTTTManager::onClick()
 { //Function called when the start game button is pressed
@@ -193,19 +217,6 @@ void NTTTManager::onClick()
 */
 void NTTTManager::loop(){
 	
-	boardCountText = new Text("BoardCount: ", PADDING_X, PADDING_Y);
-	boardCountTextField = new TextField(TextField::NUMBER, "3", PADDING_X + boardCountText->getWidth() + boardCountText->getX(), PADDING_Y, 60, -1);
-
-	boardSizeText = new Text("BoardSize: ", PADDING_X + boardCountTextField->getWidth() + boardCountTextField->getX(), PADDING_Y);
-	boardSizeTextField = new TextField(TextField::NUMBER, "4", PADDING_X + boardSizeText->getWidth() + boardSizeText->getX(), PADDING_Y, 30, 8);
-
-	lineSizeText = new Text("LineSize: ", PADDING_X + boardSizeTextField->getWidth() + boardSizeTextField->getX(), PADDING_Y);
-	lineSizeTextField = new TextField(TextField::NUMBER, "3", PADDING_X + lineSizeText->getWidth() + lineSizeText->getX(), PADDING_Y, 30, 8);
-
-	startGameButton = new Button("Start Game", PADDING_X + lineSizeTextField->getWidth() + lineSizeTextField->getX(), PADDING_Y);
-
-	startGameButton->registerClickFunc(onClickStatic, this);
-
 	while (!quit){ //Runs until the program quits
 
 		SDL_Event event;
@@ -223,7 +234,11 @@ void NTTTManager::loop(){
 					lineSizeTextField->onKeyPress(event.key.keysym, event.text.text);
 			}
 			else if (event.type == SDL_KEYDOWN){ //Responds to keyboardinput
-				if (boardCountTextField->isSelected())
+				if (isStarted && manualModeRadioButton->isChecked()){
+					if (event.key.keysym.sym == SDLK_RIGHT)
+						forward = true;
+				}
+				else if (boardCountTextField->isSelected())
 					boardCountTextField->onKeyPress(event.key.keysym, "");
 				else if (boardSizeTextField->isSelected())
 					boardSizeTextField->onKeyPress(event.key.keysym, "");
@@ -249,6 +264,8 @@ void NTTTManager::loop(){
 					lineSizeTextField->select();
 				else if (startGameButton->isInside(x, y))
 					startGameButton->click();
+				else if (manualModeRadioButton->isInside(x, y))
+					manualModeRadioButton->toggle();
 			}
 		}
 
@@ -256,7 +273,6 @@ void NTTTManager::loop(){
 		SDL_RenderClear(g_renderer); //Clears the screen
 
 		if (isStarted){
-
 			if (!isGameThreadRunning){
 				int status;
 
@@ -279,6 +295,10 @@ void NTTTManager::loop(){
 			lineSizeTextField->renderTextField(SDL_GetTicks());
 
 			startGameButton->renderButton();
+
+			manualModeText->renderText();
+
+			manualModeRadioButton->renderRadioButton();
 		}
 
 		SDL_RenderPresent(g_renderer); //Updates the screen
@@ -309,6 +329,11 @@ void NTTTManager::close(){
 	g_redCross = nullptr;
 	delete g_blueCross;
 	g_blueCross = nullptr;
+
+	delete manualModeText;
+	manualModeText = nullptr;
+	delete manualModeRadioButton;
+	manualModeRadioButton = nullptr;
 
 	delete boardCountText;
 	boardCountText = nullptr;

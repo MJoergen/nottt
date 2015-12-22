@@ -24,6 +24,9 @@ public:
 	const int getX() const { return m_x; }
 	const int getY() const { return m_y; }
 	const bool isChecked() { return m_isChecked; }
+	void check() { m_isChecked = true; }
+	void uncheck() { m_isChecked = false; }
+	void toggle() { m_isChecked = !m_isChecked; }
 
 	const bool isInside(const int& x, const int& y) const;
 

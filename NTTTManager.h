@@ -6,6 +6,7 @@
 #include "GUI/Button.h"
 #include "GUI/Text.h"
 #include "GUI/TextField.h"
+#include "GUI/RadioButton.h"
 #include "GUI/Texture.h"
 #include <algorithm>
 
@@ -37,16 +38,17 @@ class NTTTManager
         Texture *g_redCross, *g_blueCross, *g_checkMark;
         NTTTGame *g_game;
 
-        Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr;						//Text-elements in the GUI
-        TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;	//TextField-elements in the GUI
-        Button *startGameButton = nullptr;																		//The button to start the game in the GUI
+        Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr, *manualModeText = nullptr;						//Text-elements in the GUI
+        TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;							//TextField-elements in the GUI
+        Button *startGameButton = nullptr;																								//The button to start the game in the GUI
+		RadioButton *manualModeRadioButton = nullptr;
 
         SDL_Thread* gameThread;
 
         bool isGameThreadRunning = false;
         bool isStarted = false; //Boolean used to indicate if the game is started
         bool quit = false;
-
+		bool forward = false;
 
         const int windowSize = std::min(WINDOW_WIDTH, WINDOW_HEIGHT);
         int gridSize;
