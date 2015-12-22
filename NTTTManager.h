@@ -7,6 +7,7 @@
 #include "GUI/Text.h"
 #include "GUI/TextField.h"
 #include "GUI/Texture.h"
+#include <algorithm>
 
 #include "NTTTGame.h"
 
@@ -33,7 +34,7 @@ class NTTTManager
         TTF_Font* g_font = NULL;				//Pointer pointing to the representation of the font
         int g_textHeight = 0;					//The 'maximum' text height used with the font
 
-        Texture *g_redCross, *g_blueCross;
+        Texture *g_redCross, *g_blueCross, *g_checkMark;
         NTTTGame *g_game;
 
         Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr;						//Text-elements in the GUI

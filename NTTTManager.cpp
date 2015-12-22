@@ -68,6 +68,7 @@ bool NTTTManager::init()
 
 	g_redCross = new Texture("RedCross.png");
 	g_blueCross = new Texture("BlueCross.png");
+	g_checkMark = new Texture("CheckMark.png");
 	g_game = new NTTTGame();
 	
 	return true;
@@ -282,7 +283,7 @@ void NTTTManager::loop(){
 
 		SDL_RenderPresent(g_renderer); //Updates the screen
 
-		SDL_Delay(50); //Sleeps for 10 milliseconds
+		SDL_Delay(50); //Sleeps
 	}
 
 	if (isGameThreadRunning){ // Wait for the game thread to end and clean it up.
@@ -302,6 +303,8 @@ void NTTTManager::close(){
 	delete g_game;
 	g_game = nullptr;
 
+	delete g_checkMark;
+	g_checkMark = nullptr;
 	delete g_redCross;
 	g_redCross = nullptr;
 	delete g_blueCross;
