@@ -108,6 +108,9 @@ void GameInfoViewer::cleanUp() {
 
 GameInfoViewer::~GameInfoViewer(){
 	cleanUp();
+
+    TTF_CloseFont(m_headlineFont);
+    TTF_CloseFont(m_movesFont);
 }
 
 void GameInfoViewer::renderGameInfoViewer() const{
