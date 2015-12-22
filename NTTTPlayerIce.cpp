@@ -46,7 +46,7 @@ NTTTMove NTTTPlayerIce::playAliveMove(const NTTTGame game) const{
 }
 
 NTTTMove NTTTPlayerIce::playAlmostDeadWithOddLegalMoves(const NTTTGame game) const{
-	for (int index = 0; index < m_almostDeadBoardsLegalMoves.size(); index++){
+	for (unsigned int index = 0; index < m_almostDeadBoardsLegalMoves.size(); index++){
 		if (!isNumberEven(m_almostDeadBoardsLegalMoves[index])){
 
 			NTTTBoard board = game.getBoards()[m_almostDeadBoards[index]];
@@ -67,7 +67,7 @@ NTTTMove NTTTPlayerIce::playAlmostDeadWithOddLegalMoves(const NTTTGame game) con
 		}
 	}
 
-	for (int index = 0; index < m_almostDeadBoards.size(); index++){
+	for (unsigned int index = 0; index < m_almostDeadBoards.size(); index++){
 		NTTTBoard board = game.getBoards()[m_almostDeadBoards[index]];
 		for (int x = 0; x < m_boardSize; x++){
 			for (int y = 0; y < m_boardSize; y++){
@@ -87,7 +87,7 @@ NTTTMove NTTTPlayerIce::playAlmostDeadWithOddLegalMoves(const NTTTGame game) con
 }
 
 NTTTMove NTTTPlayerIce::playAlmostDeadWithEvenLegalMoves(const NTTTGame game) const{
-	for (int index = 0; index < m_almostDeadBoardsLegalMoves.size(); index++){
+	for (unsigned int index = 0; index < m_almostDeadBoardsLegalMoves.size(); index++){
 		if (isNumberEven(m_almostDeadBoardsLegalMoves[index])){
 			
 			NTTTBoard board = game.getBoards()[m_almostDeadBoards[index]];
@@ -108,7 +108,7 @@ NTTTMove NTTTPlayerIce::playAlmostDeadWithEvenLegalMoves(const NTTTGame game) co
 		}
 	}
 
-	for (int index = 0; index < m_almostDeadBoards.size(); index++){
+	for (unsigned int index = 0; index < m_almostDeadBoards.size(); index++){
 		NTTTBoard board = game.getBoards()[m_almostDeadBoards[index]];
 		for (int x = 0; x < m_boardSize; x++){
 			for (int y = 0; y < m_boardSize; y++){
@@ -129,7 +129,7 @@ NTTTMove NTTTPlayerIce::playAlmostDeadWithEvenLegalMoves(const NTTTGame game) co
 }
 
 NTTTMove NTTTPlayerIce::playAlmostDeadLegalMove(const NTTTGame game) const{
-	for (int index = 0; index < m_almostDeadBoards.size(); index++){
+	for (unsigned int index = 0; index < m_almostDeadBoards.size(); index++){
 		NTTTBoard board = game.getBoards()[m_almostDeadBoards[index]];
 		for (int x = 0; x < m_boardSize; x++){
 			for (int y = 0; y < m_boardSize; y++){
@@ -145,7 +145,7 @@ NTTTMove NTTTPlayerIce::playAlmostDeadLegalMove(const NTTTGame game) const{
 		}
 	}
 	
-	for (int index = 0; index < m_almostDeadBoards.size(); index++){
+	for (unsigned int index = 0; index < m_almostDeadBoards.size(); index++){
 		NTTTBoard board = game.getBoards()[m_almostDeadBoards[index]];
 		for (int x = 0; x < m_boardSize; x++){
 			for (int y = 0; y < m_boardSize; y++){
@@ -171,7 +171,7 @@ NTTTMove NTTTPlayerIce::playAlmostDeadLegalMove(const NTTTGame game) const{
  */
 NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game)
 {
-	for (int index = 0; index < m_aliveBoards.size(); index++){
+	for (unsigned int index = 0; index < m_aliveBoards.size(); index++){
 		NTTTBoard board = game.getBoards()[m_aliveBoards[index]];
 		bool shouldBreak = false;
 		for (int x = 0; x < m_boardSize; x++){
@@ -194,7 +194,7 @@ NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game)
 
 	int sumOfLegalMoves = 0;
 
-	for (int index = 0; index < m_almostDeadBoards.size(); index++){
+	for (unsigned int index = 0; index < m_almostDeadBoards.size(); index++){
 		if (game.getBoards()[m_almostDeadBoards[index]].getCurrentState() == NTTTBoard::DEAD){
 			m_almostDeadBoards.erase(m_almostDeadBoards.begin() + index);
 			m_almostDeadBoardsLegalMoves.erase(m_almostDeadBoardsLegalMoves.begin() + index);

@@ -7,6 +7,7 @@ sources += GUI/Button.cpp
 sources += GUI/Text.cpp
 sources += GUI/TextField.cpp
 sources += GUI/Texture.cpp
+sources += GUI/RadioButton.cpp
 
 objects = $(sources:.cpp=.o)
 depends = $(sources:.cpp=.d)

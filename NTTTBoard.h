@@ -84,7 +84,7 @@ class NTTTBoard {
             return os;
         }
 
-		void renderBoard(const unsigned int x, const unsigned int y, const unsigned int size) const;
+		void renderBoard(const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
 
     private:
         int m_lineSize;
