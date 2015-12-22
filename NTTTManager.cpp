@@ -93,6 +93,9 @@ bool NTTTManager::init()
 	manualModeText = new Text("Manual Mode: ", PADDING_X, PADDING_Y * 2 + boardCountTextField->getHeight());
 	manualModeRadioButton = new RadioButton(false, PADDING_X + manualModeText->getX() + manualModeText->getWidth(), manualModeText->getY());
 
+	logText = new Text("Write log: ", PADDING_X + manualModeRadioButton->getX() + manualModeRadioButton->getWidth(), manualModeRadioButton->getY());
+	logRadioButton = new RadioButton(false, PADDING_X + logText->getX() + logText->getWidth(), logText->getY());
+
 	return true;
 }
 
@@ -180,12 +183,18 @@ int NTTTManager::manageGame()
 			SDL_Delay(500);
 	}
 	
+	if (logRadioButton->isChecked())
+		writeLog();
+
 	//isGameThreadRunning must be set to false just before the end.
 	isGameThreadRunning = false;
 
 	return 0;
 } // end of manageGame
 
+void NTTTManager::writeLog(){
+	//TODO
+}
 
 void NTTTManager::onClick()
 { //Function called when the start game button is pressed
@@ -266,6 +275,8 @@ void NTTTManager::loop(){
 					startGameButton->click();
 				else if (manualModeRadioButton->isInside(x, y))
 					manualModeRadioButton->toggle();
+				else if (logRadioButton->isInside(x, y))
+					logRadioButton->toggle();
 			}
 		}
 
@@ -297,8 +308,10 @@ void NTTTManager::loop(){
 			startGameButton->renderButton();
 
 			manualModeText->renderText();
-
 			manualModeRadioButton->renderRadioButton();
+
+			logText->renderText();
+			logRadioButton->renderRadioButton();
 		}
 
 		SDL_RenderPresent(g_renderer); //Updates the screen
@@ -329,6 +342,11 @@ void NTTTManager::close(){
 	g_redCross = nullptr;
 	delete g_blueCross;
 	g_blueCross = nullptr;
+
+	delete logText;
+	logText = nullptr;
+	delete logRadioButton;
+	logRadioButton = nullptr;
 
 	delete manualModeText;
 	manualModeText = nullptr;

@@ -20,6 +20,7 @@ class NTTTManager
         void close();
         void onClick();
         int manageGame();
+		void writeLog();
 
 
         const char* TITLE = "No Tic Tac Toe";			//The title of the window
@@ -38,10 +39,11 @@ class NTTTManager
         Texture *g_redCross, *g_blueCross, *g_checkMark;
         NTTTGame *g_game;
 
-        Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr, *manualModeText = nullptr;						//Text-elements in the GUI
-        TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;							//TextField-elements in the GUI
-        Button *startGameButton = nullptr;																								//The button to start the game in the GUI
-		RadioButton *manualModeRadioButton = nullptr;
+		Text *boardCountText = nullptr, *boardSizeText = nullptr,
+			*lineSizeText = nullptr, *manualModeText = nullptr, *logText = nullptr;										//Text-elements in the GUI
+        TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;			//TextField-elements in the GUI
+        Button *startGameButton = nullptr;																				//The button to start the game in the GUI
+		RadioButton *manualModeRadioButton = nullptr, *logRadioButton = nullptr;
 
         SDL_Thread* gameThread;
 
