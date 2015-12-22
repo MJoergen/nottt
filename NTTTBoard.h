@@ -68,11 +68,12 @@ class NTTTBoard {
          */
         friend std::ostream& operator <<(std::ostream &os, const NTTTBoard &rhs)
         {
-            for (const std::vector<SquareState>& row : rhs.m_squareStates)
+            int boardSize = rhs.m_squareStates.size();
+            for (int x=0; x<boardSize; ++x)
             {
-                for (const SquareState& square : row)
+                for (int y=0; y<boardSize; ++y)
                 {
-                    switch (square)
+                    switch (rhs.m_squareStates[y][x])
                     {
                         case UNMARKED : os << "."; break;
                         case BLUE     : os << "x"; break;
