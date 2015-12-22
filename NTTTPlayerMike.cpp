@@ -71,8 +71,9 @@ bool Board::isBoardDead(uint64_t bits) const
  * Converts to internal bitmask representation
  * Called every time we are to make a move.
  */
-void Board::makeBits(const NTTTGame& game)
+int Board::makeBits(const NTTTGame& game)
 {
+    int numAlive = 0;
     m_bits.clear();
 
     const std::vector<NTTTBoard>& boards = game.getBoards();
@@ -103,10 +104,14 @@ void Board::makeBits(const NTTTGame& game)
             val = 0;
 
         if (m_debug)
-            std::cout << std::hex << std::setw(16) << std::setfill('0') << val << " ";
+            std::cout << std::hex << std::setw(16) << std::setfill('0') << val << std::endl;
         m_bits.push_back(val);
+        if (val)
+            numAlive++;
     }
-//    std::cout << std::endl;
+    if (m_debug)
+        std::cout << "numAlive = " << numAlive << std::endl;
+    return numAlive;
 } // end of makeBits
 
 
@@ -146,7 +151,7 @@ int Board::evaluate() const
     }
 
     if (numActive == 0)
-        return 9999;
+        return 99999;
 
     return (rand() % 201) - 100;
 } // end of evaluate
@@ -164,14 +169,18 @@ int Board::alphaBeta(int alpha, int beta, int level)
         return evaluate();
     }
 
+    if (m_debug)
+        std::cout << "alpha=" << std::dec << alpha << ", beta=" << beta << ", level=" << level << std::endl;
 
-    int bestVal = -999;
+    int bestVal = -99999;
 
+    int numActive = 0;
     for (int board=0; board<m_boardCount; ++board)
     {
         if (isBoardDead(m_bits[board]))
             continue;
 
+        numActive++;
         for (int x=0; x<m_boardSize; ++x)
         {
             for (int y=0; y<m_boardSize; ++y)
@@ -180,25 +189,52 @@ int Board::alphaBeta(int alpha, int beta, int level)
                 uint64_t mask = 1UL << bit;
                 if (m_bits[board] & mask)
                 {
+                    NTTTMove move(board, bit/8, bit%8);
+                    if (m_debug)
+                    {
+                        for (int i=level; i<4; ++i)
+                            std::cout << "  ";
+                        std::cout << move << std::endl;
+                    }
                     makeMove(board, bit);
                     int val = -alphaBeta(-beta, -alpha, level-1);
                     undoMove(board, bit);
 
-                    NTTTMove move(board, bit/8, bit%8);
                     if (m_debug)
-                        std::cout << "  " << move << " -> " << val;
+                    {
+                        for (int i=level; i<4; ++i)
+                            std::cout << "  ";
+                        std::cout << move << " -> " << std::dec << val << std::endl;
+                    }
 
                     if (val > bestVal)
                     {
                         bestVal = val;
+                    }
+
+                    // Now comes the part specific for alpha-beta pruning:
+                    // Since we are only interested, if another
+                    // move is better, we update our lower bound.
+                    if (val > alpha)
+                    {
+                        alpha = val;
+                    }
+
+                    // Now we check if the window has been closed.
+                    // If so, then stop the search.
+                    if (alpha >= beta)
+                    {
+                        // This is fail-soft, since we are returning the value best_val,
+                        // which might be outside the window.
+                        break;
                     }
                 }
             }
         }
     }
 
-    if (bestVal == -999) // No legal moves
-        return 999; // I've won
+    if (numActive == 0) // No legal moves
+        return 99990 + level; // I've won
 
     return bestVal;
 } // end of alphaBeta
@@ -207,10 +243,10 @@ int Board::alphaBeta(int alpha, int beta, int level)
 /**
  * Return the best move.
  */
-NTTTMove Board::findMove()
+NTTTMove Board::findMove(int level)
 {
     m_nodes = 0;
-    int bestVal = -99999;
+    int bestVal = -999999;
     NTTTMove bestMove(0, 0, 0);
 
     for (int board=0; board<m_boardCount; ++board)
@@ -223,11 +259,14 @@ NTTTMove Board::findMove()
                 uint64_t mask = 1UL << bit;
                 if (m_bits[board] & mask)
                 {
+                    NTTTMove move(board, bit/8, bit%8);
+                    if (m_debug)
+                        std::cout << "Move " << move << std::endl;
+
                     makeMove(board, bit);
-                    int val = -alphaBeta(-999, 999, 0);
+                    int val = -alphaBeta(-99999, 99999, level);
                     undoMove(board, bit);
 
-                    NTTTMove move(board, bit/8, bit%8);
                     if (m_debug)
                         std::cout << "Move " << move << " => " << std::dec << val << std::endl;
 
@@ -270,7 +309,7 @@ NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
 {
     if (m_debug)
         std::cout << game;
-    m_board.makeBits(game);
-    return m_board.findMove();
+    int numAlive = m_board.makeBits(game);
+    return m_board.findMove(numAlive==1 ? 4 : 0);
 } // end of performMove
 

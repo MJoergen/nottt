@@ -23,8 +23,9 @@ class Board
 
         /**
          * Converts to internal representation
+         * Returns number of boards still alive.
          */
-        void makeBits(const NTTTGame& game);
+        int makeBits(const NTTTGame& game);
 
         /**
          * Make a move.
@@ -50,7 +51,7 @@ class Board
         /**
          * Return the best move.
          */
-        NTTTMove findMove();
+        NTTTMove findMove(int level);
 
     private:
         int m_boardCount;
