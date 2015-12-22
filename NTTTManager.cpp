@@ -68,9 +68,7 @@ bool NTTTManager::init()
 		SDL_Quit();
 		return false;
 	}
-	Texture heightMeasureTexture("|,.-gWjIi", { 0, 0, 0 });
-
-	g_textHeight = heightMeasureTexture.getHeight(); //Measures the height of the texture to create an estimate on the max height (from the lowest point to the highest) of the font
+	g_textHeight = TTF_FontHeight(g_font);
 
 	g_redCross = new Texture("RedCross.png");
 	g_blueCross = new Texture("BlueCross.png");
@@ -96,6 +94,8 @@ bool NTTTManager::init()
 	logText = new Text("Write log: ", PADDING_X + manualModeRadioButton->getX() + manualModeRadioButton->getWidth(), manualModeRadioButton->getY());
 	logRadioButton = new RadioButton(false, PADDING_X + logText->getX() + logText->getWidth(), logText->getY());
 
+	m_gameInfoViewer = new GameInfoViewer();
+
 	return true;
 }
 
@@ -114,10 +114,7 @@ int NTTTManager::manageGame()
 
 	NTTTPlayerIce ice;
 	NTTTPlayerMike mike;
-
-	NTTTPlayer* player1;
-	NTTTPlayer* player2;
-
+	
 	NTTTPlayer::OrderChoice iceOrderChoice, mikeOrderChoice;
 	iceOrderChoice = ice.chooseOrder(*g_game);
 	mikeOrderChoice = mike.chooseOrder(*g_game);
@@ -125,26 +122,28 @@ int NTTTManager::manageGame()
 	if (iceOrderChoice == mikeOrderChoice){
 		if (rand() % 2 == 0){ //TODO: Make this random by srand() or other method.
 			std::cout << "Ice starts" << std::endl;
-			player1 = &ice;
-			player2 = &mike;
+			m_player1 = &ice;
+			m_player2 = &mike;
 		}
 		else {
 			std::cout << "Mike starts" << std::endl;
-			player1 = &mike;
-			player2 = &ice;
+			m_player1 = &mike;
+			m_player2 = &ice;
 		}
 	}
 	else if (iceOrderChoice == NTTTPlayer::FIRST || mikeOrderChoice == NTTTPlayer::LAST){
 		std::cout << "Ice starts" << std::endl;
-		player1 = &ice;
-		player2 = &mike;
+		m_player1 = &ice;
+		m_player2 = &mike;
 	}
 	else{
 		std::cout << "Mike starts" << std::endl;
-		player1 = &mike;
-		player2 = &ice;
+		m_player1 = &mike;
+		m_player2 = &ice;
 	}
 
+	m_gameInfoViewer->init();
+	
 
 	int player = 1;
 	NTTTMove move(0, 0, 0);
@@ -156,11 +155,11 @@ int NTTTManager::manageGame()
             switch (player)
             {
                 case 1:
-                    move = player1->performMove(*g_game);
+                    move = m_player1->performMove(*g_game);
                     g_game->makeMove(move, NTTTBoard::RED);
                     break;
                 case 2:
-                    move = player2->performMove(*g_game);
+                    move = m_player2->performMove(*g_game);
                     g_game->makeMove(move, NTTTBoard::BLUE);
                     break;
             }
@@ -170,6 +169,7 @@ int NTTTManager::manageGame()
             {
                 std::cout << "Player " << player << " won!" << std::endl;
                 gameActive = false;
+				m_gameInfoViewer->setWinner(player);
             }
         }
 		if (manualModeRadioButton->isChecked()){
@@ -179,8 +179,9 @@ int NTTTManager::manageGame()
 			while (!forward && !quit);
 			forward = false;
 		}
-		else
-			SDL_Delay(500);
+		else{
+			SDL_Delay(1000);
+		}
 	}
 	
 	if (logRadioButton->isChecked())
@@ -295,6 +296,8 @@ void NTTTManager::loop(){
 			for (int index = 0; index < g_game->getBoardCount(); index++){
 				g_game->getBoards()[index].renderBoard(BOARD_PADDING * (index % gridSize + 1) + boardRenderSize * (index % gridSize), BOARD_PADDING * (int)(index / gridSize + 1) + boardRenderSize * (int)(index / gridSize), boardRenderSize);
 			}
+
+			m_gameInfoViewer->renderGameInfoViewer();
 		}
 		else {
 			boardCountText->renderText();

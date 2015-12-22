@@ -1,10 +1,22 @@
 #include "Text.h"
 #include "../NTTTManager.h"
 
-Text::Text(const std::string text, unsigned int x, const unsigned int y){
+Text::Text(const std::string text, const unsigned int x, const unsigned int y){
 	m_x = x;
 	m_y = y;
-	m_texture = new Texture(text, {0, 0, 0});
+	m_texture = new Texture(text, { 0, 0, 0 });
+}
+
+Text::Text(const std::string text, const SDL_Color color, const unsigned int x, const unsigned int y){
+	m_x = x;
+	m_y = y;
+	m_texture = new Texture(text, color);
+}
+
+Text::Text(const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y){
+	m_x = x;
+	m_y = y;
+	m_texture = new Texture(text, font, color);
 }
 
 Text::~Text(){
@@ -26,5 +38,5 @@ const unsigned int Text::getWidth() const{
 }
 
 const unsigned int Text::getHeight() const{
-	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
+	return m_texture->getHeight() + g_NtttManager.PADDING_Y * 2;
 }

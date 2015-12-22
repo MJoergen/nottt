@@ -3,6 +3,8 @@
 
 #include "NTTTPlayerMike.h"
 
+std::string NTTTPlayerMike::getName() { return "MikeBot"; }
+
 /**
  * Converts a given line segment (start, direction, length)
  * into a 64-bit mask.

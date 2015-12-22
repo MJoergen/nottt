@@ -1,5 +1,7 @@
 #include "NTTTPlayerIce.h"
 
+std::string NTTTPlayerIce::getName() { return "IceBot"; }
+
 /**
  * Run in the initialization phase of the game.
  * @param game An instance of the NTTTGame.

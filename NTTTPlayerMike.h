@@ -78,6 +78,8 @@ class NTTTPlayerMike : public NTTTPlayer {
          */
         virtual NTTTMove performMove(const NTTTGame& game);
 
+		virtual std::string getName();
+
         /**
          * The destructor must always be made virtual
          */
