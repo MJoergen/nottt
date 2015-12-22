@@ -6,7 +6,7 @@
 
 class Button {
 private:
-	/* unsigned */ int m_x, m_y;
+	int m_x, m_y;
 
 	Texture* m_texture = nullptr;
 	
@@ -19,11 +19,10 @@ public:
 
 	void renderButton() const;
 	
-	void getSize(unsigned int& width, unsigned int& height) const;
-	const /* unsigned */ int getWidth() const;
-	const /* unsigned */ int getHeight() const;
-	const /* unsigned */ int getX() const { return m_x; }
-	const /* unsigned */ int getY() const { return m_y; }
+	const int getWidth() const;
+	const int getHeight() const;
+	const int getX() const { return m_x; }
+	const int getY() const { return m_y; }
 	
 	void click() const;
 	void registerClickFunc(void(*action)(void*), void*);
