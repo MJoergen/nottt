@@ -73,12 +73,15 @@ class NTTTBoard {
             {
                 for (int y=0; y<boardSize; ++y)
                 {
-                    switch (rhs.m_squareStates[y][x])
-                    {
-                        case UNMARKED : os << "."; break;
-                        case BLUE     : os << "x"; break;
-                        case RED      : os << "X"; break;
-                    }
+                    if (rhs.m_state == DEAD)
+                        os << "$";
+                    else
+                        switch (rhs.m_squareStates[y][x])
+                        {
+                            case UNMARKED : os << "."; break;
+                            case BLUE     : os << "x"; break;
+                            case RED      : os << "X"; break;
+                        }
                 }
                 os << std::endl;
             }
