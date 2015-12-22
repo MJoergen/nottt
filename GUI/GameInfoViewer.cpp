@@ -51,16 +51,17 @@ void GameInfoViewer::init(){
 	m_movesWidth = w + g_NtttManager.PADDING_X * 2; //Estimate
 
 	m_amountInColumn = (int)((g_NtttManager.WINDOW_HEIGHT - (m_winnerText->getY() + m_winnerText->getHeight() + 3 * g_NtttManager.PADDING_Y)) / m_movesHeight);
-	m_amountInRow = (int)((width - 2 * g_NtttManager.PADDING_X) / m_movesWidth);
 }
 
 void GameInfoViewer::addMove(NTTTMove move){
+	/*
 	const int x = g_NtttManager.getPlayingFieldSize();
 
-	m_moves.push_back(Text(std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
-		+ ", " + std::to_string(move.getSquareY()) + ")", m_movesFont , { 255, 255, 255 }, x + g_NtttManager.PADDING_X + (int)(m_moves.size() / m_amountInColumn) * m_movesWidth,
-		m_winner->getY() + m_winner->getHeight() + 2 * g_NtttManager.PADDING_Y + (m_moves.size() % m_amountInRow) * m_movesHeight));
+	m_moves.push_back(new Text(std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
+	+ ", " + std::to_string(move.getSquareY()) + ")", m_movesFont , { 0, 255, 0 }, x + g_NtttManager.PADDING_X + (int)(m_moves.size() / m_amountInColumn) * m_movesWidth,
+	m_winnerText->getY() + m_winnerText->getHeight() + 2 * g_NtttManager.PADDING_Y + (m_moves.size() % m_amountInColumn) * m_movesHeight));
 
+	*/
 }
 
 void GameInfoViewer::setWinner(int index){	//Set the winner to player1 (index = 1) or player2 (index = 2)
@@ -98,6 +99,12 @@ void GameInfoViewer::cleanUp() {
 
 	delete m_vs;
 	m_vs = nullptr;
+
+	for (int index = 0; index < m_moves.size(); index++){
+		delete m_moves[index];
+	}
+
+	m_moves.resize(0);
 }
 
 GameInfoViewer::~GameInfoViewer(){
@@ -123,4 +130,9 @@ void GameInfoViewer::renderGameInfoViewer() const{
 		m_winnerText->renderText();
 	if (m_winner != nullptr)
 		m_winner->renderText();
+
+	for (int index = 0; index < m_moves.size(); index++){
+		m_moves[index]->renderText();
+	}
+
 }

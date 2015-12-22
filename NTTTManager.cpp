@@ -163,6 +163,7 @@ int NTTTManager::manageGame()
                     g_game->makeMove(move, NTTTBoard::BLUE);
                     break;
             }
+			m_gameInfoViewer->addMove(move);
             player = 3 - player;
 
             if (!g_game->isActive())
