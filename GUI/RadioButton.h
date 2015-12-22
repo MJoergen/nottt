@@ -18,7 +18,6 @@ public:
 
 	void renderRadioButton() const;
 
-	void getSize(int& width, int& height) const;
 	const int getWidth() const;
 	const int getHeight() const;
 	const int getX() const { return m_x; }

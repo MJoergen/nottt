@@ -46,7 +46,6 @@ public:
 	void onKeyPress(const SDL_Keysym& keysym, const std::string& text);
 	const bool isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const;
 
-	void getSize(unsigned int& width, unsigned int& height) const { width = getWidth(); height = getHeight(); };
 	const unsigned int getWidth() const;
 	const unsigned int getHeight() const;
 	const unsigned int getX() const { return m_x; }

@@ -28,11 +28,6 @@ void Text::renderText() const{
 	m_texture->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
 }
 
-void Text::getSize(unsigned int& width, unsigned int& height) const {
-	width = getWidth();
-	height = getHeight();
-}
-
 const unsigned int Text::getWidth() const{
 	return m_texture->getWidth() + g_NtttManager.PADDING_X * 2;
 }

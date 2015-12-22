@@ -19,7 +19,6 @@ public:
 	void freeTexture();
 	const unsigned int getWidth() const { return m_width; }
 	const unsigned int getHeight() const { return m_height; }
-	void getSize(unsigned int& width, unsigned int& height) const { width = getWidth(); height = getHeight(); };
 	void renderTexture() const;
 	void renderTexture(const int x, const int y) const { renderTexture(x, y, m_width, m_height); }
 	void renderTexture(const int x, const int y, const int width, const int height) const;

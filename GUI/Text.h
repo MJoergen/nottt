@@ -14,7 +14,6 @@ public:
 	Text(const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y);
 	virtual ~Text();
 	void renderText() const;
-	void getSize(unsigned int& width, unsigned int& height) const;
 	const unsigned int getWidth() const;
 	const unsigned int getHeight() const;
 	const unsigned int getX() const { return m_x; }

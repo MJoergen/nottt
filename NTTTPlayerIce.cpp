@@ -29,7 +29,7 @@ NTTTPlayer::OrderChoice NTTTPlayerIce::chooseOrder(const NTTTGame& game)
 } // end of chooseOrder
 
 const bool NTTTPlayerIce::isNumberEven(const int number) const{
-	return ((number / 2.0) - (int)(number / 2.0) == 0);
+    return (number%2) == 0;
 }
 
 NTTTMove NTTTPlayerIce::playAliveMove(const NTTTGame game) const{

@@ -6,6 +6,7 @@ Button::Button(const std::string text, unsigned int x, const unsigned int y){
 	m_y = y;
 	m_texture = new Texture(text, {0, 0, 0});
 }
+
 Button::~Button(){
 	delete m_texture;
 	m_texture = nullptr;
@@ -17,16 +18,11 @@ void Button::renderButton() const {
 	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
 }
 
-void Button::getSize(unsigned int& width, unsigned int& height) const{
-	width = getWidth();
-	height = getHeight();
-}
-
-const /* unsigned */ int Button::getWidth() const{
+const int Button::getWidth() const{
 	return m_texture->getWidth() + g_NtttManager.PADDING_X * 2;
 }
 
-const /* unsigned */ int Button::getHeight() const{
+const int Button::getHeight() const{
 	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
 }
 
@@ -40,6 +36,6 @@ void Button::click() const{
 		m_action(m_data);
 }
 
-const bool Button::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const{
+const bool Button::isInside(const int& x, const int& y) const{
 	return m_x <= x && m_x + getWidth() >= x && m_y <= y && m_y + getHeight() >= y;
 }
