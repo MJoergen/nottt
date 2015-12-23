@@ -181,7 +181,6 @@ int NTTTManager::manageGame()
             }
 
 			m_moves.push_back(move);
-			std::cout << "Move: " << move << std::endl;
 
 			m_gameInfoViewer->addMove(move);
 			player = 3 - player;
@@ -199,7 +198,6 @@ int NTTTManager::manageGame()
 				if (backward){
 					if (m_moves.size() <= 1)
 						continue;
-					std::cout << "Move2: " << m_moves[m_moves.size() - 1] << std::endl;
 					g_game->undoMove(m_moves[m_moves.size() - 1]);
 					m_moves.pop_back();
 					player = 3 - player;
@@ -331,7 +329,21 @@ void NTTTManager::loop(){
 			}
 			
 			for (int index = 0; index < g_game->getBoardCount(); index++){
-				g_game->getBoards()[index].renderBoard(BOARD_PADDING * (index % gridSize + 1) + boardRenderSize * (index % gridSize), BOARD_PADDING * (int)(index / gridSize + 1) + boardRenderSize * (int)(index / gridSize), boardRenderSize);
+
+				int boardX = BOARD_PADDING * (index % gridSize + 1) + boardRenderSize * (index % gridSize);
+				int boardY = BOARD_PADDING * (int)(index / gridSize + 1) + boardRenderSize * (int)(index / gridSize);
+				int squareSize = boardRenderSize / g_game->getBoardSize();
+
+				if (m_moves.size() > 0){
+					NTTTMove& move = m_moves[m_moves.size() - 1];
+					if (move.getBoardNumber() == index){
+						SDL_SetRenderDrawColor(g_renderer, 210, 210, 210, 255);
+						SDL_Rect rect = { boardX + squareSize * move.getSquareX(), boardY + squareSize * move.getSquareY(), squareSize, squareSize };
+						SDL_RenderFillRect(g_renderer, &rect);
+					}
+				}
+
+				g_game->getBoards()[index].renderBoard(boardX, boardY, boardRenderSize);
 			}
 
 			if (g_player1 != nullptr)
