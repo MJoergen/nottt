@@ -242,7 +242,7 @@ void NTTTManager::writeLog(const int winner) const{
 	outputFile << "BoardSize: " << g_game->getBoardSize() << std::endl;
 	outputFile << "LineSize: " << g_game->getLineSize() << std::endl;
 	outputFile << "# Moves:" << std::endl;
-	for (int index = 0; index < m_moves.size(); index++){
+	for (unsigned int index = 0; index < m_moves.size(); index++){
 		outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
 	}
 	outputFile << "# Winner:" << std::endl;
