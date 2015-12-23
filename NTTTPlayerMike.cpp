@@ -279,6 +279,7 @@ NTTTMove Board::findMove(int level)
             }
         }
     }
+    assert(bestVal > -999999);
     if (m_debug)
     {
         std::cout << "nodes=" << m_nodes << std::endl;
@@ -296,6 +297,11 @@ NTTTMove Board::findMove(int level)
 NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game)
 {
     m_board.init(game);
+    switch (rand()%2)
+    {
+        case 0 : return FIRST;
+        case 1 : return LAST;
+    }
     return UNDECIDED;
 } // end of chooseOrder
 
