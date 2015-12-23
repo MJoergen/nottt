@@ -43,11 +43,12 @@ NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game)
 		int legalMoves = 0;
 		for (int x = 0; x < m_boardSize; x++){
 			for (int y = 0; y < m_boardSize; y++){
-				if (tryMove(game, index, x, y))
-					isAlmostDead = true;
-				else{
-					legalMoves++;
-				}
+				if (game.getBoards()[index].getSquareStates()[x][y] == NTTTBoard::UNMARKED)
+					if (tryMove(game, index, x, y))
+						isAlmostDead = true;
+					else{
+						legalMoves++;
+					}
 			}
 		}
 		if (isAlmostDead){

@@ -10,7 +10,7 @@
 */
 bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
 {
-    /*
+    
     if (state == UNMARKED)
     {
         assert(m_squareStates[squareX][squareY] != UNMARKED);
@@ -20,7 +20,7 @@ bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
         assert(m_state == ALIVE);
         assert(m_squareStates[squareX][squareY] == UNMARKED);
     }
-    */
+    
 
     m_squareStates[squareX][squareY] = state;
 
