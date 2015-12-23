@@ -77,6 +77,7 @@ class NTTTManager
         bool isGameThreadRunning = false;
 		bool quit = false;
 		bool isStarted = false; //Boolean used to indicate if the game is started
+		bool backward = false;
 		bool forward = false;
 		bool initGraphics = false;
 
@@ -84,7 +85,9 @@ class NTTTManager
 
 		const int windowSize = std::min(WINDOW_WIDTH, WINDOW_HEIGHT);
         int gridSize;
-        int boardRenderSize;
+		int boardRenderSize;
+
+		std::vector<NTTTMove> m_moves;
 
 }; // end of NTTTManager
 

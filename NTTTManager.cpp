@@ -179,8 +179,12 @@ int NTTTManager::manageGame()
                     g_game->makeMove(move, NTTTBoard::BLUE);
                     break;
             }
+
+			m_moves.push_back(move);
+			std::cout << "Move: " << move << std::endl;
+
 			m_gameInfoViewer->addMove(move);
-            player = 3 - player;
+			player = 3 - player;
 
             if (!g_game->isActive())
             {
@@ -192,6 +196,15 @@ int NTTTManager::manageGame()
 		if (manualModeRadioButton->isChecked()){
 			do{
 				SDL_Delay(100);
+				if (backward){
+					if (m_moves.size() <= 1)
+						continue;
+					std::cout << "Move2: " << m_moves[m_moves.size() - 1] << std::endl;
+					g_game->undoMove(m_moves[m_moves.size() - 1]);
+					m_moves.pop_back();
+					player = 3 - player;
+					backward = false;
+				}
 			}
 			while (!forward && !quit);
 			forward = false;
@@ -264,6 +277,8 @@ void NTTTManager::loop(){
 				if (isStarted && manualModeRadioButton->isChecked()){
 					if (event.key.keysym.sym == SDLK_RIGHT)
 						forward = true;
+					else if (event.key.keysym.sym == SDLK_LEFT)
+							backward = true;
 				}
 				else if (boardCountTextField->isSelected())
 					boardCountTextField->onKeyPress(event.key.keysym, "");

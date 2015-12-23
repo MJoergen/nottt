@@ -59,6 +59,7 @@ bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
                 }
         }
     }
+	m_state = ALIVE;
 	return true;
 } // end of makeMove
 

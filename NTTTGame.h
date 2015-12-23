@@ -65,6 +65,17 @@ class NTTTGame {
             m_boards[boardNumber].makeMove(squareX, squareY, state);
         }
 
+		/*
+		 * Undo a move
+		 */
+		void undoMove(const NTTTMove& move)
+		{
+			int boardNumber = move.getBoardNumber();
+			int squareX = move.getSquareX();
+			int squareY = move.getSquareY();
+			m_boards[boardNumber].makeMove(squareX, squareY, NTTTBoard::UNMARKED);
+		}
+
         /**
          * ASCII dump the board configuration
          */
