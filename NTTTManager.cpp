@@ -364,7 +364,7 @@ void NTTTManager::loop(){
 				if (m_moves.size() > 0){
 					NTTTMove& move = m_moves[m_moves.size() - 1];
 					if (move.getBoardNumber() == index){
-						SDL_SetRenderDrawColor(g_renderer, 210, 210, 210, 255);
+						SDL_SetRenderDrawColor(g_renderer, 190, 190, 190, 255);
 						SDL_Rect rect = { boardX + squareSize * move.getSquareX(), boardY + squareSize * move.getSquareY(), squareSize, squareSize };
 						SDL_RenderFillRect(g_renderer, &rect);
 					}
