@@ -101,7 +101,7 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
 		if (!is_number(text))
 			return;
 		m_content.insert(m_cursor, text);
-		if (m_limit >= 0 && std::stoi(m_content) > m_limit){
+		if (m_limit >= 0 && std::stoll(m_content) > m_limit){
 			m_content.erase(m_cursor, 1);
 		}
 		else{

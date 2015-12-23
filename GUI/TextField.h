@@ -35,7 +35,10 @@ public:
 	TextField(const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit);
 	virtual ~TextField();
 	
-	const std::string getContent() const { return m_content; }
+	const std::string getContent() const {
+		if (m_fieldType == NUMBER && m_content.length() == 0)
+			return "0";
+		return m_content; }
 	
 	const bool isSelected() { return m_selected; }
 	void select() { SDL_StartTextInput(); m_selected = true; }

@@ -42,7 +42,7 @@ class NTTTManager
 		const char* TITLE = "No Tic Tac Toe";			//The title of the window
 		const int WINDOW_WIDTH = 900;					//The width of the window
 		const int WINDOW_HEIGHT = 600;					//The height of the window
-
+		
 		TTF_Font *g_headlineFont = nullptr, *g_movesFont = nullptr;
 		int g_headlineHeight, g_movesHeight, g_movesWidth;
 		bool g_failedFontInitHeadline = false, g_failedFontInitMoves = false;
@@ -65,9 +65,10 @@ class NTTTManager
 
         SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
 
-		Text *boardCountText = nullptr, *boardSizeText = nullptr,
-			*lineSizeText = nullptr, *manualModeText = nullptr, *logText = nullptr;										//Text-elements in the GUI
-        TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr;			//TextField-elements in the GUI
+		Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr,
+			*manualModeText = nullptr, *logText = nullptr, *gameSeedText = nullptr;										//Text-elements in the GUI
+        TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr,
+			*gameSeedTextField = nullptr;																				//TextField-elements in the GUI
         Button *startGameButton = nullptr;																				//The button to start the game in the GUI
 		RadioButton *manualModeRadioButton = nullptr, *logRadioButton = nullptr;
 		GameInfoViewer *m_gameInfoViewer = nullptr;

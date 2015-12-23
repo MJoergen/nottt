@@ -3,6 +3,7 @@
 #include "NTTTPlayerMike.h"
 #include "NTTTManager.h"
 #include <fstream>
+#include <climits>
 
 NTTTManager g_NtttManager;
 
@@ -109,8 +110,12 @@ bool NTTTManager::init()
 	manualModeText = new Text("Manual Mode: ", PADDING_X, PADDING_Y * 2 + boardCountTextField->getHeight());
 	manualModeRadioButton = new RadioButton(false, PADDING_X + manualModeText->getX() + manualModeText->getWidth(), manualModeText->getY());
 
-	logText = new Text("Write log: ", PADDING_X + manualModeRadioButton->getX() + manualModeRadioButton->getWidth(), manualModeRadioButton->getY());
+	gameSeedText = new Text("Game Seed: ", PADDING_X + manualModeRadioButton->getX() + manualModeRadioButton->getWidth(), manualModeRadioButton->getY());
+	gameSeedTextField = new TextField(TextField::NUMBER, "12345", PADDING_X + gameSeedText->getX() + gameSeedText->getWidth(), gameSeedText->getY(), 150, INT_MAX);
+
+	logText = new Text("Write log: ", PADDING_X, manualModeText->getY() + PADDING_Y + manualModeText->getHeight());
 	logRadioButton = new RadioButton(false, PADDING_X + logText->getX() + logText->getWidth(), logText->getY());
+
 
 	m_gameInfoViewer = new GameInfoViewer();
 
@@ -126,6 +131,7 @@ static int manageGameStatic( void* data)
 int NTTTManager::manageGame()
 {
 
+	srand(std::stoi(gameSeedTextField->getContent()));
 	//This is where the game goes.
 
 	//Some test code
@@ -258,12 +264,13 @@ void NTTTManager::onClick()
 		std::cout << "Failed to start game: A game is already in progress." << std::endl;
 		return;
 	}
+
 	const unsigned int boardCount = std::stoi(boardCountTextField->getContent());
 	const unsigned int boardSize = std::stoi(boardSizeTextField->getContent());
 	const unsigned int lineSize = std::stoi(lineSizeTextField->getContent());
 	std::cout << "Starts the game with the following settings: { BoardCount: "
 		<< boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << " }" << std::endl;
-
+	
 	g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
 	isGameThreadRunning = true;
 	gameThread = SDL_CreateThread(manageGameStatic, "Game Thread", this);
@@ -297,6 +304,8 @@ void NTTTManager::loop(){
 					boardSizeTextField->onKeyPress(event.key.keysym, event.text.text);
 				else if (lineSizeTextField->isSelected())
 					lineSizeTextField->onKeyPress(event.key.keysym, event.text.text);
+				else if (gameSeedTextField->isSelected())
+					gameSeedTextField->onKeyPress(event.key.keysym, event.text.text);
 			}
 			else if (event.type == SDL_KEYDOWN){ //Responds to keyboardinput
 				if (isStarted && manualModeRadioButton->isChecked()){
@@ -311,6 +320,8 @@ void NTTTManager::loop(){
 					boardSizeTextField->onKeyPress(event.key.keysym, "");
 				else if (lineSizeTextField->isSelected())
 					lineSizeTextField->onKeyPress(event.key.keysym, "");
+				else if (gameSeedTextField->isSelected())
+					gameSeedTextField->onKeyPress(event.key.keysym, "");
 			}
 			else if (event.type == SDL_MOUSEBUTTONDOWN){ //Responds to mouseinput
 				int x, y;
@@ -322,6 +333,8 @@ void NTTTManager::loop(){
 					boardSizeTextField->deselect();
 				if (lineSizeTextField->isSelected())
 					lineSizeTextField->deselect();
+				if (gameSeedTextField->isSelected())
+					gameSeedTextField->deselect();
 
 				if (boardCountTextField->isInside(x, y))
 					boardCountTextField->select();
@@ -329,6 +342,8 @@ void NTTTManager::loop(){
 					boardSizeTextField->select();
 				else if (lineSizeTextField->isInside(x, y))
 					lineSizeTextField->select();
+				else if (gameSeedTextField->isInside(x, y))
+					gameSeedTextField->select();
 				else if (startGameButton->isInside(x, y))
 					startGameButton->click();
 				else if (manualModeRadioButton->isInside(x, y))
@@ -400,10 +415,12 @@ void NTTTManager::loop(){
 			boardCountText->renderText();
 			boardSizeText->renderText();
 			lineSizeText->renderText();
+			gameSeedText->renderText();
 
 			boardCountTextField->renderTextField(SDL_GetTicks());
 			boardSizeTextField->renderTextField(SDL_GetTicks());
 			lineSizeTextField->renderTextField(SDL_GetTicks());
+			gameSeedTextField->renderTextField(SDL_GetTicks());
 
 			startGameButton->renderButton();
 
@@ -429,7 +446,7 @@ void NTTTManager::loop(){
 }
 
 void NTTTManager::cleanUpGameInfoViewer(){
-
+	
 	delete g_player1;
 	g_player1 = nullptr;
 	delete g_player2;
@@ -497,6 +514,11 @@ void NTTTManager::initGameInfoViewer(){
 void NTTTManager::close(){
 
 	cleanUpGameInfoViewer();
+
+	delete gameSeedText;
+	gameSeedText = nullptr;
+	delete gameSeedTextField;
+	gameSeedTextField = nullptr;
 
 	if (!g_failedFontInitHeadline)
 		TTF_CloseFont(g_headlineFont);
