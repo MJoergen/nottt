@@ -2,6 +2,7 @@
 #include "NTTTPlayerIce.h"
 #include "NTTTPlayerMike.h"
 #include "NTTTManager.h"
+#include <fstream>
 
 NTTTManager g_NtttManager;
 
@@ -213,16 +214,42 @@ int NTTTManager::manageGame()
 	}
 	
 	if (logRadioButton->isChecked())
-		writeLog();
+		writeLog(player);
 
 	//isGameThreadRunning must be set to false just before the end.
 	isGameThreadRunning = false;
 
-	return 0;
+	return player;
 } // end of manageGame
 
-void NTTTManager::writeLog(){
+void NTTTManager::writeLog(const int winner) const{
 	//TODO
+
+	std::ofstream outputFile;
+	outputFile.open("log.txt");
+
+	if (!outputFile.good()){
+		std::cout << "Failed to open log.txt" << std::endl;
+		outputFile.close();
+		return;
+	}
+
+	outputFile << "# Players: " << std::endl;
+	outputFile << "Player 1: " << m_player1->getName() << std::endl;
+	outputFile << "Player 2: " << m_player2->getName() << std::endl;
+	outputFile << "# Settings:" << std::endl;
+	outputFile << "BoardCount: " << g_game->getBoardCount() << std::endl;
+	outputFile << "BoardSize: " << g_game->getBoardSize() << std::endl;
+	outputFile << "LineSize: " << g_game->getLineSize() << std::endl;
+	outputFile << "# Moves:" << std::endl;
+	for (int index = 0; index < m_moves.size(); index++){
+		outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
+	}
+	outputFile << "# Winner:" << std::endl;
+	outputFile << "Winner: Player " << winner << std::endl;
+
+	outputFile.close();
+
 }
 
 void NTTTManager::onClick()

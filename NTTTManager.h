@@ -22,7 +22,7 @@ class NTTTManager
         void close();
         void onClick();
         int manageGame();
-		void writeLog();
+		void writeLog(const int winner) const;
 		bool isGameStarted();
 		NTTTPlayer* getPlayer1() { return m_player1; }
 		NTTTPlayer* getPlayer2() { return m_player2; }
