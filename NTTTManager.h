@@ -43,14 +43,6 @@ class NTTTManager
 		const int WINDOW_WIDTH = 900;					//The width of the window
 		const int WINDOW_HEIGHT = 600;					//The height of the window
 		
-		TTF_Font *g_headlineFont = nullptr, *g_movesFont = nullptr;
-		int g_headlineHeight, g_movesHeight, g_movesWidth;
-		bool g_failedFontInitHeadline = false, g_failedFontInitMoves = false;
-
-		Text *g_player1 = nullptr, *g_player2 = nullptr, *g_vs = nullptr, *g_boardCount = nullptr, *g_boardSize = nullptr, *g_lineSize = nullptr;
-		Text *g_winnerText = nullptr, *g_winner = nullptr;
-		int g_amountInColumn;
-
 		std::vector<Text*> g_moves;
 
 		NTTTGame *g_game;
@@ -60,8 +52,6 @@ class NTTTManager
     // These variables are only used WITHIN the NTTTManager class
     private:
         const int BOARD_PADDING = 30;					//The padding between the borders
-		void cleanUpGameInfoViewer();
-		void initGameInfoViewer();
 
         SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
 
