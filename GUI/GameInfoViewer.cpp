@@ -19,7 +19,10 @@ GameInfoViewer::GameInfoViewer(){
 	}
 
 	m_headlineHeight = TTF_FontHeight(m_headlineFont);
-	m_movesHeight = TTF_FontHeight(m_movesFont);
+
+	Texture texture("0", {0, 0, 0, 255});
+
+	m_movesHeight = texture.getHeight();
 
 }
 
@@ -55,17 +58,33 @@ void GameInfoViewer::init(){
 	m_movesWidth = w + g_NtttManager.PADDING_X * 2; //Estimate
 
 	m_amountInColumn = (int)((g_NtttManager.WINDOW_HEIGHT - (m_winnerText->getY() + m_winnerText->getHeight() + 3 * g_NtttManager.PADDING_Y)) / m_movesHeight);
+	m_amountInRow = (int)((width - g_NtttManager.PADDING_X * 2) / m_movesWidth);
+	m_maxMoves = m_amountInColumn * m_amountInRow;
+}
+
+
+void GameInfoViewer::removeMove(){
+	if (m_excessMoves > 0){
+		m_excessMoves--;
+		return;
+	}
+	if (m_moves.size() == 0)
+		return;
+	delete m_moves[m_moves.size() - 1];
+	m_moves.resize(m_moves.size() - 1);
 }
 
 void GameInfoViewer::addMove(NTTTMove move){
-	/*
+	if (m_moves.size() >= m_maxMoves){
+		m_excessMoves++;
+		return;
+	}
 	const int x = g_NtttManager.getPlayingFieldSize();
 
 	m_moves.push_back(new Text(std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
-	+ ", " + std::to_string(move.getSquareY()) + ")", m_movesFont , { 0, 255, 0 }, x + g_NtttManager.PADDING_X + (int)(m_moves.size() / m_amountInColumn) * m_movesWidth,
+		+ ", " + std::to_string(move.getSquareY()) + ")", m_movesFont, { 255, 255, 255 }, x + 2 * g_NtttManager.PADDING_X + (int)(m_moves.size() / m_amountInColumn) * m_movesWidth,
 	m_winnerText->getY() + m_winnerText->getHeight() + 2 * g_NtttManager.PADDING_Y + (m_moves.size() % m_amountInColumn) * m_movesHeight));
 
-	*/
 }
 
 void GameInfoViewer::setWinner(int index){	//Set the winner to player1 (index = 1) or player2 (index = 2)
@@ -131,4 +150,21 @@ void GameInfoViewer::renderGameInfoViewer() const{
 	m_winnerText->renderText();
 	if (m_winner != nullptr)
 		m_winner->renderText();
+
+	for (unsigned int index = 0; index < m_moves.size(); index++){
+		switch (index%2){
+		case 0:
+			SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 255, 0, 0, 255);
+			break;
+		case 1:
+			SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 0, 0, 255, 255);
+			break;
+		}
+		const int x = g_NtttManager.getPlayingFieldSize();
+		SDL_Rect rect = { x + 2 * g_NtttManager.PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth,
+			m_winnerText->getY() + m_winnerText->getHeight() + 2 * g_NtttManager.PADDING_Y + (index % m_amountInColumn) * m_movesHeight, m_movesWidth, m_movesHeight };
+		SDL_RenderFillRect(g_NtttManager.g_renderer, &rect);
+		m_moves[index]->renderText();
+	}
+
 }

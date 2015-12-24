@@ -43,7 +43,6 @@ class NTTTManager
 		const int WINDOW_WIDTH = 900;					//The width of the window
 		const int WINDOW_HEIGHT = 600;					//The height of the window
 		
-		std::vector<Text*> g_moves;
 
 		NTTTGame *g_game;
 		const int FONT_SIZE = 30;								//The size of the font

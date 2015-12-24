@@ -128,7 +128,7 @@ int NTTTManager::manageGame()
 	mikeOrderChoice = mike.chooseOrder(*g_game);
 
 	if (iceOrderChoice == mikeOrderChoice){
-		if (rand() % 2 == 0){ //TODO: Make this random by srand() or other method.
+		if (rand() % 2 == 0){
 			std::cout << "Ice starts" << std::endl;
 			m_player1 = &ice;
 			m_player2 = &mike;
@@ -157,6 +157,10 @@ int NTTTManager::manageGame()
     bool gameActive = true;
     while (!quit)
 	{
+
+		while (m_moves.size() != m_gameInfoViewer->getMovesCount())
+			SDL_Delay(5);
+
         if (gameActive)
         {
             switch (player)
@@ -172,8 +176,8 @@ int NTTTManager::manageGame()
             }
 
 			m_moves.push_back(move);
+			
 
-			m_gameInfoViewer->addMove(move);
 			player = 3 - player;
 
             if (!g_game->isActive())
@@ -360,6 +364,13 @@ void NTTTManager::loop(){
 				m_gameInfoViewer->init();
 				initGraphics = false;
 			}
+
+			for (int index = m_gameInfoViewer->getMovesCount(); index < m_moves.size(); index++){
+				m_gameInfoViewer->addMove(m_moves[index]);
+			}
+			for (int index = m_gameInfoViewer->getMovesCount(); index > m_moves.size(); index--){
+				m_gameInfoViewer->removeMove();
+			}
 			
 			for (int index = 0; index < g_game->getBoardCount(); index++){
 
@@ -377,10 +388,6 @@ void NTTTManager::loop(){
 				}
 
 				g_game->getBoards()[index].renderBoard(boardX, boardY, boardRenderSize);
-			}
-
-			for (unsigned int index = 0; index < g_moves.size(); index++){
-				g_moves[index]->renderText();
 			}
 
 			m_gameInfoViewer->renderGameInfoViewer();
