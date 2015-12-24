@@ -17,7 +17,7 @@ private:
 
 	TTF_Font *m_headlineFont = nullptr, *m_movesFont = nullptr;
 	int m_headlineHeight, m_movesHeight, m_movesWidth;
-	int m_maxMoves, m_excessMoves = 0;
+	unsigned int m_maxMoves, m_excessMoves = 0;
 
 	bool m_failedFontInitHeadline = false, m_failedFontInitMoves = false;
 public:

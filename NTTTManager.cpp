@@ -365,10 +365,10 @@ void NTTTManager::loop(){
 				initGraphics = false;
 			}
 
-			for (int index = m_gameInfoViewer->getMovesCount(); index < m_moves.size(); index++){
+			for (unsigned int index = m_gameInfoViewer->getMovesCount(); index < m_moves.size(); index++){
 				m_gameInfoViewer->addMove(m_moves[index]);
 			}
-			for (int index = m_gameInfoViewer->getMovesCount(); index > m_moves.size(); index--){
+			for (unsigned int index = m_gameInfoViewer->getMovesCount(); index > m_moves.size(); index--){
 				m_gameInfoViewer->removeMove();
 			}
 			
