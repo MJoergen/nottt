@@ -69,7 +69,6 @@ void GameInfoViewer::addMove(NTTTMove move){
 }
 
 void GameInfoViewer::setWinner(int index){	//Set the winner to player1 (index = 1) or player2 (index = 2)
-	/*
 	const int x = g_NtttManager.getPlayingFieldSize();
 	const int width = g_NtttManager.WINDOW_WIDTH - x;
 	switch (index){
@@ -82,7 +81,6 @@ void GameInfoViewer::setWinner(int index){	//Set the winner to player1 (index = 
 	m_winner->setX(x + width - g_NtttManager.PADDING_X - m_winner->getWidth());
 	break;
 	}
-	*/
 }
 
 void GameInfoViewer::cleanUp() {

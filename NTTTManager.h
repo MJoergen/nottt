@@ -74,6 +74,9 @@ class NTTTManager
 
 		NTTTPlayer *m_player1, *m_player2;
 
+		bool m_justWon = false;
+		int m_winner = 0;
+
 		const int windowSize = std::min(WINDOW_WIDTH, WINDOW_HEIGHT);
         int gridSize;
 		int boardRenderSize;

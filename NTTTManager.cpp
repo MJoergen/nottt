@@ -180,7 +180,8 @@ int NTTTManager::manageGame()
             {
                 std::cout << "Player " << player << " won!" << std::endl;
                 gameActive = false;
-				m_gameInfoViewer->setWinner(player);
+				m_winner = player;
+				m_justWon = true;
             }
         }
 		if (manualModeRadioButton->isChecked()){
@@ -341,6 +342,12 @@ void NTTTManager::loop(){
 		SDL_RenderClear(g_renderer); //Clears the screen
 
 		if (isStarted){
+
+			if (m_winner != 0 && m_justWon){
+				m_gameInfoViewer->setWinner(m_winner);
+				m_justWon = false;
+			}
+
 			if (!isGameThreadRunning){
 				int status;
 
