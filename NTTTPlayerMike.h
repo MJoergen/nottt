@@ -30,12 +30,12 @@ class Board
         /**
          * Make a move.
          */
-        void makeMove(int board, int bit);
+        void makeMove(int board, uint64_t mask);
 
         /**
          * Undo a move.
          */
-        void undoMove(int board, int bit);
+        void undoMove(int board, uint64_t mask);
 
         /**
          * Return an estimate of the current position
