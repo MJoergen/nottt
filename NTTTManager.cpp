@@ -162,7 +162,8 @@ int NTTTManager::manageGame()
 			SDL_Delay(5);
 
         if (gameActive)
-        {
+		{
+			srand(std::stoi(gameSeedTextField->getContent())); //Sets the seed before every move
             switch (player)
             {
                 case 1:
@@ -187,25 +188,24 @@ int NTTTManager::manageGame()
 				m_winner = player;
 				m_justWon = true;
             }
-        }
-		if (manualModeRadioButton->isChecked()){
-			do{
-				SDL_Delay(100);
-				if (backward){
-					if (m_moves.size() <= 1)
-						continue;
-					g_game->undoMove(m_moves[m_moves.size() - 1]);
-					m_moves.pop_back();
-					player = 3 - player;
-					backward = false;
-				}
+			if (manualModeRadioButton->isChecked()){
+				do{
+					SDL_Delay(100);
+					if (backward){
+						if (m_moves.size() <= 1)
+							continue;
+						g_game->undoMove(m_moves[m_moves.size() - 1]);
+						m_moves.pop_back();
+						player = 3 - player;
+						backward = false;
+					}
+				} while (!forward && !quit);
+				forward = false;
 			}
-			while (!forward && !quit);
-			forward = false;
-		}
-		else{
-			SDL_Delay(1000);
-		}
+			else{
+				SDL_Delay(1000);
+			}
+        }
 	}
 	
 	if (logRadioButton->isChecked())
