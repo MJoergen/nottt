@@ -189,9 +189,9 @@ int Board::alphaBeta(int alpha, int beta, int level)
                 uint64_t mask = 1ULL << bit;
                 if (m_bits[board] & mask)
                 {
-                    NTTTMove move(board, bit/8, bit%8);
                     if (m_debug)
                     {
+                        NTTTMove move(board, x, y);
                         for (int i=level; i<4; ++i)
                             std::cout << "  ";
                         std::cout << move << std::endl;
@@ -202,6 +202,7 @@ int Board::alphaBeta(int alpha, int beta, int level)
 
                     if (m_debug)
                     {
+                        NTTTMove move(board, x, y);
                         for (int i=level; i<4; ++i)
                             std::cout << "  ";
                         std::cout << move << " -> " << std::dec << val << std::endl;
@@ -259,7 +260,7 @@ NTTTMove Board::findMove(int level)
                 uint64_t mask = 1ULL << bit;
                 if (m_bits[board] & mask)
                 {
-                    NTTTMove move(board, bit/8, bit%8);
+                    NTTTMove move(board, x, y);
                     if (m_debug)
                         std::cout << "Move " << move << std::endl;
 
