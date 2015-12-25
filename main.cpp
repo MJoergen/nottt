@@ -8,6 +8,8 @@ static int playGame(NTTTGame& game, NTTTPlayer *players[], int player, int seed)
 {
     srand(seed);
 
+    std::cout << "Playing game between " << players[player]->getName() << " and " << players[1-player]->getName() << std::endl;
+
 	players[0]->chooseOrder(game);
 	players[1]->chooseOrder(game);
 
