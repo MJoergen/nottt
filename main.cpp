@@ -4,48 +4,73 @@
 #include "NTTTPlayerIce.h"
 #include "NTTTManager.h"
 
-static void test()
+static int playGame(NTTTGame& game, NTTTPlayer *players[], int player, int seed)
 {
-    NTTTGame       game;
-	game.NewGame(3, 4, 3); // Prepares the game with the chosen settings
+    srand(seed);
 
-    NTTTPlayerIce  player1;
-    NTTTPlayerMike player2;
-	player1.chooseOrder(game);
-	player2.chooseOrder(game);
+	players[0]->chooseOrder(game);
+	players[1]->chooseOrder(game);
 
-    int player = 1;
     while (true)
     {
         NTTTMove move(0, 0, 0);
         std::cout << game;
-        switch (player)
-        {
-            case 1:
-                move = player1.performMove(game);
-                game.makeMove(move, NTTTBoard::RED);
-                break;
-            case 2:
-                move = player2.performMove(game);
-                game.makeMove(move, NTTTBoard::BLUE);
-                break;
-        }
-        std::cout << "Player " << player << " played: " << move << std::endl;
-        player = 3 - player;
+        move = players[player]->performMove(game);
+        game.makeMove(move, NTTTBoard::RED);
+        std::cout << "Player " << player+1 << " (" << players[player]->getName() << ") played: " << move << std::endl;
+        player = 1 - player;
 
         if (!game.isActive())
         {
-            std::cout << "Player " << player << " won!" << std::endl;
+            std::cout << "Player " << player+1 << " (" << players[player]->getName() << ") won!" << std::endl;
             break;
         }
         std::cout << std::endl;
     }
-} // end of test
+
+    return player;
+} // end of playGame
+
+static void playMatch(int boardCount, int boardSize, int lineSize, int count)
+{
+    NTTTPlayerIce  playerIce;
+    NTTTPlayerMike playerMike;
+//    NTTTPlayer *players[] = {&playerIce, &playerMike};
+    NTTTPlayer *players[] = {&playerMike, &playerIce};
+
+    std::cout << "Playing match between " << players[0]->getName() << " and " << players[1]->getName() << std::endl;
+
+    int wins[2] = {0, 0};
+    int order[2] = {0, 0};
+    for (int i=0; i<count; ++i)
+    {
+        int seed = i+101;
+        int first = seed%2;
+        std::cout << "Game " << i+1 << ", using seed: " << seed << std::endl;
+        NTTTGame game;
+        game.NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
+        int winner = playGame(game, players, first, seed);
+        std::cout << std::endl;
+        wins[winner]++;
+        if (first == winner)
+            order[0]++;
+        else
+            order[1]++;
+    }
+    std::cout << "Player 1 (" << players[0]->getName() << ") wins: " << wins[0];
+    std::cout << " (" << (wins[0]*100)/(wins[0]+wins[1]) << "%)" << std::endl;
+    std::cout << "Player 2 (" << players[1]->getName() << ") wins: " << wins[1];
+    std::cout << " (" << (wins[1]*100)/(wins[0]+wins[1]) << "%)" << std::endl;
+    std::cout << "First player wins: " << order[0];
+    std::cout << " (" << (order[0]*100)/(order[0]+order[1]) << "%)" << std::endl;
+    std::cout << "Second player wins: " << order[1];
+    std::cout << " (" << (order[1]*100)/(order[0]+order[1]) << "%)" << std::endl;
+    exit(0);
+} // end of playMatch
 
 int main(int argc, char *argv[]) {
 
-//    test();
-//    exit(0);
+    //playMatch(4, 5, 3, 100);
 
 	std::cout << "Program starts" << std::endl;
 
