@@ -118,9 +118,8 @@ int Board::makeBits(const NTTTGame& game)
 /**
  * Make a move.
  */
-void Board::makeMove(int board, int bit)
+void Board::makeMove(int board, uint64_t mask)
 {
-    uint64_t mask = 1ULL << bit;
     assert (m_bits[board] & mask);
     m_bits[board] &= ~mask;
 
@@ -130,9 +129,8 @@ void Board::makeMove(int board, int bit)
 /**
  * Undo a move.
  */
-void Board::undoMove(int board, int bit)
+void Board::undoMove(int board, uint64_t mask)
 {
-    uint64_t mask = 1ULL << bit;
     assert ((~m_bits[board]) & mask);
     m_bits[board] |= mask;
 } // end of makeMove
@@ -196,9 +194,9 @@ int Board::alphaBeta(int alpha, int beta, int level)
                             std::cout << "  ";
                         std::cout << move << std::endl;
                     }
-                    makeMove(board, bit);
+                    makeMove(board, mask);
                     int val = -alphaBeta(-beta, -alpha, level-1);
-                    undoMove(board, bit);
+                    undoMove(board, mask);
 
                     if (m_debug)
                     {
@@ -264,9 +262,9 @@ NTTTMove Board::findMove(int level)
                     if (m_debug)
                         std::cout << "Move " << move << std::endl;
 
-                    makeMove(board, bit);
+                    makeMove(board, mask);
                     int val = -alphaBeta(-99999, 99999, level);
-                    undoMove(board, bit);
+                    undoMove(board, mask);
 
                     if (m_debug)
                         std::cout << "Move " << move << " => " << std::dec << val << std::endl;
