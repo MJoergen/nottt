@@ -14,7 +14,7 @@ static uint64_t makeLine(int x, int y, int dx, int dy, int size)
     uint64_t res = 0;
     for (int i=0; i<size; ++i)
     {
-        res |= 1UL << (x*8+y);
+        res |= 1ULL << (x*8+y);
         x += dx;
         y += dy;
     }
@@ -96,7 +96,7 @@ int Board::makeBits(const NTTTGame& game)
             {
                 if (squareStates[x][y] != NTTTBoard::UNMARKED)
                     continue;
-                val |= 1UL << (x*8+y);
+                val |= 1ULL << (x*8+y);
             }
         }
 
@@ -120,7 +120,7 @@ int Board::makeBits(const NTTTGame& game)
  */
 void Board::makeMove(int board, int bit)
 {
-    uint64_t mask = 1UL << bit;
+    uint64_t mask = 1ULL << bit;
     assert (m_bits[board] & mask);
     m_bits[board] &= ~mask;
 
@@ -132,7 +132,7 @@ void Board::makeMove(int board, int bit)
  */
 void Board::undoMove(int board, int bit)
 {
-    uint64_t mask = 1UL << bit;
+    uint64_t mask = 1ULL << bit;
     assert ((~m_bits[board]) & mask);
     m_bits[board] |= mask;
 } // end of makeMove
@@ -186,7 +186,7 @@ int Board::alphaBeta(int alpha, int beta, int level)
             for (int y=0; y<m_boardSize; ++y)
             {
                 int bit = x*8+y;
-                uint64_t mask = 1UL << bit;
+                uint64_t mask = 1ULL << bit;
                 if (m_bits[board] & mask)
                 {
                     NTTTMove move(board, bit/8, bit%8);
@@ -256,7 +256,7 @@ NTTTMove Board::findMove(int level)
             for (int y=0; y<m_boardSize; ++y)
             {
                 int bit = x*8+y;
-                uint64_t mask = 1UL << bit;
+                uint64_t mask = 1ULL << bit;
                 if (m_bits[board] & mask)
                 {
                     NTTTMove move(board, bit/8, bit%8);
