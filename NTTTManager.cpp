@@ -209,7 +209,7 @@ int NTTTManager::manageGame()
 	}
 	
 	if (logRadioButton->isChecked())
-		writeLog(player);
+		writeLog(m_winner);
 
 	//isGameThreadRunning must be set to false just before the end.
 	isGameThreadRunning = false;
@@ -236,6 +236,7 @@ void NTTTManager::writeLog(const int winner) const{
 	outputFile << "BoardCount: " << g_game->getBoardCount() << std::endl;
 	outputFile << "BoardSize: " << g_game->getBoardSize() << std::endl;
 	outputFile << "LineSize: " << g_game->getLineSize() << std::endl;
+	outputFile << "Game Seed: " << gameSeedTextField->getContent() << std::endl;
 	outputFile << "# Moves:" << std::endl;
 	for (unsigned int index = 0; index < m_moves.size(); index++){
 		outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
