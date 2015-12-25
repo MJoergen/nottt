@@ -32,7 +32,7 @@ public:
 	void addMove(NTTTMove move);
 	void removeMove();
 	void setWinner(int index); //Set the winner to player1 (index = 1) or player2 (index = 2)
-	int getMovesCount(){
+	unsigned int getMovesCount(){
 		if (m_moves.size() < m_maxMoves)
 			return m_moves.size();
 		else
