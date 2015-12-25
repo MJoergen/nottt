@@ -53,6 +53,10 @@ class Board
          */
         NTTTMove findMove(int level);
 
+        void setVersion(int version) {m_version = version;}
+
+        int getVersion() const {return m_version;}
+
     private:
         int m_boardCount;
         int m_boardSize;
@@ -62,6 +66,7 @@ class Board
         std::vector<uint64_t> m_bits;
         std::vector<uint64_t> m_lines;
         bool m_debug = DEBUG_MIKE;
+        int  m_version = 2;
 }; // end of class Board
 
 
@@ -83,6 +88,8 @@ class NTTTPlayerMike : public NTTTPlayer {
         virtual NTTTMove performMove(const NTTTGame& game);
 
 		virtual std::string getName();
+
+        void setVersion(int version) {m_board.setVersion(version);}
 
         /**
          * The destructor must always be made virtual

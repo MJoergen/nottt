@@ -1,9 +1,15 @@
+#include <sstream>
 #include <iomanip>
 #include <assert.h>
 
 #include "NTTTPlayerMike.h"
 
-std::string NTTTPlayerMike::getName() { return "MikeBot"; }
+std::string NTTTPlayerMike::getName()
+{ 
+    std::ostringstream oss;
+    oss << "MikeBot v" << m_board.getVersion();
+    return oss.str();
+}
 
 /**
  * Converts a given line segment (start, direction, length)
@@ -142,16 +148,42 @@ void Board::undoMove(int board, uint64_t mask)
 int Board::evaluate() const
 {
     int numActive = 0;
+    int sum = (rand() % 201) - 100;
+    if (m_version==2)
+        sum=0;
     for (int board=0; board<m_boardCount; ++board)
     {
         if (!isBoardDead(m_bits[board]))
             numActive++;
+        if (m_version==2)
+        {
+            // Count the number of moves that don't kill the board
+            int count = 0;
+            for (int x=0; x<m_boardSize; ++x)
+            {
+                for (int y=0; y<m_boardSize; ++y)
+                {
+                    int bit = x*8+y;
+                    uint64_t mask = 1ULL << bit;
+                    if (m_bits[board] & mask)
+                    {
+                        ((Board *)this)->makeMove(board, mask);
+                        if (!isBoardDead(m_bits[board]))
+                        {
+                            count++;
+                        }
+                        ((Board *)this)->undoMove(board, mask);
+                    }
+                }
+            }
+            sum += count % 2;
+        }
     }
 
     if (numActive == 0)
         return 99999;
 
-    return (rand() % 201) - 100;
+    return sum;
 } // end of evaluate
 
 
@@ -246,7 +278,7 @@ NTTTMove Board::findMove(int level)
 {
     m_nodes = 0;
     int bestVal = -999999;
-    NTTTMove bestMove(0, 0, 0);
+    std::vector<NTTTMove> bestMoves;
 
     for (int board=0; board<m_boardCount; ++board)
     {
@@ -272,13 +304,19 @@ NTTTMove Board::findMove(int level)
                     if (val > bestVal)
                     {
                         bestVal = val;
-                        bestMove = move;
+                        bestMoves.clear();
+                    }
+                    if (val >= bestVal)
+                    {
+                        bestMoves.push_back(move);
                     }
                 }
             }
         }
     }
     assert(bestVal > -999999);
+    assert(bestMoves.size() > 0);
+    NTTTMove bestMove = bestMoves[rand() % bestMoves.size()];
     if (m_debug)
     {
         std::cout << "nodes=" << m_nodes << std::endl;
