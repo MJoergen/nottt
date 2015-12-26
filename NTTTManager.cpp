@@ -13,6 +13,12 @@ static void onClickStatic(void *data)
 	pNtttManager->onClick();
 }
 
+static void onReadLogClickStatic(void *data)
+{
+	NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
+	pNtttManager->onReadLogClick();
+}
+
 /**git
 * Initializes SDL2, SDL2_image, SDL2_ttf and defines static variables.
 * @return A boolean representing the whether the everything initialized correctly or not.
@@ -105,15 +111,17 @@ bool NTTTManager::init()
 
 	m_readLogButton = new Button("Read Log", PADDING_X + m_logRadioButton->getX() + m_logRadioButton->getWidth(), m_logRadioButton->getY());
 
+	m_readLogButton->registerClickFunc(onReadLogClickStatic, this);
+
 	m_gameInfoViewer = new GameInfoViewer();
 
 	return true;
 }
 
-static int manageGameStatic( void* data)
+static int manageGameStatic(void* data)
 {
-    NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
-    return pNtttManager->manageGame();
+	NTTTManager *pNtttManager = static_cast<NTTTManager *> (data);
+	return pNtttManager->manageGame();
 }
 
 int NTTTManager::manageGame()
@@ -225,10 +233,10 @@ void NTTTManager::writeLog(const int winner) const{
 	//TODO
 
 	std::ofstream outputFile;
-	outputFile.open("log.txt");
+	outputFile.open("logs/" + m_logFileInputTextField->getContent());
 
 	if (!outputFile.good()){
-		std::cout << "Failed to open log.txt" << std::endl;
+		std::cout << "Failed to open logs/" << m_logFileInputTextField->getContent() << std::endl;
 		outputFile.close();
 		return;
 	}
@@ -246,10 +254,135 @@ void NTTTManager::writeLog(const int winner) const{
 		outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
 	}
 	outputFile << "# Winner:" << std::endl;
-	outputFile << "Winner: Player " << winner << std::endl;
+	outputFile << "Winner: " << winner << std::endl;
 
 	outputFile.close();
 
+}
+
+void NTTTManager::onReadLogClick(){
+	std::ifstream inputFile;
+	inputFile.open("logs/" + m_logFileInputTextField->getContent());
+
+	if (!inputFile.good()){
+		std::cout << "Failed to open logs/" << m_logFileInputTextField->getContent() << std::endl;
+		inputFile.close();
+		return;
+	}
+
+	unsigned int boardCount;
+	unsigned int boardSize;
+	unsigned int lineSize;
+	int gameSeed;
+
+	bool players = false;
+	bool settings = false;
+	bool moves = false;
+	bool winner = false;
+
+	std::string player1, player2;
+
+	std::vector<NTTTMove> performedMoves;
+
+	unsigned int winneri = 0;
+	
+	std::string currentLine;
+	char c;
+	while ((c = inputFile.get()) != EOF){
+
+		if (c != '\n'){
+			currentLine += c;
+		} else {
+
+			if (currentLine.compare(0, 9, "# Players") == 0){
+				players = true;
+				settings = false;
+				moves = false;
+				winner = false;
+			}
+			else if (currentLine.compare(0, 10, "# Settings") == 0){
+				players = false;
+				settings = true;
+				moves = false;
+				winner = false;
+			}
+			else if (currentLine.compare(0, 7, "# Moves") == 0){
+				players = false;
+				settings = false;
+				moves = true;
+				winner = false;
+			}
+			else if (currentLine.compare(0, 8, "# Winner") == 0){
+				players = false;
+				settings = false;
+				moves = false;
+				winner = true;
+			}
+			else if (players){
+				if (currentLine.size() >= 8 && currentLine.compare(0, 8, "Player 1") == 0){
+					player1 = currentLine.substr(currentLine.find(":") + 2, currentLine.size());
+				}
+				else if (currentLine.size() >= 8 && currentLine.compare(0, 8, "Player 2") == 0){
+					player2 = currentLine.substr(currentLine.find(":") + 2, currentLine.size());
+				}
+			}
+			else if (settings){
+				if (currentLine.size() >= 10 && currentLine.compare(0, 10, "BoardCount") == 0){
+					boardCount = std::stoi(currentLine.substr(currentLine.find(":") + 1, currentLine.size()));
+				}
+				else if (currentLine.size() >= 9 && currentLine.compare(0, 9, "BoardSize") == 0){
+					boardSize = std::stoi(currentLine.substr(currentLine.find(":") + 1, currentLine.size()));
+				}
+				else if (currentLine.size() >= 8 && currentLine.compare(0, 8, "LineSize") == 0){
+					lineSize = std::stoi(currentLine.substr(currentLine.find(":") + 1, currentLine.size()));
+				}
+				else if (currentLine.size() >= 9 && currentLine.compare(0, 9, "Game Seed") == 0){
+					gameSeed = std::stoi(currentLine.substr(currentLine.find(":") + 1, currentLine.size()));
+				}
+			}
+			else if (moves){
+				int boardIndex = std::stoi(currentLine.substr(0, currentLine.find(":")));
+				int squareX = std::stoi(currentLine.substr(currentLine.find("(") + 1, currentLine.find(",")));
+				int squareY = std::stoi(currentLine.substr(currentLine.find(",") + 1, currentLine.find(")")));
+				performedMoves.push_back(NTTTMove(boardIndex, squareX, squareY));
+			}
+			else if (winner){
+				if (currentLine.size() >= 6 && currentLine.compare(0, 6, "Winner") == 0){
+					winneri = std::stoi(currentLine.substr(currentLine.find(":") + 1, currentLine.size()));
+				}
+			}
+			currentLine = "";
+		}
+	}
+
+	std::cout << "BoardCount: " << boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << ", Game Seed: " << gameSeed << std::endl;
+	std::cout << "Moves: " << performedMoves.size() << std::endl;
+
+	NTTTPlayerIce ice;
+	NTTTPlayerMike mike;
+	
+	if (( player1.compare(ice.getName()) != 0 && player1.compare(mike.getName()) ) || ( player2.compare(ice.getName()) != 0 && player2.compare(mike.getName()) != 0 )){
+		std::cout << "Unable to play game, the bots are non-existent" << std::endl;
+		inputFile.close();
+		return;
+	}
+
+	g_game->NewGame(boardCount, boardSize, lineSize);
+
+	m_moves = performedMoves;
+
+	for (int index = 0; index < performedMoves.size(); index++){
+		if (index % 2 == 0){
+			g_game->makeMove(performedMoves[index], NTTTBoard::RED);
+		}
+		else{
+			g_game->makeMove(performedMoves[index], NTTTBoard::BLUE);
+		}
+	}
+
+	//TODO
+
+	inputFile.close();
 }
 
 void NTTTManager::onClick()
@@ -266,6 +399,7 @@ void NTTTManager::onClick()
 		<< boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << " }" << std::endl;
 	
 	g_game->NewGame(boardCount, boardSize, lineSize); // Prepares the game with the chosen settings
+	m_moves.clear();
 	isGameThreadRunning = true;
 	gameThread = SDL_CreateThread(manageGameStatic, "Game Thread", this);
 	if (gameThread == NULL){

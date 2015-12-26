@@ -19,8 +19,9 @@ class NTTTManager
     public:
         bool init();
         void loop();
-        void close();
-        void onClick();
+		void close();
+		void onClick();
+		void onReadLogClick();
         int manageGame();
 		void writeLog(const int winner) const;
 		bool isGameStarted();
