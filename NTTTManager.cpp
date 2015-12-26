@@ -371,7 +371,7 @@ void NTTTManager::onReadLogClick(){
 
 	m_moves = performedMoves;
 
-	for (int index = 0; index < performedMoves.size(); index++){
+	for (unsigned int index = 0; index < performedMoves.size(); index++){
 		if (index % 2 == 0){
 			g_game->makeMove(performedMoves[index], NTTTBoard::RED);
 		}
