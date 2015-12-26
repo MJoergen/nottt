@@ -54,12 +54,13 @@ class NTTTManager
 
         SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
 
-		Text *boardCountText = nullptr, *boardSizeText = nullptr, *lineSizeText = nullptr,
-			*manualModeText = nullptr, *logText = nullptr, *gameSeedText = nullptr;										//Text-elements in the GUI
-        TextField *boardCountTextField = nullptr, *boardSizeTextField = nullptr, *lineSizeTextField = nullptr,
-			*gameSeedTextField = nullptr;																				//TextField-elements in the GUI
-        Button *startGameButton = nullptr;																				//The button to start the game in the GUI
-		RadioButton *manualModeRadioButton = nullptr, *logRadioButton = nullptr;
+		Text *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr,
+			*m_manualModeText = nullptr, *m_logText = nullptr, *m_gameSeedText = nullptr,
+			*m_logFileInputText = nullptr;																				//Text-elements in the GUI
+        TextField *m_boardCountTextField = nullptr, *m_boardSizeTextField = nullptr, *m_lineSizeTextField = nullptr,
+			*m_gameSeedTextField = nullptr, *m_logFileInputTextField = nullptr;											//TextField-elements in the GUI
+        Button *m_startGameButton = nullptr, *m_readLogButton = nullptr;												//The button to start the game in the GUI
+		RadioButton *m_manualModeRadioButton = nullptr, *m_logRadioButton = nullptr;
 		GameInfoViewer *m_gameInfoViewer = nullptr;
 
         SDL_Thread* gameThread;

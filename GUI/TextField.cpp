@@ -112,7 +112,7 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
 	}
 	else{
 		if (m_limit < 0 || !(m_content.length() + text.length() <= (unsigned) m_limit)){
-			m_content.append(text);
+			m_content.insert(m_cursor, text);
 			m_cursor += text.length();
 			calculateCursorPPos(m_cursor_ppos);
 			genTexture();

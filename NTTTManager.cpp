@@ -78,28 +78,32 @@ bool NTTTManager::init()
 	g_checkMark = new Texture("CheckMark.png");
 	g_game = new NTTTGame();
 
-	boardCountText = new Text("BoardCount: ", PADDING_X, PADDING_Y);
-	boardCountTextField = new TextField(TextField::NUMBER, "3", PADDING_X + boardCountText->getWidth() + boardCountText->getX(), PADDING_Y, 60, -1);
+	m_boardCountText = new Text("BoardCount: ", PADDING_X, PADDING_Y);
+	m_boardCountTextField = new TextField(TextField::NUMBER, "3", PADDING_X + m_boardCountText->getWidth() + m_boardCountText->getX(), PADDING_Y, 60, -1);
 
-	boardSizeText = new Text("BoardSize: ", PADDING_X + boardCountTextField->getWidth() + boardCountTextField->getX(), PADDING_Y);
-	boardSizeTextField = new TextField(TextField::NUMBER, "4", PADDING_X + boardSizeText->getWidth() + boardSizeText->getX(), PADDING_Y, 30, 8);
+	m_boardSizeText = new Text("BoardSize: ", PADDING_X + m_boardCountTextField->getWidth() + m_boardCountTextField->getX(), PADDING_Y);
+	m_boardSizeTextField = new TextField(TextField::NUMBER, "4", PADDING_X + m_boardSizeText->getWidth() + m_boardSizeText->getX(), PADDING_Y, 30, 8);
 
-	lineSizeText = new Text("LineSize: ", PADDING_X + boardSizeTextField->getWidth() + boardSizeTextField->getX(), PADDING_Y);
-	lineSizeTextField = new TextField(TextField::NUMBER, "3", PADDING_X + lineSizeText->getWidth() + lineSizeText->getX(), PADDING_Y, 30, 8);
+	m_lineSizeText = new Text("LineSize: ", PADDING_X + m_boardSizeTextField->getWidth() + m_boardSizeTextField->getX(), PADDING_Y);
+	m_lineSizeTextField = new TextField(TextField::NUMBER, "3", PADDING_X + m_lineSizeText->getWidth() + m_lineSizeText->getX(), PADDING_Y, 30, 8);
 
-	startGameButton = new Button("Start Game", PADDING_X + lineSizeTextField->getWidth() + lineSizeTextField->getX(), PADDING_Y);
+	m_startGameButton = new Button("Start Game", PADDING_X + m_lineSizeTextField->getWidth() + m_lineSizeTextField->getX(), PADDING_Y);
 
-	startGameButton->registerClickFunc(onClickStatic, this);
+	m_startGameButton->registerClickFunc(onClickStatic, this);
 
-	manualModeText = new Text("Manual Mode: ", PADDING_X, PADDING_Y * 2 + boardCountTextField->getHeight());
-	manualModeRadioButton = new RadioButton(false, PADDING_X + manualModeText->getX() + manualModeText->getWidth(), manualModeText->getY());
+	m_manualModeText = new Text("Manual Mode: ", PADDING_X, PADDING_Y * 2 + m_boardCountTextField->getHeight());
+	m_manualModeRadioButton = new RadioButton(false, PADDING_X + m_manualModeText->getX() + m_manualModeText->getWidth(), m_manualModeText->getY());
 
-	gameSeedText = new Text("Game Seed: ", PADDING_X + manualModeRadioButton->getX() + manualModeRadioButton->getWidth(), manualModeRadioButton->getY());
-	gameSeedTextField = new TextField(TextField::NUMBER, "12345", PADDING_X + gameSeedText->getX() + gameSeedText->getWidth(), gameSeedText->getY(), 150, INT_MAX);
+	m_gameSeedText = new Text("Game Seed: ", PADDING_X + m_manualModeRadioButton->getX() + m_manualModeRadioButton->getWidth(), m_manualModeRadioButton->getY());
+	m_gameSeedTextField = new TextField(TextField::NUMBER, "12345", PADDING_X + m_gameSeedText->getX() + m_gameSeedText->getWidth(), m_gameSeedText->getY(), 150, INT_MAX);
 
-	logText = new Text("Write log: ", PADDING_X, manualModeText->getY() + PADDING_Y + manualModeText->getHeight());
-	logRadioButton = new RadioButton(false, PADDING_X + logText->getX() + logText->getWidth(), logText->getY());
+	m_logFileInputText = new Text("Log name: ", PADDING_X, m_manualModeText->getY() + PADDING_Y + m_manualModeText->getHeight());
+	m_logFileInputTextField = new TextField(TextField::TEXT, "log.txt", PADDING_X + m_logFileInputText->getX() + m_logFileInputText->getWidth(), m_logFileInputText->getY(), 200, -1);
 
+	m_logText = new Text("Write log: ", PADDING_X + m_logFileInputTextField->getX() + m_logFileInputTextField->getWidth(), m_logFileInputTextField->getY());
+	m_logRadioButton = new RadioButton(false, PADDING_X + m_logText->getX() + m_logText->getWidth(), m_logText->getY());
+
+	m_readLogButton = new Button("Read Log", PADDING_X + m_logRadioButton->getX() + m_logRadioButton->getWidth(), m_logRadioButton->getY());
 
 	m_gameInfoViewer = new GameInfoViewer();
 
@@ -115,7 +119,7 @@ static int manageGameStatic( void* data)
 int NTTTManager::manageGame()
 {
 
-	srand(std::stoi(gameSeedTextField->getContent()));
+	srand(std::stoi(m_gameSeedTextField->getContent()));
 	//This is where the game goes.
 
 	//Some test code
@@ -163,7 +167,7 @@ int NTTTManager::manageGame()
 
         if (gameActive)
 		{
-			srand(std::stoi(gameSeedTextField->getContent())); //Sets the seed before every move
+			srand(std::stoi(m_gameSeedTextField->getContent())); //Sets the seed before every move
             switch (player)
             {
                 case 1:
@@ -188,7 +192,7 @@ int NTTTManager::manageGame()
 				m_winner = player;
 				m_justWon = true;
             }
-			if (manualModeRadioButton->isChecked()){
+			if (m_manualModeRadioButton->isChecked()){
 				do{
 					SDL_Delay(100);
 					if (backward){
@@ -208,7 +212,7 @@ int NTTTManager::manageGame()
         }
 	}
 	
-	if (logRadioButton->isChecked())
+	if (m_logRadioButton->isChecked())
 		writeLog(m_winner);
 
 	//isGameThreadRunning must be set to false just before the end.
@@ -236,7 +240,7 @@ void NTTTManager::writeLog(const int winner) const{
 	outputFile << "BoardCount: " << g_game->getBoardCount() << std::endl;
 	outputFile << "BoardSize: " << g_game->getBoardSize() << std::endl;
 	outputFile << "LineSize: " << g_game->getLineSize() << std::endl;
-	outputFile << "Game Seed: " << gameSeedTextField->getContent() << std::endl;
+	outputFile << "Game Seed: " << m_gameSeedTextField->getContent() << std::endl;
 	outputFile << "# Moves:" << std::endl;
 	for (unsigned int index = 0; index < m_moves.size(); index++){
 		outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
@@ -255,9 +259,9 @@ void NTTTManager::onClick()
 		return;
 	}
 
-	const unsigned int boardCount = std::stoi(boardCountTextField->getContent());
-	const unsigned int boardSize = std::stoi(boardSizeTextField->getContent());
-	const unsigned int lineSize = std::stoi(lineSizeTextField->getContent());
+	const unsigned int boardCount = std::stoi(m_boardCountTextField->getContent());
+	const unsigned int boardSize = std::stoi(m_boardSizeTextField->getContent());
+	const unsigned int lineSize = std::stoi(m_lineSizeTextField->getContent());
 	std::cout << "Starts the game with the following settings: { BoardCount: "
 		<< boardCount << ", BoardSize: " << boardSize << ", LineSize: " << lineSize << " }" << std::endl;
 	
@@ -288,58 +292,68 @@ void NTTTManager::loop(){
 				quit = true;
 			}
 			else if (event.type == SDL_TEXTINPUT){ //Responds to textinput
-				if (boardCountTextField->isSelected())
-					boardCountTextField->onKeyPress(event.key.keysym, event.text.text);
-				else if (boardSizeTextField->isSelected())
-					boardSizeTextField->onKeyPress(event.key.keysym, event.text.text);
-				else if (lineSizeTextField->isSelected())
-					lineSizeTextField->onKeyPress(event.key.keysym, event.text.text);
-				else if (gameSeedTextField->isSelected())
-					gameSeedTextField->onKeyPress(event.key.keysym, event.text.text);
+				if (m_boardCountTextField->isSelected())
+					m_boardCountTextField->onKeyPress(event.key.keysym, event.text.text);
+				else if (m_boardSizeTextField->isSelected())
+					m_boardSizeTextField->onKeyPress(event.key.keysym, event.text.text);
+				else if (m_lineSizeTextField->isSelected())
+					m_lineSizeTextField->onKeyPress(event.key.keysym, event.text.text);
+				else if (m_gameSeedTextField->isSelected())
+					m_gameSeedTextField->onKeyPress(event.key.keysym, event.text.text);
+				else if (m_logFileInputTextField->isSelected())
+					m_logFileInputTextField->onKeyPress(event.key.keysym, event.text.text);
 			}
 			else if (event.type == SDL_KEYDOWN){ //Responds to keyboardinput
-				if (isStarted && manualModeRadioButton->isChecked()){
+				if (isStarted && m_manualModeRadioButton->isChecked()){
 					if (event.key.keysym.sym == SDLK_RIGHT)
 						forward = true;
 					else if (event.key.keysym.sym == SDLK_LEFT)
 							backward = true;
 				}
-				else if (boardCountTextField->isSelected())
-					boardCountTextField->onKeyPress(event.key.keysym, "");
-				else if (boardSizeTextField->isSelected())
-					boardSizeTextField->onKeyPress(event.key.keysym, "");
-				else if (lineSizeTextField->isSelected())
-					lineSizeTextField->onKeyPress(event.key.keysym, "");
-				else if (gameSeedTextField->isSelected())
-					gameSeedTextField->onKeyPress(event.key.keysym, "");
+				else if (m_boardCountTextField->isSelected())
+					m_boardCountTextField->onKeyPress(event.key.keysym, "");
+				else if (m_boardSizeTextField->isSelected())
+					m_boardSizeTextField->onKeyPress(event.key.keysym, "");
+				else if (m_lineSizeTextField->isSelected())
+					m_lineSizeTextField->onKeyPress(event.key.keysym, "");
+				else if (m_gameSeedTextField->isSelected())
+					m_gameSeedTextField->onKeyPress(event.key.keysym, "");
+				else if (m_logFileInputTextField->isSelected())
+					m_logFileInputTextField->onKeyPress(event.key.keysym, "");
 			}
 			else if (event.type == SDL_MOUSEBUTTONDOWN){ //Responds to mouseinput
 				int x, y;
 				SDL_GetMouseState(&x, &y);
 
-				if (boardCountTextField->isSelected())
-					boardCountTextField->deselect();
-				if (boardSizeTextField->isSelected())
-					boardSizeTextField->deselect();
-				if (lineSizeTextField->isSelected())
-					lineSizeTextField->deselect();
-				if (gameSeedTextField->isSelected())
-					gameSeedTextField->deselect();
+				if (m_boardCountTextField->isSelected())
+					m_boardCountTextField->deselect();
+				if (m_boardSizeTextField->isSelected())
+					m_boardSizeTextField->deselect();
+				if (m_lineSizeTextField->isSelected())
+					m_lineSizeTextField->deselect();
+				if (m_gameSeedTextField->isSelected())
+					m_gameSeedTextField->deselect();
+				if (m_logFileInputTextField->isSelected())
+					m_logFileInputTextField->deselect();
 
-				if (boardCountTextField->isInside(x, y))
-					boardCountTextField->select();
-				else if (boardSizeTextField->isInside(x, y))
-					boardSizeTextField->select();
-				else if (lineSizeTextField->isInside(x, y))
-					lineSizeTextField->select();
-				else if (gameSeedTextField->isInside(x, y))
-					gameSeedTextField->select();
-				else if (startGameButton->isInside(x, y))
-					startGameButton->click();
-				else if (manualModeRadioButton->isInside(x, y))
-					manualModeRadioButton->toggle();
-				else if (logRadioButton->isInside(x, y))
-					logRadioButton->toggle();
+				if (m_boardCountTextField->isInside(x, y))
+					m_boardCountTextField->select();
+				else if (m_boardSizeTextField->isInside(x, y))
+					m_boardSizeTextField->select();
+				else if (m_lineSizeTextField->isInside(x, y))
+					m_lineSizeTextField->select();
+				else if (m_gameSeedTextField->isInside(x, y))
+					m_gameSeedTextField->select();
+				else if (m_logFileInputTextField->isInside(x, y))
+					m_logFileInputTextField->select();
+				else if (m_startGameButton->isInside(x, y))
+					m_startGameButton->click();
+				else if (m_readLogButton->isInside(x, y))
+					m_readLogButton->click();
+				else if (m_manualModeRadioButton->isInside(x, y))
+					m_manualModeRadioButton->toggle();
+				else if (m_logRadioButton->isInside(x, y))
+					m_logRadioButton->toggle();
 			}
 		}
 
@@ -394,23 +408,27 @@ void NTTTManager::loop(){
 			m_gameInfoViewer->renderGameInfoViewer();
 		}
 		else {
-			boardCountText->renderText();
-			boardSizeText->renderText();
-			lineSizeText->renderText();
-			gameSeedText->renderText();
+			m_boardCountText->renderText();
+			m_boardSizeText->renderText();
+			m_lineSizeText->renderText();
+			m_gameSeedText->renderText();
 
-			boardCountTextField->renderTextField(SDL_GetTicks());
-			boardSizeTextField->renderTextField(SDL_GetTicks());
-			lineSizeTextField->renderTextField(SDL_GetTicks());
-			gameSeedTextField->renderTextField(SDL_GetTicks());
+			m_boardCountTextField->renderTextField(SDL_GetTicks());
+			m_boardSizeTextField->renderTextField(SDL_GetTicks());
+			m_lineSizeTextField->renderTextField(SDL_GetTicks());
+			m_gameSeedTextField->renderTextField(SDL_GetTicks());
 
-			startGameButton->renderButton();
+			m_startGameButton->renderButton();
 
-			manualModeText->renderText();
-			manualModeRadioButton->renderRadioButton();
+			m_manualModeText->renderText();
+			m_manualModeRadioButton->renderRadioButton();
 
-			logText->renderText();
-			logRadioButton->renderRadioButton();
+			m_logFileInputText->renderText();
+			m_logFileInputTextField->renderTextField(SDL_GetTicks());
+
+			m_logText->renderText();
+			m_logRadioButton->renderRadioButton();
+			m_readLogButton->renderButton();
 		}
 
 		SDL_RenderPresent(g_renderer); //Updates the screen
@@ -431,11 +449,19 @@ void NTTTManager::loop(){
 * Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
 */
 void NTTTManager::close(){
+
+	delete m_readLogButton;
+	m_readLogButton = nullptr;
 	
-	delete gameSeedText;
-	gameSeedText = nullptr;
-	delete gameSeedTextField;
-	gameSeedTextField = nullptr;
+	delete m_logFileInputText;
+	m_logFileInputText = nullptr;
+	delete m_logFileInputTextField;
+	m_logFileInputTextField = nullptr;
+
+	delete m_gameSeedText;
+	m_gameSeedText = nullptr;
+	delete m_gameSeedTextField;
+	m_gameSeedTextField = nullptr;
 	
 	delete m_gameInfoViewer;
 	m_gameInfoViewer = nullptr;
@@ -450,33 +476,33 @@ void NTTTManager::close(){
 	delete g_blueCross;
 	g_blueCross = nullptr;
 
-	delete logText;
-	logText = nullptr;
-	delete logRadioButton;
-	logRadioButton = nullptr;
+	delete m_logText;
+	m_logText = nullptr;
+	delete m_logRadioButton;
+	m_logRadioButton = nullptr;
 
-	delete manualModeText;
-	manualModeText = nullptr;
-	delete manualModeRadioButton;
-	manualModeRadioButton = nullptr;
+	delete m_manualModeText;
+	m_manualModeText = nullptr;
+	delete m_manualModeRadioButton;
+	m_manualModeRadioButton = nullptr;
 
-	delete boardCountText;
-	boardCountText = nullptr;
-	delete boardCountTextField;
-	boardCountTextField = nullptr;
+	delete m_boardCountText;
+	m_boardCountText = nullptr;
+	delete m_boardCountTextField;
+	m_boardCountTextField = nullptr;
 
-	delete boardSizeText;
-	boardSizeText = nullptr;
-	delete boardSizeTextField;
-	boardSizeTextField = nullptr;
+	delete m_boardSizeText;
+	m_boardSizeText = nullptr;
+	delete m_boardSizeTextField;
+	m_boardSizeTextField = nullptr;
 
-	delete lineSizeText;
-	lineSizeText = nullptr;
-	delete lineSizeTextField;
-	lineSizeTextField = nullptr;
+	delete m_lineSizeText;
+	m_lineSizeText = nullptr;
+	delete m_lineSizeTextField;
+	m_lineSizeTextField = nullptr;
 
-	delete startGameButton;
-	startGameButton = nullptr;
+	delete m_startGameButton;
+	m_startGameButton = nullptr;
 
 	TTF_CloseFont(g_font);
 
