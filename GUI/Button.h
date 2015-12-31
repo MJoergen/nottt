@@ -23,6 +23,9 @@ public:
 	const int getHeight() const;
 	const int getX() const { return m_x; }
 	const int getY() const { return m_y; }
+	void setX(const unsigned int x) { m_x = x; }
+	void setY(const unsigned int y) { m_y = y; }
+	void set(const unsigned int x, const unsigned int y) { m_x = x; m_y = y; }
 	
 	void click() const;
 	void registerClickFunc(void(*action)(void*), void*);

@@ -13,8 +13,8 @@ private:
 	unsigned int m_width, m_height;
 public:
 	Texture(const std::string path);
-	Texture(const std::string text, SDL_Color textColor);
-	Texture(const std::string text, TTF_Font* font, SDL_Color textColor);
+	Texture(const std::string text, const SDL_Color textColor);
+	Texture(const std::string text, TTF_Font* font, const SDL_Color textColor);
 	virtual ~Texture();
 	void freeTexture();
 	const unsigned int getWidth() const { return m_width; }

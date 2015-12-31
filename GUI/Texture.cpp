@@ -20,7 +20,7 @@ Texture::Texture(const std::string path){
 	SDL_FreeSurface(loadedSurface);
 }
 
-Texture::Texture(const std::string text, SDL_Color textColor){
+Texture::Texture(const std::string text, const SDL_Color textColor){
 	
 	SDL_Surface* textSurface = TTF_RenderText_Solid(g_NtttManager.g_font, text.c_str(), textColor);
 	if (textSurface == NULL){
@@ -39,7 +39,7 @@ Texture::Texture(const std::string text, SDL_Color textColor){
 	SDL_FreeSurface(textSurface);
 }
 
-Texture::Texture(const std::string text, TTF_Font* font, SDL_Color textColor){
+Texture::Texture(const std::string text, TTF_Font* font, const SDL_Color textColor){
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
 	if (textSurface == NULL){
 		std::cout << "Failed creating Text Surface: " << TTF_GetError() << std::endl;
