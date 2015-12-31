@@ -69,6 +69,9 @@ void BotsScreen::input(const SDL_Event* e){
 }
 
 void BotsScreen::cleanUp(){
+	delete m_headline;
+	m_headline = nullptr;
+
 	delete m_availableBotsText;
 	m_availableBotsText = nullptr;
 
