@@ -117,11 +117,11 @@ bool NTTTManager::init()
 
 	m_gameInfoViewer = new GameInfoViewer();
 
-	m_botsScreen = new BotsScreen();
-	m_botsScreen->init(&m_currentState, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_botsScreen = new BotsScreen(&m_currentState);
+	m_botsScreen->init(g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	m_mainMenuScreen = new MainMenuScreen();
-	m_mainMenuScreen->init(&m_currentState, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_mainMenuScreen = new MainMenuScreen(&m_currentState);
+	m_mainMenuScreen->init(g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	return true;
 }
@@ -473,6 +473,13 @@ void NTTTManager::update(){
 			initGraphics = false;
 		}
 
+		for (unsigned int index = m_gameInfoViewer->getMovesCount(); index < m_moves.size(); index++){
+			m_gameInfoViewer->addMove(m_moves[index]);
+		}
+		for (unsigned int index = m_gameInfoViewer->getMovesCount(); index > m_moves.size(); index--){
+			m_gameInfoViewer->removeMove();
+		}
+
 	}
 }
 
@@ -549,13 +556,6 @@ void NTTTManager::render() const{
 	SDL_RenderClear(g_renderer); //Clears the screen
 
 	if (isStarted){
-
-		for (unsigned int index = m_gameInfoViewer->getMovesCount(); index < m_moves.size(); index++){
-			m_gameInfoViewer->addMove(m_moves[index]);
-		}
-		for (unsigned int index = m_gameInfoViewer->getMovesCount(); index > m_moves.size(); index--){
-			m_gameInfoViewer->removeMove();
-		}
 
 		for (int index = 0; index < g_game->getBoardCount(); index++){
 

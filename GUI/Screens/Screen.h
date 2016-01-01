@@ -8,12 +8,12 @@ class Screen {
 public:
 
 	enum ScreenState{
-		MAIN_MENU, NEW_GAME, LOAD_GAME, STATISTICS, BOTS, EXIT
+		MAIN_MENU, NEW_GAME, LOAD_GAME, STATISTICS, BOTS, EXIT, GAME
 	};
 
 	virtual ~Screen() {};
-	virtual void init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height) = 0;
-	virtual void render(const SDL_Renderer* renderer) const = 0;
+	virtual void init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height) = 0;
+	virtual void render(SDL_Renderer* renderer) const = 0;
 	virtual void input(const SDL_Event & e) = 0;
 	virtual void úpdate() = 0;
 	virtual void cleanUp() = 0;

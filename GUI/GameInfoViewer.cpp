@@ -122,6 +122,13 @@ void GameInfoViewer::cleanUp() {
 
 	delete m_vs;
 	m_vs = nullptr;
+
+	for (unsigned int index = 0; index < m_moves.size(); index++){
+		delete m_moves[index];
+		m_moves[index] = nullptr;
+	}
+	m_moves.resize(0);
+
 }
 
 GameInfoViewer::~GameInfoViewer(){

@@ -52,6 +52,10 @@ void MainMenuScreen::onClickExit(){
 	(*m_currentState) = EXIT;
 }
 
+MainMenuScreen::MainMenuScreen(ScreenState* currentState){
+	m_currentState = currentState;
+}
+
 MainMenuScreen::~MainMenuScreen(){
 	cleanUp();
 }
@@ -60,8 +64,7 @@ void MainMenuScreen::úpdate() {
 
 }
 
-void MainMenuScreen::init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
-	m_currentState = currentState;
+void MainMenuScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
 
 	const unsigned int halfWidth = width / 2;
 	const unsigned int halfHeight = height / 2;
@@ -96,7 +99,7 @@ void MainMenuScreen::init(ScreenState* currentState, TTF_Font* headlineFont, TTF
 
 }
 
-void MainMenuScreen::render(const SDL_Renderer* renderer) const{ // The renderer will be used later
+void MainMenuScreen::render(SDL_Renderer* renderer) const{ // The renderer will be used later
 	m_headlineText->renderText();
 
 	m_newGameButton->renderButton();

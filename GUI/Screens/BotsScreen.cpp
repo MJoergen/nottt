@@ -12,6 +12,10 @@ void BotsScreen::onClick(){
 	(*m_currentState) = MAIN_MENU;
 }
 
+BotsScreen::BotsScreen(ScreenState* currentState){
+	m_currentState = currentState;
+}
+
 BotsScreen::~BotsScreen(){
 	cleanUp();
 }
@@ -20,8 +24,7 @@ void BotsScreen::úpdate() {
 
 }
 
-void BotsScreen::init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
-	m_currentState = currentState;
+void BotsScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
 
 	const unsigned int halfWidth = width / 2;
 	const SDL_Color black = { 0, 0, 0, 255 };
@@ -51,7 +54,7 @@ void BotsScreen::init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Fon
 
 }
 
-void BotsScreen::render(const SDL_Renderer* renderer) const{ // The renderer will be used later
+void BotsScreen::render(SDL_Renderer* renderer) const{ // The renderer will be used later
 	m_headline->renderText();
 	m_availableBotsText->renderText();
 

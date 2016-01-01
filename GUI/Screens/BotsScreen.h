@@ -8,9 +8,10 @@
 
 class BotsScreen : public Screen {
 public:
+	BotsScreen(ScreenState* currentState);
 	virtual ~BotsScreen();
-	virtual void init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
-	virtual void render(const SDL_Renderer* renderer) const;
+	virtual void init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
+	virtual void render(SDL_Renderer* renderer) const;
 	virtual void input(const SDL_Event & e);
 	virtual void úpdate();
 	virtual void cleanUp();
