@@ -54,7 +54,7 @@ class NTTTManager
     // These variables are only used WITHIN the NTTTManager class
     private:
 		Screen::ScreenState m_currentState = Screen::MAIN_MENU;
-		Screen *m_botsScreen = nullptr;
+		Screen *m_botsScreen = nullptr, *m_mainMenuScreen = nullptr;
 
 		void render() const;
 		void input(SDL_Event & e);

@@ -5,6 +5,7 @@
 #include <fstream>
 #include <climits>
 #include "GUI/Screens/BotsScreen.h"
+#include "GUI/Screens/MainMenuScreen.h"
 
 NTTTManager g_NtttManager;
 
@@ -118,6 +119,9 @@ bool NTTTManager::init()
 
 	m_botsScreen = new BotsScreen();
 	m_botsScreen->init(&m_currentState, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+	m_mainMenuScreen = new MainMenuScreen();
+	m_mainMenuScreen->init(&m_currentState, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	return true;
 }
@@ -598,6 +602,7 @@ void NTTTManager::render() const{
 		m_readLogButton->renderButton();
 		
 		//m_botsScreen->render(g_renderer);
+		//m_mainMenuScreen->render(g_renderer);
 	}
 
 	SDL_RenderPresent(g_renderer); //Updates the screen
@@ -608,6 +613,9 @@ void NTTTManager::render() const{
 * Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
 */
 void NTTTManager::close(){
+
+	delete m_mainMenuScreen;
+	m_mainMenuScreen = nullptr;
 
 	delete m_botsScreen;
 	m_botsScreen = nullptr;

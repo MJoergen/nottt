@@ -1,9 +1,13 @@
 #ifndef _MAINMENU_SCREEN_H_
 #define _MAINMENU_SCREEN_H_
 
+#include "Screen.h"
+#include "../Text.h"
+#include "../Button.h"
+
 class MainMenuScreen : public Screen {
 public:
-	virtual ~BotsScreen();
+	virtual ~MainMenuScreen();
 	virtual void init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
 	virtual void render(const SDL_Renderer* renderer) const;
 	virtual void input(const SDL_Event & e);

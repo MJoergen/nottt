@@ -8,7 +8,7 @@ class Screen {
 public:
 
 	enum ScreenState{
-		MAIN_MENU, NEW_GAME, LOAD_GAME, STATISTICS, BOTS
+		MAIN_MENU, NEW_GAME, LOAD_GAME, STATISTICS, BOTS, EXIT
 	};
 
 	virtual ~Screen() {};
