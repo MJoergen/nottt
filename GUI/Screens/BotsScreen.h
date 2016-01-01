@@ -12,6 +12,7 @@ public:
 	virtual void init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
 	virtual void render(const SDL_Renderer* renderer) const;
 	virtual void input(const SDL_Event* e);
+	virtual void úpdate();
 	virtual void cleanUp();
 	void onClick();
 private:

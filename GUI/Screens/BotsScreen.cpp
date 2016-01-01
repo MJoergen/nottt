@@ -16,6 +16,10 @@ BotsScreen::~BotsScreen(){
 	cleanUp();
 }
 
+void BotsScreen::úpdate() {
+
+}
+
 void BotsScreen::init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
 	m_currentState = currentState;
 
@@ -38,8 +42,8 @@ void BotsScreen::init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Fon
 	m_botsTexts.push_back(mikeBotText);
 	m_botsTexts.push_back(iceBotText);
 
-	m_return = new Button("Back to Main Menu", 0, height - PADDING_Y);
-	m_return->setX(halfWidth - m_return->getWidth() / 2);
+	m_return = new Button("Back to Main Menu", 0, 0);
+	m_return->set(halfWidth - m_return->getWidth() / 2, height - PADDING_Y - m_return->getHeight());
 	m_return->registerClickFunc(onClickReturn, this);
 
 	// <-----
@@ -48,6 +52,7 @@ void BotsScreen::init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Fon
 }
 
 void BotsScreen::render(const SDL_Renderer* renderer) const{ // The renderer will be used later
+	m_headline->renderText();
 	m_availableBotsText->renderText();
 
 	for (unsigned int index = 0; index < m_botsTexts.size(); index++){

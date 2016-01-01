@@ -14,6 +14,7 @@ Button::~Button(){
 
 void Button::renderButton() const {
 	m_texture->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
+	SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 0, 0, 0, 255);
 	SDL_Rect rect = { m_x, m_y, getWidth(), getHeight() };
 	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
 }

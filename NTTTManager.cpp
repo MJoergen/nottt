@@ -4,6 +4,7 @@
 #include "NTTTManager.h"
 #include <fstream>
 #include <climits>
+#include "GUI/Screens/BotsScreen.h"
 
 NTTTManager g_NtttManager;
 
@@ -114,6 +115,9 @@ bool NTTTManager::init()
 	m_readLogButton->registerClickFunc(onReadLogClickStatic, this);
 
 	m_gameInfoViewer = new GameInfoViewer();
+
+	m_botsScreen = new BotsScreen();
+	m_botsScreen->init(&m_currentState, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	return true;
 }
@@ -419,153 +423,19 @@ void NTTTManager::loop(){
 	
 	while (!quit){ //Runs until the program quits
 
+		//Input
 		SDL_Event event;
-
 		while (SDL_PollEvent(&event) != 0){ //Get the pending events, if any
 			if (event.type == SDL_QUIT){ //Quits the program, if a SDL_QUIT event has been triggered (e.g. when the window is closed)
 				quit = true;
 			}
-			else if (event.type == SDL_TEXTINPUT){ //Responds to textinput
-				if (m_boardCountTextField->isSelected())
-					m_boardCountTextField->onKeyPress(event.key.keysym, event.text.text);
-				else if (m_boardSizeTextField->isSelected())
-					m_boardSizeTextField->onKeyPress(event.key.keysym, event.text.text);
-				else if (m_lineSizeTextField->isSelected())
-					m_lineSizeTextField->onKeyPress(event.key.keysym, event.text.text);
-				else if (m_gameSeedTextField->isSelected())
-					m_gameSeedTextField->onKeyPress(event.key.keysym, event.text.text);
-				else if (m_logFileInputTextField->isSelected())
-					m_logFileInputTextField->onKeyPress(event.key.keysym, event.text.text);
-			}
-			else if (event.type == SDL_KEYDOWN){ //Responds to keyboardinput
-				if (isStarted && m_manualModeRadioButton->isChecked()){
-					if (event.key.keysym.sym == SDLK_RIGHT)
-						forward = true;
-					else if (event.key.keysym.sym == SDLK_LEFT)
-							backward = true;
-				}
-				else if (m_boardCountTextField->isSelected())
-					m_boardCountTextField->onKeyPress(event.key.keysym, "");
-				else if (m_boardSizeTextField->isSelected())
-					m_boardSizeTextField->onKeyPress(event.key.keysym, "");
-				else if (m_lineSizeTextField->isSelected())
-					m_lineSizeTextField->onKeyPress(event.key.keysym, "");
-				else if (m_gameSeedTextField->isSelected())
-					m_gameSeedTextField->onKeyPress(event.key.keysym, "");
-				else if (m_logFileInputTextField->isSelected())
-					m_logFileInputTextField->onKeyPress(event.key.keysym, "");
-			}
-			else if (event.type == SDL_MOUSEBUTTONDOWN){ //Responds to mouseinput
-				int x, y;
-				SDL_GetMouseState(&x, &y);
-
-				if (m_boardCountTextField->isSelected())
-					m_boardCountTextField->deselect();
-				if (m_boardSizeTextField->isSelected())
-					m_boardSizeTextField->deselect();
-				if (m_lineSizeTextField->isSelected())
-					m_lineSizeTextField->deselect();
-				if (m_gameSeedTextField->isSelected())
-					m_gameSeedTextField->deselect();
-				if (m_logFileInputTextField->isSelected())
-					m_logFileInputTextField->deselect();
-
-				if (m_boardCountTextField->isInside(x, y))
-					m_boardCountTextField->select();
-				else if (m_boardSizeTextField->isInside(x, y))
-					m_boardSizeTextField->select();
-				else if (m_lineSizeTextField->isInside(x, y))
-					m_lineSizeTextField->select();
-				else if (m_gameSeedTextField->isInside(x, y))
-					m_gameSeedTextField->select();
-				else if (m_logFileInputTextField->isInside(x, y))
-					m_logFileInputTextField->select();
-				else if (m_startGameButton->isInside(x, y))
-					m_startGameButton->click();
-				else if (m_readLogButton->isInside(x, y))
-					m_readLogButton->click();
-				else if (m_manualModeRadioButton->isInside(x, y))
-					m_manualModeRadioButton->toggle();
-				else if (m_logRadioButton->isInside(x, y))
-					m_logRadioButton->toggle();
+			else {
+				input(event);
 			}
 		}
 
-		SDL_SetRenderDrawColor(g_renderer, 255, 255, 255, 255);
-		SDL_RenderClear(g_renderer); //Clears the screen
-
-		if (isStarted){
-
-			if (m_winner != 0 && m_justWon){
-				m_gameInfoViewer->setWinner(m_winner);
-				m_justWon = false;
-			}
-
-			if (!isGameThreadRunning){
-				int status;
-
-				SDL_WaitThread(gameThread, &status);
-				isStarted = false;
-				std::cout << "Game ended: " << status << std::endl;
-			}
-
-			if (initGraphics){
-				m_gameInfoViewer->init();
-				initGraphics = false;
-			}
-
-			for (unsigned int index = m_gameInfoViewer->getMovesCount(); index < m_moves.size(); index++){
-				m_gameInfoViewer->addMove(m_moves[index]);
-			}
-			for (unsigned int index = m_gameInfoViewer->getMovesCount(); index > m_moves.size(); index--){
-				m_gameInfoViewer->removeMove();
-			}
-			
-			for (int index = 0; index < g_game->getBoardCount(); index++){
-
-				int boardX = BOARD_PADDING * (index % gridSize + 1) + boardRenderSize * (index % gridSize);
-				int boardY = BOARD_PADDING * (int)(index / gridSize + 1) + boardRenderSize * (int)(index / gridSize);
-				int squareSize = boardRenderSize / g_game->getBoardSize();
-
-				if (m_moves.size() > 0){
-					NTTTMove& move = m_moves[m_moves.size() - 1];
-					if (move.getBoardNumber() == index){
-						SDL_SetRenderDrawColor(g_renderer, 190, 190, 190, 255); //Color of the "last move" square
-						SDL_Rect rect = { boardX + squareSize * move.getSquareX(), boardY + squareSize * move.getSquareY(), squareSize, squareSize };
-						SDL_RenderFillRect(g_renderer, &rect);
-					}
-				}
-
-				g_game->getBoards()[index].renderBoard(boardX, boardY, boardRenderSize);
-			}
-
-			m_gameInfoViewer->renderGameInfoViewer();
-		}
-		else {
-			m_boardCountText->renderText();
-			m_boardSizeText->renderText();
-			m_lineSizeText->renderText();
-			m_gameSeedText->renderText();
-
-			m_boardCountTextField->renderTextField(SDL_GetTicks());
-			m_boardSizeTextField->renderTextField(SDL_GetTicks());
-			m_lineSizeTextField->renderTextField(SDL_GetTicks());
-			m_gameSeedTextField->renderTextField(SDL_GetTicks());
-
-			m_startGameButton->renderButton();
-
-			m_manualModeText->renderText();
-			m_manualModeRadioButton->renderRadioButton();
-
-			m_logFileInputText->renderText();
-			m_logFileInputTextField->renderTextField(SDL_GetTicks());
-
-			m_logText->renderText();
-			m_logRadioButton->renderRadioButton();
-			m_readLogButton->renderButton();
-		}
-
-		SDL_RenderPresent(g_renderer); //Updates the screen
+		update();
+		render();
 
 		SDL_Delay(50); //Sleeps
 	}
@@ -579,10 +449,168 @@ void NTTTManager::loop(){
 	}
 }
 
+void NTTTManager::update(){
+	if (isStarted){
+		if (m_winner != 0 && m_justWon){
+			m_gameInfoViewer->setWinner(m_winner);
+			m_justWon = false;
+		}
+
+		if (!isGameThreadRunning){
+			int status;
+
+			SDL_WaitThread(gameThread, &status);
+			isStarted = false;
+			std::cout << "Game ended: " << status << std::endl;
+		}
+
+		if (initGraphics){
+			m_gameInfoViewer->init();
+			initGraphics = false;
+		}
+
+	}
+}
+
+void NTTTManager::input(SDL_Event & event) {
+	if (event.type == SDL_TEXTINPUT){ //Responds to textinput
+		if (m_boardCountTextField->isSelected())
+			m_boardCountTextField->onKeyPress(event.key.keysym, event.text.text);
+		else if (m_boardSizeTextField->isSelected())
+			m_boardSizeTextField->onKeyPress(event.key.keysym, event.text.text);
+		else if (m_lineSizeTextField->isSelected())
+			m_lineSizeTextField->onKeyPress(event.key.keysym, event.text.text);
+		else if (m_gameSeedTextField->isSelected())
+			m_gameSeedTextField->onKeyPress(event.key.keysym, event.text.text);
+		else if (m_logFileInputTextField->isSelected())
+			m_logFileInputTextField->onKeyPress(event.key.keysym, event.text.text);
+	}
+	else if (event.type == SDL_KEYDOWN){ //Responds to keyboardinput
+		if (isStarted && m_manualModeRadioButton->isChecked()){
+			if (event.key.keysym.sym == SDLK_RIGHT)
+				forward = true;
+			else if (event.key.keysym.sym == SDLK_LEFT)
+				backward = true;
+		}
+		else if (m_boardCountTextField->isSelected())
+			m_boardCountTextField->onKeyPress(event.key.keysym, "");
+		else if (m_boardSizeTextField->isSelected())
+			m_boardSizeTextField->onKeyPress(event.key.keysym, "");
+		else if (m_lineSizeTextField->isSelected())
+			m_lineSizeTextField->onKeyPress(event.key.keysym, "");
+		else if (m_gameSeedTextField->isSelected())
+			m_gameSeedTextField->onKeyPress(event.key.keysym, "");
+		else if (m_logFileInputTextField->isSelected())
+			m_logFileInputTextField->onKeyPress(event.key.keysym, "");
+	}
+	else if (event.type == SDL_MOUSEBUTTONDOWN){ //Responds to mouseinput
+		int x, y;
+		SDL_GetMouseState(&x, &y);
+
+		if (m_boardCountTextField->isSelected())
+			m_boardCountTextField->deselect();
+		if (m_boardSizeTextField->isSelected())
+			m_boardSizeTextField->deselect();
+		if (m_lineSizeTextField->isSelected())
+			m_lineSizeTextField->deselect();
+		if (m_gameSeedTextField->isSelected())
+			m_gameSeedTextField->deselect();
+		if (m_logFileInputTextField->isSelected())
+			m_logFileInputTextField->deselect();
+
+		if (m_boardCountTextField->isInside(x, y))
+			m_boardCountTextField->select();
+		else if (m_boardSizeTextField->isInside(x, y))
+			m_boardSizeTextField->select();
+		else if (m_lineSizeTextField->isInside(x, y))
+			m_lineSizeTextField->select();
+		else if (m_gameSeedTextField->isInside(x, y))
+			m_gameSeedTextField->select();
+		else if (m_logFileInputTextField->isInside(x, y))
+			m_logFileInputTextField->select();
+		else if (m_startGameButton->isInside(x, y))
+			m_startGameButton->click();
+		else if (m_readLogButton->isInside(x, y))
+			m_readLogButton->click();
+		else if (m_manualModeRadioButton->isInside(x, y))
+			m_manualModeRadioButton->toggle();
+		else if (m_logRadioButton->isInside(x, y))
+			m_logRadioButton->toggle();
+	}
+}
+
+void NTTTManager::render() const{
+
+	SDL_SetRenderDrawColor(g_renderer, 255, 255, 255, 255);
+	SDL_RenderClear(g_renderer); //Clears the screen
+
+	if (isStarted){
+
+		for (unsigned int index = m_gameInfoViewer->getMovesCount(); index < m_moves.size(); index++){
+			m_gameInfoViewer->addMove(m_moves[index]);
+		}
+		for (unsigned int index = m_gameInfoViewer->getMovesCount(); index > m_moves.size(); index--){
+			m_gameInfoViewer->removeMove();
+		}
+
+		for (int index = 0; index < g_game->getBoardCount(); index++){
+
+			int boardX = BOARD_PADDING * (index % gridSize + 1) + boardRenderSize * (index % gridSize);
+			int boardY = BOARD_PADDING * (int)(index / gridSize + 1) + boardRenderSize * (int)(index / gridSize);
+			int squareSize = boardRenderSize / g_game->getBoardSize();
+
+			if (m_moves.size() > 0){
+				const NTTTMove& move = m_moves[m_moves.size() - 1];
+				if (move.getBoardNumber() == index){
+					SDL_SetRenderDrawColor(g_renderer, 190, 190, 190, 255); //Color of the "last move" square
+					SDL_Rect rect = { boardX + squareSize * move.getSquareX(), boardY + squareSize * move.getSquareY(), squareSize, squareSize };
+					SDL_RenderFillRect(g_renderer, &rect);
+				}
+			}
+
+			g_game->getBoards()[index].renderBoard(boardX, boardY, boardRenderSize);
+		}
+
+		m_gameInfoViewer->renderGameInfoViewer();
+	}
+	else {
+		
+		m_boardCountText->renderText();
+		m_boardSizeText->renderText();
+		m_lineSizeText->renderText();
+		m_gameSeedText->renderText();
+
+		m_boardCountTextField->renderTextField(SDL_GetTicks());
+		m_boardSizeTextField->renderTextField(SDL_GetTicks());
+		m_lineSizeTextField->renderTextField(SDL_GetTicks());
+		m_gameSeedTextField->renderTextField(SDL_GetTicks());
+
+		m_startGameButton->renderButton();
+
+		m_manualModeText->renderText();
+		m_manualModeRadioButton->renderRadioButton();
+
+		m_logFileInputText->renderText();
+		m_logFileInputTextField->renderTextField(SDL_GetTicks());
+
+		m_logText->renderText();
+		m_logRadioButton->renderRadioButton();
+		m_readLogButton->renderButton();
+		
+		//m_botsScreen->render(g_renderer);
+	}
+
+	SDL_RenderPresent(g_renderer); //Updates the screen
+}
+
+
 /**
 * Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
 */
 void NTTTManager::close(){
+
+	delete m_botsScreen;
+	m_botsScreen = nullptr;
 
 	delete m_readLogButton;
 	m_readLogButton = nullptr;

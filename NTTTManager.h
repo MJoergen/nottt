@@ -14,6 +14,8 @@
 #include "NTTTGame.h"
 #include "NTTTPlayer.h"
 
+#include "GUI/Screens/Screen.h"
+
 class NTTTManager
 {
     public:
@@ -51,6 +53,14 @@ class NTTTManager
 
     // These variables are only used WITHIN the NTTTManager class
     private:
+		Screen::ScreenState m_currentState = Screen::MAIN_MENU;
+		Screen *m_botsScreen = nullptr;
+
+		void render() const;
+		void input(SDL_Event & e);
+		void update();
+
+
         const int BOARD_PADDING = 30;					//The padding between the borders
 
         SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
