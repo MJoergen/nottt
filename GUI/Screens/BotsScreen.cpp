@@ -62,8 +62,8 @@ void BotsScreen::render(const SDL_Renderer* renderer) const{ // The renderer wil
 	m_return->renderButton();
 }
 
-void BotsScreen::input(const SDL_Event* e){
-	if (e->type != SDL_MOUSEBUTTONDOWN)
+void BotsScreen::input(const SDL_Event & event){
+	if (event.type != SDL_MOUSEBUTTONDOWN)
 		return;
 
 	int x, y;

@@ -14,10 +14,11 @@ public:
 	virtual ~Screen() {};
 	virtual void init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height) = 0;
 	virtual void render(const SDL_Renderer* renderer) const = 0;
-	virtual void input(const SDL_Event* e) = 0;
+	virtual void input(const SDL_Event & e) = 0;
 	virtual void úpdate() = 0;
 	virtual void cleanUp() = 0;
 protected:
+	const unsigned int PADDING_X = 5, PADDING_Y = 5;
 	const unsigned int HEADLINE_PADDING = 10;
 	ScreenState* m_currentState = nullptr;
 };

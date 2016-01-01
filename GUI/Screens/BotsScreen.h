@@ -11,12 +11,11 @@ public:
 	virtual ~BotsScreen();
 	virtual void init(ScreenState* currentState, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
 	virtual void render(const SDL_Renderer* renderer) const;
-	virtual void input(const SDL_Event* e);
+	virtual void input(const SDL_Event & e);
 	virtual void úpdate();
 	virtual void cleanUp();
 	void onClick();
 private:
-	const unsigned int PADDING_X = 10, PADDING_Y = 5;
 	Text* m_headline = nullptr;
 	Text* m_availableBotsText = nullptr;
 	std::vector<Text*> m_botsTexts;
