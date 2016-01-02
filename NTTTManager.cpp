@@ -37,8 +37,8 @@ bool NTTTManager::init()
 		return false;
 	}
 
-	g_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN); //Creates a window
-	if (g_window == NULL){
+	m_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN); //Creates a window
+	if (m_window == NULL){
 		std::cout << "Failed creating window: " << SDL_GetError() << std::endl;
 		TTF_Quit();
 		IMG_Quit();
@@ -46,10 +46,10 @@ bool NTTTManager::init()
 		return false;
 	}
 
-	m_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED); //Creates the renderer used to render to the window
+	m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED); //Creates the renderer used to render to the window
 	if (m_renderer == NULL){
 		std::cout << "Failed creating renderer: " << SDL_GetError() << std::endl;
-		SDL_DestroyWindow(g_window);
+		SDL_DestroyWindow(m_window);
 		TTF_Quit();
 		IMG_Quit();
 		SDL_Quit();
@@ -60,7 +60,7 @@ bool NTTTManager::init()
 	if (m_font == NULL){
 		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
 		SDL_DestroyRenderer(m_renderer);
-		SDL_DestroyWindow(g_window);
+		SDL_DestroyWindow(m_window);
 		TTF_Quit();
 		IMG_Quit();
 		SDL_Quit();
@@ -72,7 +72,7 @@ bool NTTTManager::init()
 		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
 		TTF_CloseFont(m_font);
 		SDL_DestroyRenderer(m_renderer);
-		SDL_DestroyWindow(g_window);
+		SDL_DestroyWindow(m_window);
 		TTF_Quit();
 		IMG_Quit();
 		SDL_Quit();
@@ -374,9 +374,9 @@ void NTTTManager::close(){
 	TTF_CloseFont(m_font);
 
 	SDL_DestroyRenderer(m_renderer);
-	SDL_DestroyWindow(g_window);
+	SDL_DestroyWindow(m_window);
 	m_renderer = nullptr;
-	g_window = nullptr;
+	m_window = nullptr;
 
 	TTF_Quit();
 	IMG_Quit();

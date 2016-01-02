@@ -55,7 +55,7 @@ class NTTTManager
 		void input(SDL_Event & e);
 		void update();
 
-        SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
+        SDL_Window* m_window = NULL;			//Pointer pointing to a struct representing the window
 
         bool quit = false;
 
