@@ -16,6 +16,8 @@ private:
 	/* unsigned */ int m_x, m_y;
 	/* unsigned */ int m_width;
 	
+	const int m_paddingX = 3, m_paddingY = 5;
+
 	int m_limit = -1;
 	unsigned int m_cursor = 0;
 	unsigned int m_cursor_ppos = 0;

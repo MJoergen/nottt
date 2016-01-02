@@ -19,7 +19,7 @@ public:
 	virtual void prepareForQuit() = 0;
 	virtual void cleanUp() = 0;
 protected:
-	const unsigned int PADDING_X = 5, PADDING_Y = 5;
+	const unsigned int PADDING_X = 5, PADDING_Y = 10;
 	const unsigned int HEADLINE_PADDING = 10;
 	ScreenState* m_currentState = nullptr;
 };

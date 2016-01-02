@@ -23,13 +23,7 @@ class NTTTManager
 		void close();
 		void onReadLogClick();
 		void writeLog(const int winner) const;
-
-    // These variables are accessed from OUTSIDE the NTTTManager class via the
-    // global variable g_NtttManager
-    // TODO: Put these variables in a separate class
-	public:
-        const int PADDING_X = 3, PADDING_Y = 5;			//The padding along the axises
-				
+						
     // These variables are only used WITHIN the NTTTManager class
 	private:
 		Texture *m_redCross;

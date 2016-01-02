@@ -13,6 +13,8 @@ private:
 	void(*m_action)(void *) = nullptr;
     void *m_data;
 
+	const int m_paddingX = 3, m_paddingY = 5;
+
 public:
 	Button(SDL_Renderer *renderer, const std::string text, TTF_Font *font, const unsigned int x, const unsigned int y);
 	virtual ~Button();

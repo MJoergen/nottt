@@ -11,6 +11,8 @@ private:
 	bool m_isChecked = false;
 	int m_size;
 
+	const int m_paddingX = 3, m_paddingY = 3;
+
 public:
 	RadioButton(const bool isChecked, const int x, const int y, const int size);
 	virtual ~RadioButton();

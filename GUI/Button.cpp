@@ -13,18 +13,18 @@ Button::~Button(){
 }
 
 void Button::renderButton(SDL_Renderer *renderer) const {
-	m_texture->renderTexture(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
+	m_texture->renderTexture(renderer, m_x + m_paddingX, m_y + m_paddingY);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_Rect rect = { m_x, m_y, getWidth(), getHeight() };
 	SDL_RenderDrawRect(renderer, &rect);
 }
 
 const int Button::getWidth() const{
-	return m_texture->getWidth() + g_NtttManager.PADDING_X * 2;
+	return m_texture->getWidth() + m_paddingX * 2;
 }
 
 const int Button::getHeight() const{
-	return m_texture->getHeight() + g_NtttManager.PADDING_Y * 2;
+	return m_texture->getHeight() + m_paddingY * 2;
 }
 
 void Button::registerClickFunc(void(*action)(void *), void *data) {
