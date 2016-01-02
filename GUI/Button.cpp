@@ -1,10 +1,10 @@
 #include "Button.h"
 #include "../NTTTManager.h"
 
-Button::Button(SDL_Renderer *renderer, const std::string text, unsigned int x, const unsigned int y){
+Button::Button(SDL_Renderer *renderer, const std::string text, TTF_Font *font, unsigned int x, const unsigned int y){
 	m_x = x;
 	m_y = y;
-	m_texture = new Texture(renderer, text, {0, 0, 0});
+	m_texture = new Texture(renderer, text, font, {0, 0, 0});
 }
 
 Button::~Button(){

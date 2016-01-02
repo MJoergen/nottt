@@ -33,19 +33,22 @@ class NTTTManager
         Texture *g_checkMark;
         const int PADDING_X = 3, PADDING_Y = 5;			//The padding along the axises
         int g_textHeight = 0;							//The 'maximum' text height used with the font
-        TTF_Font* g_font = NULL;						//Pointer pointing to the representation of the font
+				
+    // These variables are only used WITHIN the NTTTManager class
+	private:
+
+		TTF_Font* m_font = NULL;						//Pointer pointing to the representation of the font
+		const int FONT_SIZE = 30;								//The size of the font
+		const std::string FONT_PATH = "Junicode-Regular.ttf";	//The path to the font
+
+		NTTTGame *g_game;
+
 		const char* TITLE = "No Tic Tac Toe";			//The title of the window
 		const int WINDOW_WIDTH = 900;					//The width of the window
 		const int WINDOW_HEIGHT = 600;					//The height of the window
-		
 
-		NTTTGame *g_game;
-		const int FONT_SIZE = 30;								//The size of the font
-		const std::string FONT_PATH = "Junicode-Regular.ttf";	//The path to the font
-		
-    // These variables are only used WITHIN the NTTTManager class
-	private:
 		SDL_Renderer* m_renderer = NULL;				//Pointer pointing to a struct representing the renderer
+		
 		int m_boardCount = 3, m_boardSize = 4, m_lineSize = 3, m_gameSeed = 12345;
 		bool m_manualMode = false, m_writeLog = false;
 		std::string m_logName = "log.txt";

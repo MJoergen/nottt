@@ -71,9 +71,9 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 	m_boardSizeText = new Text(renderer, "Board Size: ", guiFont, black, 0, m_boardCountText->getY());
 	m_lineSizeText = new Text(renderer, "Line Size: ", guiFont, black, 0, m_boardCountText->getY());
 
-	m_boardCountTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_boardCount), 0, m_boardCountText->getY(), 50, -1);
-	m_boardSizeTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_boardSize), 0, m_boardCountText->getY(), 30, 8);
-	m_lineSizeTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_lineSize), 0, m_boardCountText->getY(), 30, 8);
+	m_boardCountTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_boardCount), guiFont, 0, m_boardCountText->getY(), 50, -1);
+	m_boardSizeTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_boardSize), guiFont, 0, m_boardCountText->getY(), 30, 8);
+	m_lineSizeTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_lineSize), guiFont, 0, m_boardCountText->getY(), 30, 8);
 
 	const unsigned int firstLineWidth = m_boardCountText->getWidth() + m_boardSizeText->getWidth() + m_lineSizeText->getWidth()
 		+ m_boardCountTextField->getWidth() + m_boardSizeTextField->getWidth() + m_lineSizeTextField->getWidth() + 5 * PADDING_X;
@@ -91,7 +91,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 	//
 	m_gameSeedText = new Text(renderer, "Game Seed: ", guiFont, black, 0, m_boardCountText->getY() + m_boardCountText->getHeight() + PADDING_Y);
 
-	m_gameSeedTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_gameSeed), 0, m_gameSeedText->getY(), 200, INT_MAX);
+	m_gameSeedTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_gameSeed), guiFont, 0, m_gameSeedText->getY(), 200, INT_MAX);
 
 	const unsigned int secondLineWidth = m_gameSeedText->getWidth() + m_gameSeedTextField->getWidth() + PADDING_X;
 	const unsigned int halfSecondLineWidth = secondLineWidth / 2;
@@ -125,7 +125,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 	//
 	m_logNameText = new Text(renderer, "Log Name: ", guiFont, black, 0, m_writeLogText->getY() + m_writeLogText->getHeight() + PADDING_Y);
 
-	m_logNameTextField = new TextField(renderer, TextField::TEXT, "log.txt", 0, m_logNameText->getY(), 200, -1);
+	m_logNameTextField = new TextField(renderer, TextField::TEXT, "log.txt", guiFont, 0, m_logNameText->getY(), 200, -1);
 
 	const unsigned int fifthLineWidth = m_logNameText->getWidth() + m_logNameTextField->getWidth() + PADDING_X;
 	const unsigned int halfFifthLineWidth = fifthLineWidth / 2;
@@ -134,12 +134,12 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 	m_logNameTextField->setX(m_logNameText->getX() + m_logNameText->getWidth() + PADDING_X);
 
 	//
-	m_startGameButton = new Button(renderer, "Start Game", 0, m_logNameText->getY() + m_logNameText->getHeight() + PADDING_Y);
+	m_startGameButton = new Button(renderer, "Start Game", guiFont, 0, m_logNameText->getY() + m_logNameText->getHeight() + PADDING_Y);
 	m_startGameButton->setX(halfWidth - m_startGameButton->getWidth() / 2);
 	m_startGameButton->registerClickFunc(onClickNewGameStart, this);
 
 	//
-	m_returnButton = new Button(renderer, "Back to Main Menu", 0, 0);
+	m_returnButton = new Button(renderer, "Back to Main Menu", guiFont, 0, 0);
 	m_returnButton->set(halfWidth - m_returnButton->getWidth() / 2, height - PADDING_Y - m_returnButton->getHeight());
 	m_returnButton->registerClickFunc(onClickNewGameReturn, this);
 

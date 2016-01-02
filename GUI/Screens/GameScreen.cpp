@@ -160,11 +160,11 @@ void GameScreen::initializeWinnerDisplayText(SDL_Renderer *renderer){
 	const int width = m_width - x;
 	switch (m_winner){
 	case 1:
-		m_winnerDisplayText = new Text(renderer, m_player1->getName(), { 255, 0, 0 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+		m_winnerDisplayText = new Text(renderer, m_player1->getName(), m_guiFont, { 255, 0, 0 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
 		m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
 		break;
 	case 2:
-		m_winnerDisplayText = new Text(renderer, m_player2->getName(), { 0, 0, 255 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+		m_winnerDisplayText = new Text(renderer, m_player2->getName(), m_guiFont, { 0, 0, 255 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
 		m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
 		break;
 	}
@@ -172,6 +172,11 @@ void GameScreen::initializeWinnerDisplayText(SDL_Renderer *renderer){
 
 void GameScreen::initialize(SDL_Renderer *renderer){
 	cleanUp();
+
+	Texture texture(renderer, "0", m_movesFont, { 0, 0, 0, 255 });
+
+	m_movesHeight = texture.getHeight() + 2 * PADDING_Y;
+
 
 	//Maybe temporary ----->
 	m_game->NewGame(*m_boardCount, *m_boardSize, *m_lineSize);
@@ -215,6 +220,7 @@ void GameScreen::initialize(SDL_Renderer *renderer){
 	const int x = m_playingFieldSize;
 	const int y = 0;
 	const int width = m_width - x;
+	const SDL_Color black = { 0, 0, 0, 255 };
 
 	m_vsText = new Text(renderer, " vs ", m_headlineFont, { 0, 0, 0 }, x, y);
 	m_vsText->set(x - m_vsText->getWidth() / 2 + width / 2, PADDING_Y);
@@ -223,16 +229,16 @@ void GameScreen::initialize(SDL_Renderer *renderer){
 	m_player2Text = new Text(renderer, m_player2->getName(), m_headlineFont, { 0, 0, 255 }, m_vsText->getX() + m_vsText->getWidth(), m_vsText->getY());
 	m_player1Text->setX(m_vsText->getX() - m_player1Text->getWidth());
 
-	m_boardCountText = new Text(renderer, "BoardCount: " + std::to_string(*m_boardCount), x, m_vsText->getY() + m_vsText->getHeight() + PADDING_Y * 2);
+	m_boardCountText = new Text(renderer, "BoardCount: " + std::to_string(*m_boardCount), m_guiFont, black, x, m_vsText->getY() + m_vsText->getHeight() + PADDING_Y * 2);
 	m_boardCountText->setX(x + width / 2 - m_boardCountText->getWidth() / 2);
 
-	m_boardSizeText = new Text(renderer, "BoardSize: " + std::to_string(*m_boardSize), x, m_boardCountText->getY() + m_boardCountText->getHeight() + PADDING_Y);
+	m_boardSizeText = new Text(renderer, "BoardSize: " + std::to_string(*m_boardSize), m_guiFont, black, x, m_boardCountText->getY() + m_boardCountText->getHeight() + PADDING_Y);
 	m_boardSizeText->setX(x + width / 2 - m_boardSizeText->getWidth() / 2);
 
-	m_lineSizeText = new Text(renderer, "LineSize: " + std::to_string(*m_lineSize), x, m_boardSizeText->getY() + m_boardSizeText->getHeight() + PADDING_Y);
+	m_lineSizeText = new Text(renderer, "LineSize: " + std::to_string(*m_lineSize), m_guiFont, black, x, m_boardSizeText->getY() + m_boardSizeText->getHeight() + PADDING_Y);
 	m_lineSizeText->setX(x + width / 2 - m_lineSizeText->getWidth() / 2);
 
-	m_winnerText = new Text(renderer, "Winner: ", x + PADDING_X, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+	m_winnerText = new Text(renderer, "Winner: ", m_guiFont, black, x + PADDING_X, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
 
 	int w, h;
 
@@ -261,10 +267,6 @@ void GameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* 
 	m_guiFont = guiFont;
 	m_width = width;
 	m_height = height;
-
-	Texture texture(renderer, "0", { 0, 0, 0, 255 });
-
-	m_movesHeight = texture.getHeight();
 }
 
 void GameScreen::render(SDL_Renderer* renderer) const{

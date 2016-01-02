@@ -14,7 +14,7 @@ private:
     void *m_data;
 
 public:
-	Button(SDL_Renderer *renderer, const std::string text, const unsigned int x, const unsigned int y);
+	Button(SDL_Renderer *renderer, const std::string text, TTF_Font *font, const unsigned int x, const unsigned int y);
 	virtual ~Button();
 
 	void renderButton(SDL_Renderer *renderer) const;

@@ -1,18 +1,6 @@
 #include "Text.h"
 #include "../NTTTManager.h"
 
-Text::Text(SDL_Renderer *renderer, const std::string text, const unsigned int x, const unsigned int y){
-	m_x = x;
-	m_y = y;
-	m_texture = new Texture(renderer, text, { 0, 0, 0 });
-}
-
-Text::Text(SDL_Renderer *renderer, const std::string text, const SDL_Color color, const unsigned int x, const unsigned int y){
-	m_x = x;
-	m_y = y;
-	m_texture = new Texture(renderer, text, color);
-}
-
 Text::Text(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y){
 	m_x = x;
 	m_y = y;

@@ -58,8 +58,8 @@ bool NTTTManager::init()
 		return false;
 	}
 
-	g_font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE); //Creates the font used in the application
-	if (g_font == NULL){
+	m_font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE); //Creates the font used in the application
+	if (m_font == NULL){
 		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
 		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(g_window);
@@ -68,12 +68,12 @@ bool NTTTManager::init()
 		SDL_Quit();
 		return false;
 	}
-	g_textHeight = TTF_FontHeight(g_font);
+	g_textHeight = TTF_FontHeight(m_font);
 
 	m_movesFont = TTF_OpenFont(FONT_PATH.c_str(), (int)(FONT_SIZE * 0.5));
 	if (m_movesFont == NULL){
 		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
-		TTF_CloseFont(g_font);
+		TTF_CloseFont(m_font);
 		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(g_window);
 		TTF_Quit();
@@ -90,20 +90,20 @@ bool NTTTManager::init()
 	//New GUI system
 
 	m_botsScreen = new BotsScreen(&m_currentState);
-	m_botsScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_botsScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	m_mainMenuScreen = new MainMenuScreen(&m_currentState);
-	m_mainMenuScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_mainMenuScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	NewGameScreen::NewGameData newGameData = { &m_currentState, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName };
 
 	m_newGameScreen = new NewGameScreen(newGameData);
-	m_newGameScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_newGameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	GameScreen::GameData gameData = { &m_currentState, g_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &quit };
 
 	m_gameScreen = new GameScreen(gameData);
-	m_gameScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_gameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	return true;
 }
@@ -405,7 +405,7 @@ void NTTTManager::close(){
 	delete g_blueCross;
 	g_blueCross = nullptr;
 
-	TTF_CloseFont(g_font);
+	TTF_CloseFont(m_font);
 
 	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(g_window);

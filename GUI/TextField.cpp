@@ -1,13 +1,14 @@
 #include "TextField.h"
 #include "../NTTTManager.h"
 
-TextField::TextField(SDL_Renderer *renderer, const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit) {
+TextField::TextField(SDL_Renderer *renderer, const FieldType fieldType, const std::string content, TTF_Font *font, const int x, const int y, const int width, const int limit) {
 	m_fieldType = fieldType;
 	m_x = x;
 	m_y = y;
 	m_width = width;
 	m_limit = limit;
 	m_content = content;
+	m_font = font;
 	genTexture(renderer);
 }
 
@@ -19,9 +20,9 @@ TextField::~TextField(){
 void TextField::genTexture(SDL_Renderer *renderer){
 	delete m_texture;
 	if (m_content.length() <= 0)
-		m_texture = new Texture(renderer, " ", { 0, 0, 0 });
+		m_texture = new Texture(renderer, " ", m_font, { 0, 0, 0 });
 	else
-		m_texture = new Texture(renderer, m_content, { 0, 0, 0 });
+		m_texture = new Texture(renderer, m_content, m_font, { 0, 0, 0 });
 	m_changed = false;
 }
 
@@ -137,7 +138,7 @@ void TextField::calculateCursorPPos(unsigned int& cursorPPos){
 	int w, h;
 	std::string content = m_content;
 	content.resize(m_cursor);
-	TTF_SizeText(g_NtttManager.g_font, content.c_str(), &w, &h);
+	TTF_SizeText(m_font, content.c_str(), &w, &h);
 	cursorPPos = w;
 }
 

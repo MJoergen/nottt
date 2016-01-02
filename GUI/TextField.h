@@ -23,6 +23,8 @@ private:
 
 	bool m_selected = false;
 	
+	TTF_Font *m_font = nullptr;
+
 	std::string m_content = "";
 	std::string m_oldContent;
 	
@@ -32,7 +34,7 @@ private:
 	void genTexture(SDL_Renderer *renderer);
 
 public:
-	TextField(SDL_Renderer *renderer, const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit);
+	TextField(SDL_Renderer *renderer, const FieldType fieldType, const std::string content, TTF_Font *font, const int x, const int y, const int width, const int limit);
 	virtual ~TextField();
 	
 	const std::string getContent() const {

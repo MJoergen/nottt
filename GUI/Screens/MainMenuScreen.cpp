@@ -78,7 +78,7 @@ void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fo
 	m_headlineText = new Text(renderer, "Main Menu", headlineFont, black, 0, HEADLINE_PADDING);
 	m_headlineText->setX(halfWidth - m_headlineText->getWidth() / 2);
 
-	m_exitButton = new Button(renderer, "Exit", 0, 0);
+	m_exitButton = new Button(renderer, "Exit", guiFont, 0, 0);
 
 	const unsigned int buttonsHeight = m_exitButton->getHeight() * 5 + PADDING_Y * 4;
 	const unsigned int halfBuffonsHeight = buttonsHeight / 2;
@@ -86,19 +86,19 @@ void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fo
 	m_exitButton->set(halfWidth - m_exitButton->getWidth() / 2, halfHeight + halfBuffonsHeight - m_exitButton->getHeight());
 	m_exitButton->registerClickFunc(onClickExitStatic, this);
 	
-	m_statisticsButton = new Button(renderer, "Statistics", 0, 0);
+	m_statisticsButton = new Button(renderer, "Statistics", guiFont, 0, 0);
 	m_statisticsButton->set(halfWidth - m_statisticsButton->getWidth() / 2, m_exitButton->getY() - PADDING_Y - m_statisticsButton->getHeight());
 	m_statisticsButton->registerClickFunc(onClickStatisticsStatic, this);
 
-	m_botsButton = new Button(renderer, "Bots", 0, 0);
+	m_botsButton = new Button(renderer, "Bots", guiFont, 0, 0);
 	m_botsButton->set(halfWidth - m_botsButton->getWidth() / 2, m_statisticsButton->getY() - PADDING_Y - m_botsButton->getHeight());
 	m_botsButton->registerClickFunc(onClickBotsStatic, this);
 
-	m_loadGameButton = new Button(renderer, "Load Game", 0, 0);
+	m_loadGameButton = new Button(renderer, "Load Game", guiFont, 0, 0);
 	m_loadGameButton->set(halfWidth - m_loadGameButton->getWidth() / 2, m_botsButton->getY() - PADDING_Y - m_loadGameButton->getHeight());
 	m_loadGameButton->registerClickFunc(onClickLoadGameStatic, this);
 
-	m_newGameButton = new Button(renderer, "New Game", 0, 0);
+	m_newGameButton = new Button(renderer, "New Game", guiFont, 0, 0);
 	m_newGameButton->set(halfWidth - m_newGameButton->getWidth() / 2, m_loadGameButton->getY() - PADDING_Y - m_newGameButton->getHeight());
 	m_newGameButton->registerClickFunc(onClickNewGameStatic, this);
 

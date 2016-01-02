@@ -13,7 +13,6 @@ private:
 	unsigned int m_width, m_height;
 public:
 	Texture(SDL_Renderer *renderer, const std::string path);
-	Texture(SDL_Renderer *renderer, const std::string text, const SDL_Color textColor);
 	Texture(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color textColor);
 	virtual ~Texture();
 	void freeTexture();
