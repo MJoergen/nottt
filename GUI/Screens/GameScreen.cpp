@@ -3,6 +3,7 @@
 #include "../../NTTTPlayerMike.h"
 #include <string>
 #include <algorithm>
+#include <fstream>
 
 static int manageGameStatic(void* data)
 {
@@ -16,6 +17,37 @@ void GameScreen::prepareForQuit(){
 		SDL_WaitThread(m_gameThread, &status);
 		std::cout << "Game ended: " << status << std::endl;
 	}
+}
+
+void GameScreen::writeLog(const int winner) const{
+	//TODO
+
+	std::ofstream outputFile;
+	outputFile.open("logs/" + *m_logName);
+
+	if (!outputFile.good()){
+		std::cout << "Failed to open logs/" << *m_logName << std::endl;
+		outputFile.close();
+		return;
+	}
+
+	outputFile << "# Players: " << std::endl;
+	outputFile << "Player 1: " << m_player1->getName() << std::endl;
+	outputFile << "Player 2: " << m_player2->getName() << std::endl;
+	outputFile << "# Settings:" << std::endl;
+	outputFile << "BoardCount: " << *m_boardCount << std::endl;
+	outputFile << "BoardSize: " << *m_boardSize << std::endl;
+	outputFile << "LineSize: " << *m_lineSize << std::endl;
+	outputFile << "Game Seed: " << *m_gameSeed << std::endl;
+	outputFile << "# Moves:" << std::endl;
+	for (unsigned int index = 0; index < m_moves.size(); index++){
+		outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
+	}
+	outputFile << "# Winner:" << std::endl;
+	outputFile << "Winner: " << winner << std::endl;
+
+	outputFile.close();
+
 }
 
 int GameScreen::manageGame(){
@@ -74,10 +106,10 @@ int GameScreen::manageGame(){
 		}
 	}
 
-	/*
-	if (m_logRadioButton->isChecked())
-	writeLog(m_winner);
-	*/
+	
+	if (*m_writeLog)
+		writeLog(m_winner);
+	
 
 	//m_isGameThreadRunning must be set to false just before the end.
 	m_isGameThreadRunning = false;

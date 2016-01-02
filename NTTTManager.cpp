@@ -106,37 +106,6 @@ bool NTTTManager::init()
 }
 
 /*
-void NTTTManager::writeLog(const int winner) const{
-	//TODO
-
-	std::ofstream outputFile;
-	outputFile.open("logs/" + m_logFileInputTextField->getContent());
-
-	if (!outputFile.good()){
-		std::cout << "Failed to open logs/" << m_logFileInputTextField->getContent() << std::endl;
-		outputFile.close();
-		return;
-	}
-
-	outputFile << "# Players: " << std::endl;
-	outputFile << "Player 1: " << m_player1->getName() << std::endl;
-	outputFile << "Player 2: " << m_player2->getName() << std::endl;
-	outputFile << "# Settings:" << std::endl;
-	outputFile << "BoardCount: " << g_game->getBoardCount() << std::endl;
-	outputFile << "BoardSize: " << g_game->getBoardSize() << std::endl;
-	outputFile << "LineSize: " << g_game->getLineSize() << std::endl;
-	outputFile << "Game Seed: " << m_gameSeedTextField->getContent() << std::endl;
-	outputFile << "# Moves:" << std::endl;
-	for (unsigned int index = 0; index < m_moves.size(); index++){
-		outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
-	}
-	outputFile << "# Winner:" << std::endl;
-	outputFile << "Winner: " << winner << std::endl;
-
-	outputFile.close();
-
-}
-
 void NTTTManager::onReadLogClick(){
 	std::ifstream inputFile;
 	inputFile.open("logs/" + m_logFileInputTextField->getContent());
