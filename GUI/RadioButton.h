@@ -8,11 +8,11 @@ class RadioButton {
 private:
 	
 	int m_x, m_y;
-	
 	bool m_isChecked = false;
+	int m_size;
 
 public:
-	RadioButton(const bool isChecked, const int x, const int y);
+	RadioButton(const bool isChecked, const int x, const int y, const int size);
 	virtual ~RadioButton();
 
 

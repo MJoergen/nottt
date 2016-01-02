@@ -105,7 +105,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 	//
 	m_manualModeText = new Text(renderer, "Manual Mode:", guiFont, black, 0, m_gameSeedText->getY() + m_gameSeedText->getHeight() + PADDING_Y);
 
-	m_manualModeRadioButton = new RadioButton(*m_manualMode, 0, m_manualModeText->getY());
+	m_manualModeRadioButton = new RadioButton(*m_manualMode, 0, m_manualModeText->getY(), m_manualModeText->getHeight());
 
 	const unsigned int thirdLineWidth = m_manualModeText->getWidth() + m_manualModeRadioButton->getWidth() + PADDING_X;
 	const unsigned int halfThirdLineWidth = thirdLineWidth / 2;
@@ -116,7 +116,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 	//
 	m_writeLogText = new Text(renderer, "Write log: ", guiFont, black, 0, m_manualModeText->getY() + m_manualModeText->getHeight() + PADDING_Y);
 
-	m_writeLogRadioButton = new RadioButton(*m_writeLog, 0, m_writeLogText->getY());
+	m_writeLogRadioButton = new RadioButton(*m_writeLog, 0, m_writeLogText->getY(), m_writeLogText->getHeight());
 
 	const unsigned int fourthLineWidth = m_writeLogText->getWidth() + m_writeLogRadioButton->getWidth() + PADDING_X;
 	const unsigned int halfFourthLineWidth = fourthLineWidth / 2;

@@ -33,7 +33,7 @@ void TextField::updateTextField(SDL_Renderer *renderer){
 
 void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
 
-	SDL_Rect rect = { m_x, m_y, m_width, g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2 };
+	SDL_Rect rect = { m_x, m_y, m_width, m_texture->getHeight() + g_NtttManager.PADDING_Y * 2 };
 
 	if (m_selected)
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -48,13 +48,13 @@ void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
 
 	if (m_content.length() <= 0){
 		if (m_selected && time % 2000 >= 1000) {
-			SDL_RenderDrawLine(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y);
+			SDL_RenderDrawLine(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y, m_x + g_NtttManager.PADDING_X, m_y + m_texture->getHeight() + g_NtttManager.PADDING_Y);
 		}
 	}
 	else{
 		m_texture->renderTexture(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
 		if (m_selected && time % 2000 >= 1000) {
-			SDL_RenderDrawLine(renderer, m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y,
+			SDL_RenderDrawLine(renderer, m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + m_texture->getHeight() + g_NtttManager.PADDING_Y,
 				m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + g_NtttManager.PADDING_Y);
 		}
 	}
@@ -62,7 +62,7 @@ void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
 }
 
 const bool TextField::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const{
-	return m_x <= x && m_x + m_width >= x && m_y <= y && m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_X * 2 >= y;
+	return m_x <= x && m_x + m_width >= x && m_y <= y && m_y + (int) m_texture->getHeight() + g_NtttManager.PADDING_X * 2 >= y;
 }
 
 bool is_number(const std::string& s) //Checks if a string is a number
@@ -147,5 +147,5 @@ const unsigned int TextField::getWidth() const{
 }
 
 const unsigned int TextField::getHeight() const{
-	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
+	return m_texture->getHeight() + g_NtttManager.PADDING_Y * 2;
 }

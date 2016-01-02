@@ -68,7 +68,6 @@ bool NTTTManager::init()
 		SDL_Quit();
 		return false;
 	}
-	g_textHeight = TTF_FontHeight(m_font);
 
 	m_movesFont = TTF_OpenFont(FONT_PATH.c_str(), (int)(FONT_SIZE * 0.5));
 	if (m_movesFont == NULL){

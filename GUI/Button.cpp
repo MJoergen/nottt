@@ -24,7 +24,7 @@ const int Button::getWidth() const{
 }
 
 const int Button::getHeight() const{
-	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
+	return m_texture->getHeight() + g_NtttManager.PADDING_Y * 2;
 }
 
 void Button::registerClickFunc(void(*action)(void *), void *data) {

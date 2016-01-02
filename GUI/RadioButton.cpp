@@ -1,10 +1,11 @@
 #include "RadioButton.h"
 #include "../NTTTManager.h"
 
-RadioButton::RadioButton(const bool isChecked, const int x, const int y){
+RadioButton::RadioButton(const bool isChecked, const int x, const int y, const int size){
 	m_isChecked = isChecked;
 	m_x = x;
 	m_y = y;
+	m_size = size;
 }
 
 RadioButton::~RadioButton(){
@@ -12,7 +13,7 @@ RadioButton::~RadioButton(){
 }
 
 const int RadioButton::getWidth() const {
-	return g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2;
+	return m_size;
 }
 
 const int RadioButton::getHeight() const {

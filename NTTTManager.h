@@ -29,7 +29,6 @@ class NTTTManager
     // TODO: Put these variables in a separate class
 	public:
         const int PADDING_X = 3, PADDING_Y = 5;			//The padding along the axises
-        int g_textHeight = 0;							//The 'maximum' text height used with the font
 				
     // These variables are only used WITHIN the NTTTManager class
 	private:
