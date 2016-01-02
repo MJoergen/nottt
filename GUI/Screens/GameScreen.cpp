@@ -100,6 +100,9 @@ GameScreen::GameScreen(GameData data){
 	m_logName = data.logName;
 
 	m_quit = data.quit;
+
+	m_redCross = data.redCross;
+	m_blueCross = data.blueCross;
 }
 
 GameScreen::~GameScreen(){
@@ -289,7 +292,7 @@ void GameScreen::render(SDL_Renderer* renderer) const{
 			}
 		}
 
-		m_game->getBoards()[index].renderBoard(renderer, boardX, boardY, m_boardRenderSize);
+		m_game->getBoards()[index].renderBoard(renderer, m_redCross, m_blueCross, boardX, boardY, m_boardRenderSize);
 	}
 
 	if (m_player1Text == nullptr)

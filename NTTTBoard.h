@@ -2,6 +2,7 @@
 #define _NTTTBOARD_H_
 
 #include <SDL.h>
+#include "GUI/Texture.h"
 #include <vector>
 #include <iostream>
 
@@ -89,7 +90,7 @@ class NTTTBoard {
             return os;
         }
 
-		void renderBoard(SDL_Renderer *renderer, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
+		void renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
 
     private:
         int m_lineSize;

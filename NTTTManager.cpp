@@ -82,9 +82,9 @@ bool NTTTManager::init()
 		return false;
 	}
 
-	g_redCross = new Texture(m_renderer, "RedCross.png");
-	g_blueCross = new Texture(m_renderer, "BlueCross.png");
-	g_checkMark = new Texture(m_renderer, "CheckMark.png");
+	m_redCross = new Texture(m_renderer, "RedCross.png");
+	m_blueCross = new Texture(m_renderer, "BlueCross.png");
+	m_checkMark = new Texture(m_renderer, "CheckMark.png");
 	g_game = new NTTTGame();
 
 	//New GUI system
@@ -95,12 +95,12 @@ bool NTTTManager::init()
 	m_mainMenuScreen = new MainMenuScreen(&m_currentState);
 	m_mainMenuScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	NewGameScreen::NewGameData newGameData = { &m_currentState, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName };
+	NewGameScreen::NewGameData newGameData = { &m_currentState, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, m_checkMark };
 
 	m_newGameScreen = new NewGameScreen(newGameData);
 	m_newGameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	GameScreen::GameData gameData = { &m_currentState, g_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &quit };
+	GameScreen::GameData gameData = { &m_currentState, g_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &quit, m_redCross, m_blueCross };
 
 	m_gameScreen = new GameScreen(gameData);
 	m_gameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -398,12 +398,12 @@ void NTTTManager::close(){
 	delete g_game;
 	g_game = nullptr;
 
-	delete g_checkMark;
-	g_checkMark = nullptr;
-	delete g_redCross;
-	g_redCross = nullptr;
-	delete g_blueCross;
-	g_blueCross = nullptr;
+	delete m_checkMark;
+	m_checkMark = nullptr;
+	delete m_redCross;
+	m_redCross = nullptr;
+	delete m_blueCross;
+	m_blueCross = nullptr;
 
 	TTF_CloseFont(m_font);
 

@@ -19,6 +19,8 @@ public:
 		bool *manualMode;
 		bool *writeLog;
 		std::string *logName;
+
+		Texture *checkMark;
 	};
 	NewGameScreen(NewGameData data);
 	virtual ~NewGameScreen();
@@ -35,6 +37,7 @@ private:
 	bool *m_manualMode = nullptr, *m_writeLog = nullptr;
 	std::string *m_logName = nullptr;
 
+	Texture *m_checkMark;
 
 	Text* m_headlineText = nullptr;
 	Text *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr, *m_gameSeedText = nullptr;

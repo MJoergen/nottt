@@ -28,14 +28,14 @@ class NTTTManager
     // global variable g_NtttManager
     // TODO: Put these variables in a separate class
 	public:
-        Texture *g_redCross;
-        Texture *g_blueCross;
-        Texture *g_checkMark;
         const int PADDING_X = 3, PADDING_Y = 5;			//The padding along the axises
         int g_textHeight = 0;							//The 'maximum' text height used with the font
 				
     // These variables are only used WITHIN the NTTTManager class
 	private:
+		Texture *m_redCross;
+		Texture *m_blueCross;
+		Texture *m_checkMark;
 
 		TTF_Font* m_font = NULL;						//Pointer pointing to the representation of the font
 		const int FONT_SIZE = 30;								//The size of the font

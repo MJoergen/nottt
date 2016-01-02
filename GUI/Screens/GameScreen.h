@@ -23,6 +23,10 @@ public:
 		bool *writeLog;
 		std::string *logName;
 		bool *quit;
+
+		Texture *redCross;
+		Texture *blueCross;
+
 	};
 	GameScreen(GameData data);
 	virtual ~GameScreen();
@@ -64,6 +68,8 @@ private:
 	TTF_Font *m_headlineFont = nullptr, *m_guiFont = nullptr;
 	unsigned int m_width, m_height;
 	bool *m_quit = nullptr;
+
+	Texture *m_redCross = nullptr, *m_blueCross = nullptr;
 
 	//Modified copy from GameInfoViewer ----->
 	Text *m_player1Text = nullptr, *m_player2Text = nullptr, *m_vsText = nullptr, *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr;

@@ -97,7 +97,7 @@ void NTTTBoard::renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickne
 	SDL_RenderDrawLine(renderer, x, y, x + width, y + width);
 }
 
-void NTTTBoard::renderBoard(SDL_Renderer *renderer, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const 
+void NTTTBoard::renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const 
 {
     /* unsigned */ int boardSize = m_squareStates.size();
     /* unsigned */ int squareSize = size / boardSize;
@@ -113,10 +113,10 @@ void NTTTBoard::renderBoard(SDL_Renderer *renderer, const /* unsigned */ int x, 
     for (/* unsigned */ int x_i = 0; x_i < boardSize; x_i++){
         for (/* unsigned */ int y_i = 0; y_i < boardSize; y_i++){
             if (m_squareStates[x_i][y_i] == RED)
-				g_NtttManager.g_redCross->renderTexture(renderer,
+				redCross->renderTexture(renderer,
                         x + x_i * squareSize, y + y_i * squareSize, squareSize, squareSize);
             else if (m_squareStates[x_i][y_i] == BLUE)
-				g_NtttManager.g_blueCross->renderTexture(renderer,
+				blueCross->renderTexture(renderer,
                         x + x_i * squareSize, y + y_i * squareSize, squareSize, squareSize);
         }
     }

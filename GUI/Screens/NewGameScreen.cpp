@@ -40,6 +40,8 @@ NewGameScreen::NewGameScreen(NewGameData data){
 	m_manualMode = data.manualMode;
 	m_writeLog = data.writeLog;
 	m_logName = data.logName;
+
+	m_checkMark = data.checkMark;
 }
 
 NewGameScreen::~NewGameScreen(){
@@ -157,13 +159,13 @@ void NewGameScreen::render(SDL_Renderer* renderer) const{ // The renderer will b
 	m_gameSeedTextField->renderTextField(renderer, SDL_GetTicks());
 
 	m_manualModeText->renderText(renderer);
-	m_manualModeRadioButton->renderRadioButton(renderer);
+	m_manualModeRadioButton->renderRadioButton(renderer, m_checkMark);
 
 	m_startGameButton->renderButton(renderer);
 
 	m_writeLogText->renderText(renderer);
 
-	m_writeLogRadioButton->renderRadioButton(renderer);
+	m_writeLogRadioButton->renderRadioButton(renderer, m_checkMark);
 
 	if (m_writeLogRadioButton->isChecked()){
 		m_logNameText->renderText(renderer);
