@@ -60,9 +60,14 @@ MainMenuScreen::~MainMenuScreen(){
 	cleanUp();
 }
 
-void MainMenuScreen::úpdate() {
+void MainMenuScreen::update() {
 
 }
+
+void MainMenuScreen::prepareForQuit(){
+
+}
+
 
 void MainMenuScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
 
@@ -70,7 +75,7 @@ void MainMenuScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsig
 	const unsigned int halfHeight = height / 2;
 	const SDL_Color black = { 0, 0, 0, 255 };
 
-	m_headlineText = new Text("Bots", headlineFont, black, 0, HEADLINE_PADDING);
+	m_headlineText = new Text("Main Menu", headlineFont, black, 0, HEADLINE_PADDING);
 	m_headlineText->setX(halfWidth - m_headlineText->getWidth() / 2);
 
 	m_exitButton = new Button("Exit", 0, 0);

@@ -20,7 +20,11 @@ BotsScreen::~BotsScreen(){
 	cleanUp();
 }
 
-void BotsScreen::úpdate() {
+void BotsScreen::update() {
+
+}
+
+void BotsScreen::prepareForQuit(){
 
 }
 

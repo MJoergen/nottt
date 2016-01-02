@@ -8,7 +8,6 @@
 #include "GUI/TextField.h"
 #include "GUI/RadioButton.h"
 #include "GUI/Texture.h"
-#include "GUI/GameInfoViewer.h"
 #include <algorithm>
 
 #include "NTTTGame.h"
@@ -18,23 +17,17 @@
 
 class NTTTManager
 {
-    public:
+	public:
         bool init();
         void loop();
 		void close();
-		void onClick();
 		void onReadLogClick();
-        int manageGame();
 		void writeLog(const int winner) const;
-		bool isGameStarted();
-		NTTTPlayer* getPlayer1() { return m_player1; }
-		NTTTPlayer* getPlayer2() { return m_player2; }
-		const int getPlayingFieldSize() { return windowSize; }
 
     // These variables are accessed from OUTSIDE the NTTTManager class via the
     // global variable g_NtttManager
     // TODO: Put these variables in a separate class
-    public:
+	public:
         SDL_Renderer* g_renderer = NULL;				//Pointer pointing to a struct representing the renderer
         Texture *g_redCross;
         Texture *g_blueCross;
@@ -50,49 +43,25 @@ class NTTTManager
 		NTTTGame *g_game;
 		const int FONT_SIZE = 30;								//The size of the font
 		const std::string FONT_PATH = "Junicode-Regular.ttf";	//The path to the font
-
+		
     // These variables are only used WITHIN the NTTTManager class
-    private:
+	private:
+		int m_boardCount = 3, m_boardSize = 4, m_lineSize = 3, m_gameSeed = 12345;
+		bool m_manualMode = false, m_writeLog = false;
+		std::string m_logName = "log.txt";
+		
 		Screen::ScreenState m_currentState = Screen::MAIN_MENU;
-		Screen *m_botsScreen = nullptr, *m_mainMenuScreen = nullptr;
+		Screen *m_botsScreen = nullptr, *m_mainMenuScreen = nullptr, *m_newGameScreen = nullptr, *m_gameScreen = nullptr;
+
+		TTF_Font *m_movesFont = nullptr;
 
 		void render() const;
 		void input(SDL_Event & e);
 		void update();
 
-
-        const int BOARD_PADDING = 30;					//The padding between the borders
-
         SDL_Window* g_window = NULL;			//Pointer pointing to a struct representing the window
 
-		Text *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr,
-			*m_manualModeText = nullptr, *m_logText = nullptr, *m_gameSeedText = nullptr,
-			*m_logFileInputText = nullptr;																				//Text-elements in the GUI
-        TextField *m_boardCountTextField = nullptr, *m_boardSizeTextField = nullptr, *m_lineSizeTextField = nullptr,
-			*m_gameSeedTextField = nullptr, *m_logFileInputTextField = nullptr;											//TextField-elements in the GUI
-        Button *m_startGameButton = nullptr, *m_readLogButton = nullptr;												//The button to start the game in the GUI
-		RadioButton *m_manualModeRadioButton = nullptr, *m_logRadioButton = nullptr;
-		GameInfoViewer *m_gameInfoViewer = nullptr;
-
-        SDL_Thread* gameThread;
-
-        bool isGameThreadRunning = false;
-		bool quit = false;
-		bool isStarted = false; //Boolean used to indicate if the game is started
-		bool backward = false;
-		bool forward = false;
-		bool initGraphics = false;
-
-		NTTTPlayer *m_player1, *m_player2;
-
-		bool m_justWon = false;
-		int m_winner = 0;
-
-		const int windowSize = std::min(WINDOW_WIDTH, WINDOW_HEIGHT);
-        int gridSize;
-		int boardRenderSize;
-
-		std::vector<NTTTMove> m_moves;
+        bool quit = false;
 
 }; // end of NTTTManager
 

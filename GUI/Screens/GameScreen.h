@@ -11,32 +11,47 @@
 
 class GameScreen : public Screen {
 public:
-	GameScreen(ScreenState* currentState, NTTTGame *game, TTF_Font *movesFont);
+	GameScreen(ScreenState* currentState, NTTTGame *game, TTF_Font *movesFont, int *boardCount,
+		int *boardSize, int *lineSize, int *gameSeed, bool *manualMode, bool *writeLog, std::string *logName, bool *quit);
 	virtual ~GameScreen();
 	virtual void init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
 	virtual void render(SDL_Renderer* renderer) const;
 	virtual void input(const SDL_Event & e);
-	virtual void úpdate();
+	virtual void update();
+	virtual void prepareForQuit();
 	virtual void cleanUp();
+	int manageGame();
 
-	//Copy from GameInfoViewer ----->
+	//Modified copy from GameInfoViewer ----->
 	unsigned int getMovesCount(){
-		if (m_moves.size() < m_maxMoves)
-			return m_moves.size();
+		if (m_movesTexts.size() < m_maxMoves)
+			return m_movesTexts.size();
 		else
 			return m_maxMoves + m_excessMoves;
 	}
 	//<-----
 
 private:
+	bool m_isThreadProperlyClosed = true;
+
 	void initialize();
 	bool m_isInitialized;
 	NTTTPlayer *m_player1, *m_player2;
 	NTTTGame *m_game;
-	unsigned int m_boardCount, m_boardSize, m_lineSize, m_gameSeed;
+	unsigned int m_winner = 0;
+
+	int *m_boardCount = nullptr, *m_boardSize = nullptr, *m_lineSize = nullptr, *m_gameSeed = nullptr;
+	bool *m_manualMode = nullptr, *m_writeLog = nullptr;
+	std::string *m_logName = nullptr;
+	
+	bool m_forward = false, m_backward = false;
+
+	bool m_isGameThreadRunning = false;
+	SDL_Thread *m_gameThread = nullptr;
 
 	TTF_Font *m_headlineFont = nullptr, *m_guiFont = nullptr;
 	unsigned int m_width, m_height;
+	bool *m_quit = nullptr;
 
 	//Modified copy from GameInfoViewer ----->
 	Text *m_player1Text = nullptr, *m_player2Text = nullptr, *m_vsText = nullptr, *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr;
@@ -48,12 +63,9 @@ private:
 	TTF_Font *m_movesFont = nullptr;
 	int m_headlineHeight, m_movesHeight, m_movesWidth;
 	unsigned int m_maxMoves, m_excessMoves = 0;
-
-	bool m_failedFontInitHeadline = false, m_failedFontInitMoves = false;
 	//<-----
 
 	//Modified copy from NTTTManager ----->
-	int manageGame();
 	void writeLog(const int winner) const;
 	const int BOARD_PADDING = 30;					//The padding between the borders
 
@@ -63,6 +75,10 @@ private:
 
 	std::vector<NTTTMove> m_moves;
 	//<-----
+
+	void initializeWinnerDisplayText();
+	void addMove(NTTTMove move);
+	void removeMove();
 };
 
 #endif
