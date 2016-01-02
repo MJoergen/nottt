@@ -28,7 +28,6 @@ class NTTTManager
     // global variable g_NtttManager
     // TODO: Put these variables in a separate class
 	public:
-        SDL_Renderer* g_renderer = NULL;				//Pointer pointing to a struct representing the renderer
         Texture *g_redCross;
         Texture *g_blueCross;
         Texture *g_checkMark;
@@ -46,6 +45,7 @@ class NTTTManager
 		
     // These variables are only used WITHIN the NTTTManager class
 	private:
+		SDL_Renderer* m_renderer = NULL;				//Pointer pointing to a struct representing the renderer
 		int m_boardCount = 3, m_boardSize = 4, m_lineSize = 3, m_gameSeed = 12345;
 		bool m_manualMode = false, m_writeLog = false;
 		std::string m_logName = "log.txt";

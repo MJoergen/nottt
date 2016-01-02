@@ -12,17 +12,17 @@ private:
 	SDL_Texture* m_texture = NULL;
 	unsigned int m_width, m_height;
 public:
-	Texture(const std::string path);
-	Texture(const std::string text, const SDL_Color textColor);
-	Texture(const std::string text, TTF_Font* font, const SDL_Color textColor);
+	Texture(SDL_Renderer *renderer, const std::string path);
+	Texture(SDL_Renderer *renderer, const std::string text, const SDL_Color textColor);
+	Texture(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color textColor);
 	virtual ~Texture();
 	void freeTexture();
 	const unsigned int getWidth() const { return m_width; }
 	const unsigned int getHeight() const { return m_height; }
-	void renderTexture() const;
-	void renderTexture(const int x, const int y) const { renderTexture(x, y, m_width, m_height); }
-	void renderTexture(const int x, const int y, const int width, const int height) const;
-	void renderTexture(const int sx, const int sy, const int swidth, const int sheight, const int dx, const int dy, const int dwidth, const int dheight) const;
+	void renderTexture(SDL_Renderer *renderer) const;
+	void renderTexture(SDL_Renderer *renderer, const int x, const int y) const { renderTexture(renderer, x, y, m_width, m_height); }
+	void renderTexture(SDL_Renderer *renderer, const int x, const int y, const int width, const int height) const;
+	void renderTexture(SDL_Renderer *renderer, const int sx, const int sy, const int swidth, const int sheight, const int dx, const int dy, const int dwidth, const int dheight) const;
 	friend std::ostream& operator <<(std::ostream &os, const Texture &rhs){
 		os << "Texture: { Width: " << rhs.m_width << ", Height: " << rhs.m_height << " }" << std::endl;
 		return os;

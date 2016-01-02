@@ -60,8 +60,8 @@ MainMenuScreen::~MainMenuScreen(){
 	cleanUp();
 }
 
-void MainMenuScreen::update() {
-
+void MainMenuScreen::update(SDL_Renderer *renderer) {
+	
 }
 
 void MainMenuScreen::prepareForQuit(){
@@ -69,16 +69,16 @@ void MainMenuScreen::prepareForQuit(){
 }
 
 
-void MainMenuScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
+void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
 
 	const unsigned int halfWidth = width / 2;
 	const unsigned int halfHeight = height / 2;
 	const SDL_Color black = { 0, 0, 0, 255 };
 
-	m_headlineText = new Text("Main Menu", headlineFont, black, 0, HEADLINE_PADDING);
+	m_headlineText = new Text(renderer, "Main Menu", headlineFont, black, 0, HEADLINE_PADDING);
 	m_headlineText->setX(halfWidth - m_headlineText->getWidth() / 2);
 
-	m_exitButton = new Button("Exit", 0, 0);
+	m_exitButton = new Button(renderer, "Exit", 0, 0);
 
 	const unsigned int buttonsHeight = m_exitButton->getHeight() * 5 + PADDING_Y * 4;
 	const unsigned int halfBuffonsHeight = buttonsHeight / 2;
@@ -86,32 +86,32 @@ void MainMenuScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsig
 	m_exitButton->set(halfWidth - m_exitButton->getWidth() / 2, halfHeight + halfBuffonsHeight - m_exitButton->getHeight());
 	m_exitButton->registerClickFunc(onClickExitStatic, this);
 	
-	m_statisticsButton = new Button("Statistics", 0, 0);
+	m_statisticsButton = new Button(renderer, "Statistics", 0, 0);
 	m_statisticsButton->set(halfWidth - m_statisticsButton->getWidth() / 2, m_exitButton->getY() - PADDING_Y - m_statisticsButton->getHeight());
 	m_statisticsButton->registerClickFunc(onClickStatisticsStatic, this);
 
-	m_botsButton = new Button("Bots", 0, 0);
+	m_botsButton = new Button(renderer, "Bots", 0, 0);
 	m_botsButton->set(halfWidth - m_botsButton->getWidth() / 2, m_statisticsButton->getY() - PADDING_Y - m_botsButton->getHeight());
 	m_botsButton->registerClickFunc(onClickBotsStatic, this);
 
-	m_loadGameButton = new Button("Load Game", 0, 0);
+	m_loadGameButton = new Button(renderer, "Load Game", 0, 0);
 	m_loadGameButton->set(halfWidth - m_loadGameButton->getWidth() / 2, m_botsButton->getY() - PADDING_Y - m_loadGameButton->getHeight());
 	m_loadGameButton->registerClickFunc(onClickLoadGameStatic, this);
 
-	m_newGameButton = new Button("New Game", 0, 0);
+	m_newGameButton = new Button(renderer, "New Game", 0, 0);
 	m_newGameButton->set(halfWidth - m_newGameButton->getWidth() / 2, m_loadGameButton->getY() - PADDING_Y - m_newGameButton->getHeight());
 	m_newGameButton->registerClickFunc(onClickNewGameStatic, this);
 
 }
 
 void MainMenuScreen::render(SDL_Renderer* renderer) const{ // The renderer will be used later
-	m_headlineText->renderText();
+	m_headlineText->renderText(renderer);
 
-	m_newGameButton->renderButton();
-	m_loadGameButton->renderButton();
-	m_botsButton->renderButton();
-	m_statisticsButton->renderButton();
-	m_exitButton->renderButton();
+	m_newGameButton->renderButton(renderer);
+	m_loadGameButton->renderButton(renderer);
+	m_botsButton->renderButton(renderer);
+	m_statisticsButton->renderButton(renderer);
+	m_exitButton->renderButton(renderer);
 }
 
 void MainMenuScreen::input(const SDL_Event & event){

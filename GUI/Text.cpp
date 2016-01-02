@@ -1,22 +1,22 @@
 #include "Text.h"
 #include "../NTTTManager.h"
 
-Text::Text(const std::string text, const unsigned int x, const unsigned int y){
+Text::Text(SDL_Renderer *renderer, const std::string text, const unsigned int x, const unsigned int y){
 	m_x = x;
 	m_y = y;
-	m_texture = new Texture(text, { 0, 0, 0 });
+	m_texture = new Texture(renderer, text, { 0, 0, 0 });
 }
 
-Text::Text(const std::string text, const SDL_Color color, const unsigned int x, const unsigned int y){
+Text::Text(SDL_Renderer *renderer, const std::string text, const SDL_Color color, const unsigned int x, const unsigned int y){
 	m_x = x;
 	m_y = y;
-	m_texture = new Texture(text, color);
+	m_texture = new Texture(renderer, text, color);
 }
 
-Text::Text(const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y){
+Text::Text(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y){
 	m_x = x;
 	m_y = y;
-	m_texture = new Texture(text, font, color);
+	m_texture = new Texture(renderer, text, font, color);
 }
 
 Text::~Text(){
@@ -24,8 +24,8 @@ Text::~Text(){
 	m_texture = nullptr;
 }
 
-void Text::renderText() const{
-	m_texture->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
+void Text::renderText(SDL_Renderer *renderer) const{
+	m_texture->renderTexture(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
 }
 
 const unsigned int Text::getWidth() const{

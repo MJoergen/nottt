@@ -14,10 +14,10 @@ private:
     void *m_data;
 
 public:
-	Button(const std::string text, const unsigned int x, const unsigned int y);
+	Button(SDL_Renderer *renderer, const std::string text, const unsigned int x, const unsigned int y);
 	virtual ~Button();
 
-	void renderButton() const;
+	void renderButton(SDL_Renderer *renderer) const;
 	
 	const int getWidth() const;
 	const int getHeight() const;

@@ -85,31 +85,30 @@ int GameScreen::manageGame(){
 	return player;
 }
 
-GameScreen::GameScreen(ScreenState* currentState, NTTTGame *game, TTF_Font *movesFont,
-	int *boardCount, int *boardSize, int *lineSize, int *gameSeed, bool *manualMode, bool *writeLog, std::string *logName, bool *quit){
-	m_currentState = currentState;
+GameScreen::GameScreen(GameData data){
+	m_currentState = data.currentState;
 
-	m_game = game;
-	m_movesFont = movesFont;
+	m_game = data.game;
+	m_movesFont = data.movesFont;
 
-	m_boardCount = boardCount;
-	m_boardSize = boardSize;
-	m_lineSize = lineSize;
-	m_gameSeed = gameSeed;
-	m_manualMode = manualMode;
-	m_writeLog = writeLog;
-	m_logName = logName;
+	m_boardCount = data.boardCount;
+	m_boardSize = data.boardSize;
+	m_lineSize = data.lineSize;
+	m_gameSeed = data.gameSeed;
+	m_manualMode = data.manualMode;
+	m_writeLog = data.writeLog;
+	m_logName = data.logName;
 
-	m_quit = quit;
+	m_quit = data.quit;
 }
 
 GameScreen::~GameScreen(){
 	cleanUp();
 }
 
-void GameScreen::update() {
+void GameScreen::update(SDL_Renderer *renderer) {
 	if (!m_isInitialized){
-		initialize();
+		initialize(renderer);
 		m_isInitialized = true;
 	}
 	else if (!m_isGameThreadRunning && !m_isThreadProperlyClosed){
@@ -122,10 +121,10 @@ void GameScreen::update() {
 		(*m_currentState) = MAIN_MENU;
 	}
 	if (m_winner != 0 && m_winnerDisplayText == nullptr){
-		initializeWinnerDisplayText();
+		initializeWinnerDisplayText(renderer);
 	}
 	for (unsigned int index = getMovesCount(); index < m_moves.size(); index++){
-		addMove(m_moves[index]);
+		addMove(renderer, m_moves[index]);
 	}
 	for (unsigned int index = getMovesCount(); index > m_moves.size(); index--){
 		removeMove();
@@ -143,35 +142,35 @@ void GameScreen::removeMove(){
 	m_movesTexts.resize(m_movesTexts.size() - 1);
 }
 
-void GameScreen::addMove(NTTTMove move){
+void GameScreen::addMove(SDL_Renderer *renderer, NTTTMove move){
 	if (m_movesTexts.size() >= m_maxMoves){
 		m_excessMoves++;
 		return;
 	}
 	const int x = m_playingFieldSize;
 
-	m_movesTexts.push_back(new Text(std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
+	m_movesTexts.push_back(new Text(renderer, std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
 		+ ", " + std::to_string(move.getSquareY()) + ")", m_movesFont, { 255, 255, 255 }, x + 2 * PADDING_X + (int)(m_movesTexts.size() / m_amountInColumn) * m_movesWidth,
 		m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (m_movesTexts.size() % m_amountInColumn) * m_movesHeight));
 
 }
 
-void GameScreen::initializeWinnerDisplayText(){
+void GameScreen::initializeWinnerDisplayText(SDL_Renderer *renderer){
 	const int x = m_playingFieldSize;
 	const int width = m_width - x;
 	switch (m_winner){
 	case 1:
-		m_winnerDisplayText = new Text(m_player1->getName(), { 255, 0, 0 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+		m_winnerDisplayText = new Text(renderer, m_player1->getName(), { 255, 0, 0 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
 		m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
 		break;
 	case 2:
-		m_winnerDisplayText = new Text(m_player2->getName(), { 0, 0, 255 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+		m_winnerDisplayText = new Text(renderer, m_player2->getName(), { 0, 0, 255 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
 		m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
 		break;
 	}
 }
 
-void GameScreen::initialize(){
+void GameScreen::initialize(SDL_Renderer *renderer){
 	cleanUp();
 
 	//Maybe temporary ----->
@@ -217,23 +216,23 @@ void GameScreen::initialize(){
 	const int y = 0;
 	const int width = m_width - x;
 
-	m_vsText = new Text(" vs ", m_headlineFont, { 0, 0, 0 }, x, y);
+	m_vsText = new Text(renderer, " vs ", m_headlineFont, { 0, 0, 0 }, x, y);
 	m_vsText->set(x - m_vsText->getWidth() / 2 + width / 2, PADDING_Y);
 
-	m_player1Text = new Text(m_player1->getName(), m_headlineFont, { 255, 0, 0 }, x, m_vsText->getY());
-	m_player2Text = new Text(m_player2->getName(), m_headlineFont, { 0, 0, 255 }, m_vsText->getX() + m_vsText->getWidth(), m_vsText->getY());
+	m_player1Text = new Text(renderer, m_player1->getName(), m_headlineFont, { 255, 0, 0 }, x, m_vsText->getY());
+	m_player2Text = new Text(renderer, m_player2->getName(), m_headlineFont, { 0, 0, 255 }, m_vsText->getX() + m_vsText->getWidth(), m_vsText->getY());
 	m_player1Text->setX(m_vsText->getX() - m_player1Text->getWidth());
 
-	m_boardCountText = new Text("BoardCount: " + std::to_string(*m_boardCount), x, m_vsText->getY() + m_vsText->getHeight() + PADDING_Y * 2);
+	m_boardCountText = new Text(renderer, "BoardCount: " + std::to_string(*m_boardCount), x, m_vsText->getY() + m_vsText->getHeight() + PADDING_Y * 2);
 	m_boardCountText->setX(x + width / 2 - m_boardCountText->getWidth() / 2);
 
-	m_boardSizeText = new Text("BoardSize: " + std::to_string(*m_boardSize), x, m_boardCountText->getY() + m_boardCountText->getHeight() + PADDING_Y);
+	m_boardSizeText = new Text(renderer, "BoardSize: " + std::to_string(*m_boardSize), x, m_boardCountText->getY() + m_boardCountText->getHeight() + PADDING_Y);
 	m_boardSizeText->setX(x + width / 2 - m_boardSizeText->getWidth() / 2);
 
-	m_lineSizeText = new Text("LineSize: " + std::to_string(*m_lineSize), x, m_boardSizeText->getY() + m_boardSizeText->getHeight() + PADDING_Y);
+	m_lineSizeText = new Text(renderer, "LineSize: " + std::to_string(*m_lineSize), x, m_boardSizeText->getY() + m_boardSizeText->getHeight() + PADDING_Y);
 	m_lineSizeText->setX(x + width / 2 - m_lineSizeText->getWidth() / 2);
 
-	m_winnerText = new Text("Winner: ", x + PADDING_X, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+	m_winnerText = new Text(renderer, "Winner: ", x + PADDING_X, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
 
 	int w, h;
 
@@ -255,7 +254,7 @@ void GameScreen::initialize(){
 	}
 }
 
-void GameScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
+void GameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
 	//This function is almost empty since the gui depends on the settings (the settings has not yet been chosen)
 	m_playingFieldSize = std::min(width, height);
 	m_headlineFont = headlineFont;
@@ -263,7 +262,7 @@ void GameScreen::init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned 
 	m_width = width;
 	m_height = height;
 
-	Texture texture("0", { 0, 0, 0, 255 });
+	Texture texture(renderer, "0", { 0, 0, 0, 255 });
 
 	m_movesHeight = texture.getHeight();
 }
@@ -288,23 +287,23 @@ void GameScreen::render(SDL_Renderer* renderer) const{
 			}
 		}
 
-		m_game->getBoards()[index].renderBoard(boardX, boardY, m_boardRenderSize);
+		m_game->getBoards()[index].renderBoard(renderer, boardX, boardY, m_boardRenderSize);
 	}
 
 	if (m_player1Text == nullptr)
 		return;
 
-	m_player1Text->renderText();
-	m_player2Text->renderText();
-	m_vsText->renderText();
+	m_player1Text->renderText(renderer);
+	m_player2Text->renderText(renderer);
+	m_vsText->renderText(renderer);
 
-	m_boardCountText->renderText();
-	m_boardSizeText->renderText();
-	m_lineSizeText->renderText();
+	m_boardCountText->renderText(renderer);
+	m_boardSizeText->renderText(renderer);
+	m_lineSizeText->renderText(renderer);
 
-	m_winnerText->renderText();
+	m_winnerText->renderText(renderer);
 	if (m_winnerDisplayText != nullptr)
-		m_winnerDisplayText->renderText();
+		m_winnerDisplayText->renderText(renderer);
 
 	for (unsigned int index = 0; index < m_movesTexts.size(); index++){
 		switch (index % 2){
@@ -319,7 +318,7 @@ void GameScreen::render(SDL_Renderer* renderer) const{
 		SDL_Rect rect = { x + 2 * PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth,
 			m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_amountInColumn) * m_movesHeight, m_movesWidth, m_movesHeight };
 		SDL_RenderFillRect(renderer, &rect);
-		m_movesTexts[index]->renderText();
+		m_movesTexts[index]->renderText(renderer);
 	}
 
 }

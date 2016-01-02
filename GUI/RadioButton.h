@@ -16,7 +16,7 @@ public:
 	virtual ~RadioButton();
 
 
-	void renderRadioButton() const;
+	void renderRadioButton(SDL_Renderer *renderer) const;
 
 	const int getWidth() const;
 	const int getHeight() const;

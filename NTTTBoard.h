@@ -1,6 +1,7 @@
 #ifndef _NTTTBOARD_H_
 #define _NTTTBOARD_H_
 
+#include <SDL.h>
 #include <vector>
 #include <iostream>
 
@@ -88,15 +89,15 @@ class NTTTBoard {
             return os;
         }
 
-		void renderBoard(const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
+		void renderBoard(SDL_Renderer *renderer, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
 
     private:
         int m_lineSize;
         State m_state;
         std::vector< std::vector<SquareState> > m_squareStates;
 		Line m_line;
-		void renderDiagonalLineRight(const int thickness, const int x, const int y, const int width) const;
-		void renderDiagonalLineLeft(const int thickness, const int x, const int y, const int width) const;
+		void renderDiagonalLineRight(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
+		void renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
 }; // end of class NTTTBoard
 
 #endif // _NTTTBOARD_H_

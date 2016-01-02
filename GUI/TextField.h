@@ -29,10 +29,10 @@ private:
 	FieldType m_fieldType;
 	
 	Texture* m_texture = NULL;
-	void genTexture();
+	void genTexture(SDL_Renderer *renderer);
 
 public:
-	TextField(const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit);
+	TextField(SDL_Renderer *renderer, const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit);
 	virtual ~TextField();
 	
 	const std::string getContent() const {
@@ -43,8 +43,11 @@ public:
 	const bool isSelected() { return m_selected; }
 	void select() { SDL_StartTextInput(); m_selected = true; }
 	void deselect() { SDL_StopTextInput(); m_selected = false; }
+
+	bool m_changed = false;
 	
-	void renderTextField(const int& time) const;
+	void renderTextField(SDL_Renderer *renderer, const int& time) const;
+	void updateTextField(SDL_Renderer *renderer);
 	
 	void onKeyPress(const SDL_Keysym& keysym, const std::string& text);
 	const bool isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const;

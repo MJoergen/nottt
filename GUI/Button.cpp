@@ -1,10 +1,10 @@
 #include "Button.h"
 #include "../NTTTManager.h"
 
-Button::Button(const std::string text, unsigned int x, const unsigned int y){
+Button::Button(SDL_Renderer *renderer, const std::string text, unsigned int x, const unsigned int y){
 	m_x = x;
 	m_y = y;
-	m_texture = new Texture(text, {0, 0, 0});
+	m_texture = new Texture(renderer, text, {0, 0, 0});
 }
 
 Button::~Button(){
@@ -12,11 +12,11 @@ Button::~Button(){
 	m_texture = nullptr;
 }
 
-void Button::renderButton() const {
-	m_texture->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
-	SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 0, 0, 0, 255);
+void Button::renderButton(SDL_Renderer *renderer) const {
+	m_texture->renderTexture(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_Rect rect = { m_x, m_y, getWidth(), getHeight() };
-	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
+	SDL_RenderDrawRect(renderer, &rect);
 }
 
 const int Button::getWidth() const{

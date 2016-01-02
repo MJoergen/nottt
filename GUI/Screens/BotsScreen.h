@@ -10,10 +10,10 @@ class BotsScreen : public Screen {
 public:
 	BotsScreen(ScreenState* currentState);
 	virtual ~BotsScreen();
-	virtual void init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
+	virtual void init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
 	virtual void render(SDL_Renderer* renderer) const;
 	virtual void input(const SDL_Event & e);
-	virtual void update();
+	virtual void update(SDL_Renderer *renderer);
 	virtual void prepareForQuit();
 	virtual void cleanUp();
 	void onClick();

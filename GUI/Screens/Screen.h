@@ -12,10 +12,10 @@ public:
 	};
 
 	virtual ~Screen() {};
-	virtual void init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height) = 0;
+	virtual void init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height) = 0;
 	virtual void render(SDL_Renderer* renderer) const = 0;
 	virtual void input(const SDL_Event & e) = 0;
-	virtual void update() = 0;
+	virtual void update(SDL_Renderer *renderer) = 0;
 	virtual void prepareForQuit() = 0;
 	virtual void cleanUp() = 0;
 protected:

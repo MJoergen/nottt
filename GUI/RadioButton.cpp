@@ -19,12 +19,12 @@ const int RadioButton::getHeight() const {
 	return getWidth();
 }
 
-void RadioButton::renderRadioButton() const {
+void RadioButton::renderRadioButton(SDL_Renderer *renderer) const {
 	if (m_isChecked)
-		g_NtttManager.g_checkMark->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y,
+		g_NtttManager.g_checkMark->renderTexture(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y,
 			getWidth() - g_NtttManager.PADDING_X * 2, getHeight() - g_NtttManager.PADDING_Y * 2);
 	SDL_Rect rect = { m_x, m_y, getWidth(), getHeight() };
-	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
+	SDL_RenderDrawRect(renderer, &rect);
 }
 
 const bool RadioButton::isInside(const int& x, const int& y) const{

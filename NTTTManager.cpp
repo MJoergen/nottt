@@ -48,8 +48,8 @@ bool NTTTManager::init()
 		return false;
 	}
 
-	g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED); //Creates the renderer used to render to the window
-	if (g_renderer == NULL){
+	m_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED); //Creates the renderer used to render to the window
+	if (m_renderer == NULL){
 		std::cout << "Failed creating renderer: " << SDL_GetError() << std::endl;
 		SDL_DestroyWindow(g_window);
 		TTF_Quit();
@@ -61,7 +61,7 @@ bool NTTTManager::init()
 	g_font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE); //Creates the font used in the application
 	if (g_font == NULL){
 		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
-		SDL_DestroyRenderer(g_renderer);
+		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(g_window);
 		TTF_Quit();
 		IMG_Quit();
@@ -74,7 +74,7 @@ bool NTTTManager::init()
 	if (m_movesFont == NULL){
 		std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
 		TTF_CloseFont(g_font);
-		SDL_DestroyRenderer(g_renderer);
+		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(g_window);
 		TTF_Quit();
 		IMG_Quit();
@@ -82,24 +82,28 @@ bool NTTTManager::init()
 		return false;
 	}
 
-	g_redCross = new Texture("RedCross.png");
-	g_blueCross = new Texture("BlueCross.png");
-	g_checkMark = new Texture("CheckMark.png");
+	g_redCross = new Texture(m_renderer, "RedCross.png");
+	g_blueCross = new Texture(m_renderer, "BlueCross.png");
+	g_checkMark = new Texture(m_renderer, "CheckMark.png");
 	g_game = new NTTTGame();
 
 	//New GUI system
 
 	m_botsScreen = new BotsScreen(&m_currentState);
-	m_botsScreen->init(g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_botsScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	m_mainMenuScreen = new MainMenuScreen(&m_currentState);
-	m_mainMenuScreen->init(g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_mainMenuScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	m_newGameScreen = new NewGameScreen(&m_currentState, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName);
-	m_newGameScreen->init(g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	NewGameScreen::NewGameData newGameData = { &m_currentState, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName };
 
-	m_gameScreen = new GameScreen(&m_currentState, g_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &quit);
-	m_gameScreen->init(g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+	m_newGameScreen = new NewGameScreen(newGameData);
+	m_newGameScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+	GameScreen::GameData gameData = { &m_currentState, g_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &quit };
+
+	m_gameScreen = new GameScreen(gameData);
+	m_gameScreen->init(m_renderer, g_font, g_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	return true;
 }
@@ -297,19 +301,19 @@ void NTTTManager::loop(){
 void NTTTManager::update(){
 	switch (m_currentState){
 	case Screen::MAIN_MENU:
-		m_mainMenuScreen->update();
+		m_mainMenuScreen->update(m_renderer);
 		break;
 	case Screen::NEW_GAME:
-		m_newGameScreen->update();
+		m_newGameScreen->update(m_renderer);
 		break;
 	case Screen::LOAD_GAME:
 		//TODO
 		break;
 	case Screen::GAME:
-		m_gameScreen->update();
+		m_gameScreen->update(m_renderer);
 		break;
 	case Screen::BOTS:
-		m_botsScreen->update();
+		m_botsScreen->update(m_renderer);
 		break;
 	case Screen::STATISTICS:
 		//TODO
@@ -345,30 +349,30 @@ void NTTTManager::input(SDL_Event & event) {
 
 void NTTTManager::render() const{
 
-	SDL_SetRenderDrawColor(g_renderer, 255, 255, 255, 255);
-	SDL_RenderClear(g_renderer); //Clears the screen
+	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+	SDL_RenderClear(m_renderer); //Clears the screen
 	switch (m_currentState){
 	case Screen::MAIN_MENU:
-		m_mainMenuScreen->render(g_renderer);
+		m_mainMenuScreen->render(m_renderer);
 		break;
 	case Screen::NEW_GAME:
-		m_newGameScreen->render(g_renderer);
+		m_newGameScreen->render(m_renderer);
 		break;
 	case Screen::LOAD_GAME:
 		//TODO
 		break;
 	case Screen::GAME:
-		m_gameScreen->render(g_renderer);
+		m_gameScreen->render(m_renderer);
 		break;
 	case Screen::BOTS:
-		m_botsScreen->render(g_renderer);
+		m_botsScreen->render(m_renderer);
 		break;
 	case Screen::STATISTICS:
 		//TODO
 		break;
 	}
 
-	SDL_RenderPresent(g_renderer); //Updates the screen
+	SDL_RenderPresent(m_renderer); //Updates the screen
 }
 
 
@@ -403,9 +407,9 @@ void NTTTManager::close(){
 
 	TTF_CloseFont(g_font);
 
-	SDL_DestroyRenderer(g_renderer);
+	SDL_DestroyRenderer(m_renderer);
 	SDL_DestroyWindow(g_window);
-	g_renderer = nullptr;
+	m_renderer = nullptr;
 	g_window = nullptr;
 
 	TTF_Quit();

@@ -11,13 +11,25 @@
 
 class GameScreen : public Screen {
 public:
-	GameScreen(ScreenState* currentState, NTTTGame *game, TTF_Font *movesFont, int *boardCount,
-		int *boardSize, int *lineSize, int *gameSeed, bool *manualMode, bool *writeLog, std::string *logName, bool *quit);
+	struct GameData{
+		ScreenState* currentState;
+		NTTTGame *game;
+		TTF_Font *movesFont;
+		int *boardCount;
+		int *boardSize;
+		int *lineSize;
+		int *gameSeed;
+		bool *manualMode;
+		bool *writeLog;
+		std::string *logName;
+		bool *quit;
+	};
+	GameScreen(GameData data);
 	virtual ~GameScreen();
-	virtual void init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
+	virtual void init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
 	virtual void render(SDL_Renderer* renderer) const;
 	virtual void input(const SDL_Event & e);
-	virtual void update();
+	virtual void update(SDL_Renderer *renderer);
 	virtual void prepareForQuit();
 	virtual void cleanUp();
 	int manageGame();
@@ -34,7 +46,7 @@ public:
 private:
 	bool m_isThreadProperlyClosed = true;
 
-	void initialize();
+	void initialize(SDL_Renderer *renderer);
 	bool m_isInitialized;
 	NTTTPlayer *m_player1, *m_player2;
 	NTTTGame *m_game;
@@ -76,8 +88,8 @@ private:
 	std::vector<NTTTMove> m_moves;
 	//<-----
 
-	void initializeWinnerDisplayText();
-	void addMove(NTTTMove move);
+	void initializeWinnerDisplayText(SDL_Renderer *renderer);
+	void addMove(SDL_Renderer *renderer, NTTTMove move);
 	void removeMove();
 };
 

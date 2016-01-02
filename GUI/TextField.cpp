@@ -1,14 +1,14 @@
 #include "TextField.h"
 #include "../NTTTManager.h"
 
-TextField::TextField(const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit) {
+TextField::TextField(SDL_Renderer *renderer, const FieldType fieldType, const std::string content, const int x, const int y, const int width, const int limit) {
 	m_fieldType = fieldType;
 	m_x = x;
 	m_y = y;
 	m_width = width;
 	m_limit = limit;
 	m_content = content;
-	genTexture();
+	genTexture(renderer);
 }
 
 TextField::~TextField(){
@@ -16,37 +16,44 @@ TextField::~TextField(){
 	m_texture = nullptr;
 }
 
-void TextField::genTexture(){
+void TextField::genTexture(SDL_Renderer *renderer){
 	delete m_texture;
 	if (m_content.length() <= 0)
-		m_texture = new Texture(" ", { 0, 0, 0 });
+		m_texture = new Texture(renderer, " ", { 0, 0, 0 });
 	else
-		m_texture = new Texture(m_content, { 0, 0, 0 });
+		m_texture = new Texture(renderer, m_content, { 0, 0, 0 });
+	m_changed = false;
 }
 
-void TextField::renderTextField(const int& time) const {
+void TextField::updateTextField(SDL_Renderer *renderer){
+	if (m_changed)
+		genTexture(renderer);
+}
+
+void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
+
 	SDL_Rect rect = { m_x, m_y, m_width, g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y * 2 };
 
 	if (m_selected)
-		SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 255, 255, 255, 255);
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	else
-		SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 230, 230, 230, 255);
+		SDL_SetRenderDrawColor(renderer, 230, 230, 230, 255);
 
-	SDL_RenderFillRect(g_NtttManager.g_renderer, &rect);
+	SDL_RenderFillRect(renderer, &rect);
 
-	SDL_SetRenderDrawColor(g_NtttManager.g_renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-	SDL_RenderDrawRect(g_NtttManager.g_renderer, &rect);
+	SDL_RenderDrawRect(renderer, &rect);
 
 	if (m_content.length() <= 0){
 		if (m_selected && time % 2000 >= 1000) {
-			SDL_RenderDrawLine(g_NtttManager.g_renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y);
+			SDL_RenderDrawLine(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y);
 		}
 	}
 	else{
-		m_texture->renderTexture(m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
+		m_texture->renderTexture(renderer, m_x + g_NtttManager.PADDING_X, m_y + g_NtttManager.PADDING_Y);
 		if (m_selected && time % 2000 >= 1000) {
-			SDL_RenderDrawLine(g_NtttManager.g_renderer, m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y,
+			SDL_RenderDrawLine(renderer, m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + g_NtttManager.g_textHeight + g_NtttManager.PADDING_Y,
 				m_x + g_NtttManager.PADDING_X + m_cursor_ppos, m_y + g_NtttManager.PADDING_Y);
 		}
 	}
@@ -75,14 +82,14 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
 		if (m_cursor > 0){
 			m_content.erase(--m_cursor, 1);
 			calculateCursorPPos(m_cursor_ppos);
-			genTexture();
+			m_changed = true;
 		}
 	}
 
 	if (keysym.sym == SDLK_DELETE)
 		if (m_cursor < m_content.length()){
 			m_content.erase(m_cursor, 1);
-			genTexture();
+			m_changed = true;
 		}
 
 	if (keysym.sym == SDLK_LEFT)
@@ -107,7 +114,7 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
 		else{
 			m_cursor += text.length();
 			calculateCursorPPos(m_cursor_ppos);
-			genTexture();
+			m_changed = true;
 		}
 	}
 	else{
@@ -115,7 +122,7 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
 			m_content.insert(m_cursor, text);
 			m_cursor += text.length();
 			calculateCursorPPos(m_cursor_ppos);
-			genTexture();
+			m_changed = true;
 		}
 	}
 }

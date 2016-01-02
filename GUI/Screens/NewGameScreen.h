@@ -7,14 +7,25 @@
 #include "../Button.h"
 #include "../RadioButton.h"
 
+
 class NewGameScreen : public Screen {
 public:
-	NewGameScreen(ScreenState* currentState, int *boardCount, int *boardSize, int *lineSize, int *gameSeed, bool *manualMode, bool *writeLog, std::string *logName);
+	struct NewGameData{
+		ScreenState* currentState;
+		int *boardCount;
+		int *boardSize;
+		int *lineSize;
+		int *gameSeed;
+		bool *manualMode;
+		bool *writeLog;
+		std::string *logName;
+	};
+	NewGameScreen(NewGameData data);
 	virtual ~NewGameScreen();
-	virtual void init(TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
+	virtual void init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
 	virtual void render(SDL_Renderer* renderer) const;
 	virtual void input(const SDL_Event & e);
-	virtual void update();
+	virtual void update(SDL_Renderer *renderer);
 	virtual void prepareForQuit();
 	virtual void cleanUp();
 	void onClickReturn();

@@ -9,11 +9,11 @@ private:
 	unsigned int m_x, m_y;
 	Texture* m_texture;
 public:
-	Text(const std::string text, const unsigned int x, const unsigned int y);
-	Text(const std::string text, const SDL_Color color, const unsigned int x, const unsigned int y);
-	Text(const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y);
+	Text(SDL_Renderer *renderer, const std::string text, const unsigned int x, const unsigned int y);
+	Text(SDL_Renderer *renderer, const std::string text, const SDL_Color color, const unsigned int x, const unsigned int y);
+	Text(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y);
 	virtual ~Text();
-	void renderText() const;
+	void renderText(SDL_Renderer *renderer) const;
 	const unsigned int getWidth() const;
 	const unsigned int getHeight() const;
 	const unsigned int getX() const { return m_x; }
