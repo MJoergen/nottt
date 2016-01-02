@@ -9,8 +9,6 @@
 #include "GUI/Screens/NewGameScreen.h"
 #include "GUI/Screens/GameScreen.h"
 
-NTTTManager g_NtttManager;
-
 /**git
 * Initializes SDL2, SDL2_image, SDL2_ttf and defines static variables.
 * @return A boolean representing the whether the everything initialized correctly or not.

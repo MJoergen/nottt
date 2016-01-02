@@ -61,7 +61,5 @@ class NTTTManager
 
 }; // end of NTTTManager
 
-extern NTTTManager g_NtttManager;
-
 #endif // _NTTTGLOBAL_H_
 
