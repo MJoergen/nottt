@@ -34,7 +34,7 @@ class NTTTManager
 		const int FONT_SIZE = 30;								//The size of the font
 		const std::string FONT_PATH = "Junicode-Regular.ttf";	//The path to the font
 
-		NTTTGame *g_game;
+		NTTTGame *m_game;
 
 		const char* TITLE = "No Tic Tac Toe";			//The title of the window
 		const int WINDOW_WIDTH = 900;					//The width of the window
