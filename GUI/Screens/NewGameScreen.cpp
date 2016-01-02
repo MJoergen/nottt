@@ -220,6 +220,8 @@ void NewGameScreen::input(const SDL_Event & event){
 			m_logNameTextField->select();
 		else if (m_startGameButton->isInside(x, y))
 			m_startGameButton->click();
+		else if (m_returnButton->isInside(x, y))
+			m_returnButton->click();
 		else if (m_manualModeRadioButton->isInside(x, y))
 			m_manualModeRadioButton->toggle();
 		else if (m_writeLogRadioButton->isInside(x, y))
