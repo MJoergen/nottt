@@ -184,9 +184,14 @@ void GameScreen::addMove(SDL_Renderer *renderer, NTTTMove move){
 	}
 	const int x = m_playingFieldSize;
 
-	m_movesTexts.push_back(new Text(renderer, std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
-		+ ", " + std::to_string(move.getSquareY()) + ")", m_movesFont, { 255, 255, 255 }, x + 2 * PADDING_X + (int)(m_movesTexts.size() / m_amountInColumn) * m_movesWidth,
-		m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (m_movesTexts.size() % m_amountInColumn) * m_movesHeight));
+	Text *text = new Text(renderer, std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
+		+ ", " + std::to_string(move.getSquareY()) + ")", m_movesFont, { 255, 255, 255 }, 0,
+		0);
+
+	text->set(x + 2 * PADDING_X + (int)(m_movesTexts.size() / m_amountInColumn) * m_movesWidth + m_movesWidth / 2 - text->getWidth() / 2,
+		m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (m_movesTexts.size() % m_amountInColumn) * m_movesHeight + m_movesHeight / 2 - text->getHeight() / 2);
+
+	m_movesTexts.push_back(text);
 
 }
 
@@ -326,9 +331,6 @@ void GameScreen::render(SDL_Renderer* renderer) const{
 
 		m_game->getBoards()[index].renderBoard(renderer, m_redCross, m_blueCross, boardX, boardY, m_boardRenderSize);
 	}
-
-	if (m_player1Text == nullptr)
-		return;
 
 	m_player1Text->renderText(renderer);
 	m_player2Text->renderText(renderer);
