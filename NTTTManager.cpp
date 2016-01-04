@@ -284,6 +284,9 @@ void NTTTManager::update(){
 	case Screen::STATISTICS:
 		//TODO
 		break;
+	case Screen::EXIT:
+		//TODO
+		break;
 	}
 
 }
@@ -334,6 +337,9 @@ void NTTTManager::render() const{
 		m_botsScreen->render(m_renderer);
 		break;
 	case Screen::STATISTICS:
+		//TODO
+		break;
+	case Screen::EXIT:
 		//TODO
 		break;
 	}
