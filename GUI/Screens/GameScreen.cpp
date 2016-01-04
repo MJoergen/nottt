@@ -314,7 +314,7 @@ void GameScreen::render(SDL_Renderer* renderer) const{
 	if (!m_isInitialized)
 		return;
 
-	for (unsigned int index = 0; index < (unsigned int) *m_boardCount; index++){
+	for (int index = 0; index < *m_boardCount; index++){
 
 		int boardX = BOARD_PADDING * (index % m_gridSize + 1) + m_boardRenderSize * (index % m_gridSize);
 		int boardY = BOARD_PADDING * (int)(index / m_gridSize + 1) + m_boardRenderSize * (int)(index / m_gridSize);
