@@ -307,6 +307,8 @@ void GameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* 
 	m_guiFont = guiFont;
 	m_width = width;
 	m_height = height;
+    m_player1 = nullptr;
+    m_player2 = nullptr;
 }
 
 void GameScreen::render(SDL_Renderer* renderer) const{
