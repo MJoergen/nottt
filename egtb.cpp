@@ -52,15 +52,26 @@
  *
  */
 
+//#define USE_MMAP // This currently only works on Linux
+
 #include <iostream>
 #include <vector>
 #include <stdint.h>
+
+#ifdef USE_MMAP
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
 #if 1
 #define LINE_SIZE            3
 #define BOARD_SIZE           4
 #define NUM_SQUARES         16
 #define NUM_POSITIONS   65536UL /* 2^16 */
+#define FILE_NAME "egtb-4x4.dat"
 #endif
 
 #if 0
@@ -68,9 +79,10 @@
 #define BOARD_SIZE           5
 #define NUM_SQUARES         25
 #define NUM_POSITIONS 33554432UL /* 2^25 */
+#define FILE_NAME "egtb-5x5.dat"
 #endif
 
-typedef enum 
+typedef enum __attribute__ ((__packed__))
 {
     POS_UNKNOWN = 0,
     POS_WIN = 1,
@@ -79,7 +91,9 @@ typedef enum
 
 std::vector<uint32_t> m_lines;
 
+#ifndef USE_MMAP
 pos_t egtb[NUM_POSITIONS];
+#endif
 
 /**     
  * Converts a given line segment (start, direction, length)
@@ -152,6 +166,7 @@ static void init()
         }
     }
 
+    /*
     std::cout << m_lines.size() << std::endl;
     for (unsigned int i=0; i<m_lines.size(); ++i)
     {
@@ -160,11 +175,41 @@ static void init()
         std::cout << std::endl;
     }
     std::cout << std::endl;
+    */
 
 }; // end of init
 
 int main()
 {
+#ifdef USE_MMAP
+    int fd = open(FILE_NAME, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    std::cout << "fd = " << fd << std::endl;
+    if (fd < 0)
+    {
+        std::cout << "Failed. errno=" << errno << std::endl;
+        perror("open");
+        return (-1);
+    }
+
+    if (posix_fallocate(fd, 0, NUM_POSITIONS))
+    {
+        std::cout << "Failed. errno=" << errno << std::endl;
+        perror("fallocate");
+        return (-1);
+    }
+
+    pos_t *egtb = (pos_t *) mmap(nullptr, NUM_POSITIONS, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (egtb == MAP_FAILED)
+    {
+        std::cout << "Failed. errno=" << errno << std::endl;
+        perror("mmap");
+        return (-1);
+    }
+#endif
+
+
+    std::cout << sizeof(egtb[0]) << std::endl;
+    std::cout << sizeof(egtb) << std::endl;
     init();
 
     for (unsigned int pos=0; pos<NUM_POSITIONS; ++pos)
@@ -219,6 +264,7 @@ int main()
     std::cout << std::endl;
     std::cout << std::endl;
 
+    /*
     for (unsigned int pos=0; pos<NUM_POSITIONS; ++pos)
     {
         if (!isBoardDead(pos))
@@ -273,6 +319,12 @@ int main()
         std::cout << ", Lost = " << numLost[i];
         std::cout << ", Dead = " << numDead[i] << std::endl;
     }
+    */
+
+#ifdef USE_MMAP
+    munmap(egtb, NUM_POSITIONS);
+    close(fd);
+#endif
 
     return 0;
 }
