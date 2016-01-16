@@ -1,9 +1,11 @@
 /*
  * This is a feeble attempt to perform retrograde analysis on a single board.
- * So far it has been tested on a 4x4 board, generating 64 kbit = 8 kbyte of data.
- * and on 5x5 board generating 32 megabit = 4 megabyte of data. This takes about 1 minute.
+ * So far it has been tested on:
+ * *** 4x4 board, generating 64 kB of data.
+ * *** 5x5 board, generating 32 MB of data. This takes about 3 seconds.
  *
- * 4x4 board
+ * Statistics:
+ * 4x4 board:
  *  0: Wins =    1, Lost =    0, Dead =     0
  *  1: Wins =   12, Lost =    4, Dead =     0
  *  2: Wins =  110, Lost =   10, Dead =     0
@@ -21,6 +23,7 @@
  * 14: Wins =    0, Lost =    0, Dead =   120
  * 15: Wins =    0, Lost =    0, Dead =    16
  * 16: Wins =    0, Lost =    0, Dead =     1
+ * Conclusion: The empty 4x4 board is a win, but only if you play in the corner.
  *
  * 5x5 board:
  *  0: Wins =      0, Lost =     1, Dead =       0
@@ -49,10 +52,27 @@
  * 23: Wins =      0, Lost =     0, Dead =     300
  * 24: Wins =      0, Lost =     0, Dead =      25
  * 25: Wins =      0, Lost =     0, Dead =       1
+ * Conclusion: The empty 5x5 board is a loss, no matter where you play.
  *
  */
 
-//#define USE_MMAP // This currently only works on Linux
+/*
+ * Uncomment the following line to generate a binary file with the data.
+ * Currently, one byte is used for each position.
+ *
+ * Caveat: This currently only works on Linux
+ */
+//#define USE_MMAP
+
+/*
+ * Uncomment the following line to dump all the solutions as ASCII.
+ */
+//#define DUMP_SOLUTIONS
+
+/*
+ * Ucomment the following line to dump all the statistics.
+ */
+//#define DUMP_STATISTICS
 
 #include <iostream>
 #include <vector>
@@ -75,13 +95,86 @@
 #endif
 
 #if 0
-#define LINE_SIZE            3
-#define BOARD_SIZE           5
-#define NUM_SQUARES         25
-#define NUM_POSITIONS 33554432UL /* 2^25 */
+#define LINE_SIZE             3
+#define BOARD_SIZE            5
+#define NUM_SQUARES          25
+#define NUM_POSITIONS  33554432UL /* 2^25 */
 #define FILE_NAME "egtb-5x5.dat"
 #endif
 
+/*
+ * This is a helper class to quickly determine
+ * whether the position contains a complete line.
+ *
+ * This currently only works up to 5x5 boards. To work on 6x6 boards all the
+ * uint32_t variables must be changed to uint64_t.
+ */
+class Lines
+{
+    public:
+        Lines() // Constructor
+        {
+            m_lines.clear();
+
+            for (int x=0; x<BOARD_SIZE; ++x)
+            {
+                for (int y=0; y<BOARD_SIZE; ++y)
+                {
+                    if (x+LINE_SIZE <= BOARD_SIZE) // Horizontal
+                        m_lines.push_back(makeLine(x, y, 1, 0, LINE_SIZE));
+                    if (y+LINE_SIZE <= BOARD_SIZE) // Vertical
+                        m_lines.push_back(makeLine(x, y, 0, 1, LINE_SIZE));
+                    if (x+LINE_SIZE <= BOARD_SIZE && y+LINE_SIZE <= BOARD_SIZE) // Diagonal
+                        m_lines.push_back(makeLine(x, y, 1, 1, LINE_SIZE));
+                    if (x >= LINE_SIZE-1 && y+LINE_SIZE <= BOARD_SIZE) // Diagonal
+                        m_lines.push_back(makeLine(x, y, -1, 1, LINE_SIZE));
+                }
+            }
+        }; // end of init
+
+        /*
+         * Returns true if the board contains a complete line
+         */
+        bool isBoardDead(uint32_t pos) const
+        {
+            for (uint32_t lineMask : m_lines)
+            {
+                if ((pos & lineMask) == lineMask)
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }; // end of isBoardDead
+
+    private:
+        std::vector<uint32_t> m_lines;
+
+        /**     
+         * Private helper function. Used only in the constructor.
+         *
+         * Converts a given line segment (start, direction, length)
+         * into a 16-bit mask.
+         */     
+        uint32_t makeLine(int x, int y, int dx, int dy, int size)
+        {
+            uint32_t res = 0;
+            for (int i=0; i<size; ++i)
+            {
+                res |= 1UL << (x*BOARD_SIZE+y);
+                x += dx;
+                y += dy;
+            }   
+            return res;
+        } // end of makeLine
+
+}; // end of Lines
+
+/*
+ * The " __attribute__ ((__packed__)) " part is to ensure, that
+ * only one byte is used by the enum. Otherwise, it uses 4 bytes.
+ */
 typedef enum __attribute__ ((__packed__))
 {
     POS_UNKNOWN = 0,
@@ -89,43 +182,10 @@ typedef enum __attribute__ ((__packed__))
     POS_LOST = 2
 } pos_t;
 
-std::vector<uint32_t> m_lines;
-
-#ifndef USE_MMAP
-pos_t egtb[NUM_POSITIONS];
-#endif
-
-/**     
- * Converts a given line segment (start, direction, length)
- * into a 16-bit mask.
- */     
-static uint32_t makeLine(int x, int y, int dx, int dy, int size)
-{
-    uint32_t res = 0;
-    for (int i=0; i<size; ++i)
-    {
-        res |= 1UL << (x*BOARD_SIZE+y);
-        x += dx;
-        y += dy;
-    }   
-    return res;
-} // end of makeLine
-
-
-static bool isBoardDead(uint32_t pos)
-{
-    for (uint32_t lineMask : m_lines)
-    {
-        if ((pos & lineMask) == lineMask)
-        {
-            return true;
-        }
-    }
-    return false;
-
-}; // end of isBoardDead
-
-static void printBoard(uint32_t pos)
+/*
+ * This prints out an ASCII representation of the board.
+ */
+void printBoard(uint32_t pos)
 {
     for (unsigned int i=0; i<NUM_SQUARES; ++i)
     {
@@ -139,7 +199,11 @@ static void printBoard(uint32_t pos)
     }
 }; // end of printBoard
 
-static int countBits(uint32_t pos)
+/*
+ * This counts the number of '1' bits in the variable.
+ * This corresponds to the number of X's on the board.
+ */
+int countBits(uint32_t pos)
 {
     int count;
     for (count=0; pos; count++)
@@ -147,73 +211,38 @@ static int countBits(uint32_t pos)
     return count;
 }; // end of countBits
 
-static void init()
-{
-    m_lines.clear();
-
-    for (int x=0; x<BOARD_SIZE; ++x)
-    {
-        for (int y=0; y<BOARD_SIZE; ++y)
-        {
-            if (x+LINE_SIZE <= BOARD_SIZE) // Horizontal
-                m_lines.push_back(makeLine(x, y, 1, 0, LINE_SIZE));
-            if (y+LINE_SIZE <= BOARD_SIZE) // Vertical
-                m_lines.push_back(makeLine(x, y, 0, 1, LINE_SIZE));
-            if (x+LINE_SIZE <= BOARD_SIZE && y+LINE_SIZE <= BOARD_SIZE) // Diagonal
-                m_lines.push_back(makeLine(x, y, 1, 1, LINE_SIZE));
-            if (x >= LINE_SIZE-1 && y+LINE_SIZE <= BOARD_SIZE) // Diagonal
-                m_lines.push_back(makeLine(x, y, -1, 1, LINE_SIZE));
-        }
-    }
-
-    /*
-    std::cout << m_lines.size() << std::endl;
-    for (unsigned int i=0; i<m_lines.size(); ++i)
-    {
-        printBoard(m_lines[i]);
-        std::cout << std::endl;
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-    */
-
-}; // end of init
+#ifndef USE_MMAP
+pos_t egtb[NUM_POSITIONS];
+#endif
 
 int main()
 {
+    Lines lines;
+
 #ifdef USE_MMAP
-    int fd = open(FILE_NAME, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    std::cout << "fd = " << fd << std::endl;
+    int fd = open(FILE_NAME, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR); // Read from existing file or create new.
     if (fd < 0)
     {
-        std::cout << "Failed. errno=" << errno << std::endl;
         perror("open");
         return (-1);
     }
 
-    if (posix_fallocate(fd, 0, NUM_POSITIONS))
+    if (posix_fallocate(fd, 0, NUM_POSITIONS)) // Make sure new file has the right size
     {
-        std::cout << "Failed. errno=" << errno << std::endl;
         perror("fallocate");
         return (-1);
     }
 
     pos_t *egtb = (pos_t *) mmap(nullptr, NUM_POSITIONS, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    if (egtb == MAP_FAILED)
+    if (egtb == MAP_FAILED) // Map the file to a pointer
     {
-        std::cout << "Failed. errno=" << errno << std::endl;
         perror("mmap");
         return (-1);
     }
-#endif
-
-
-    std::cout << sizeof(egtb[0]) << std::endl;
-    std::cout << sizeof(egtb) << std::endl;
-    init();
-
+#else
     for (unsigned int pos=0; pos<NUM_POSITIONS; ++pos)
         egtb[pos] = POS_UNKNOWN;
+#endif
 
     bool updated = true;
     while (updated) 
@@ -228,7 +257,7 @@ int main()
             // This is a currently unknown position
 
             pos_t thisVal = POS_WIN;
-            if (!isBoardDead(pos))
+            if (!lines.isBoardDead(pos))
             {
                 thisVal = POS_LOST; // Assume the worst
                 // Loop through all legal moves
@@ -264,10 +293,10 @@ int main()
     std::cout << std::endl;
     std::cout << std::endl;
 
-    /*
+#ifdef DUMP_SOLUTIONS
     for (unsigned int pos=0; pos<NUM_POSITIONS; ++pos)
     {
-        if (!isBoardDead(pos))
+        if (!lines.isBoardDead(pos))
         {
             printBoard(pos);
             std::cout << "Value = ";
@@ -278,7 +307,7 @@ int main()
                 case POS_UNKNOWN : std::cout << "Unknown"; break;
             }
             std::cout << "  ";
-            if (isBoardDead(pos))
+            if (lines.isBoardDead(pos))
                 std::cout << "Dead";
             else
                 std::cout << "Alive";
@@ -286,7 +315,9 @@ int main()
             std::cout << std::endl;
         }
     }
+#endif
 
+#ifdef DUMP_STATISTICS
     int numWins[NUM_SQUARES+1];
     int numLost[NUM_SQUARES+1];
     int numDead[NUM_SQUARES+1];
@@ -301,7 +332,7 @@ int main()
     for (unsigned int pos=0; pos<NUM_POSITIONS; ++pos)
     {
         int numBits = countBits(pos);
-        if (!isBoardDead(pos))
+        if (!lines.isBoardDead(pos))
         {
             if (egtb[pos] == POS_WIN)
                 numWins[numBits]++;
@@ -319,7 +350,7 @@ int main()
         std::cout << ", Lost = " << numLost[i];
         std::cout << ", Dead = " << numDead[i] << std::endl;
     }
-    */
+#endif
 
 #ifdef USE_MMAP
     munmap(egtb, NUM_POSITIONS);
@@ -328,3 +359,4 @@ int main()
 
     return 0;
 }
+
