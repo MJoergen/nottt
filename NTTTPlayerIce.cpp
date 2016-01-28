@@ -1,6 +1,7 @@
 #include "NTTTPlayerIce.h"
+#include <fstream>
 
-std::string NTTTPlayerIce::getName() { return "IceBot v1"; }
+std::string NTTTPlayerIce::getName() { return "IceBot v2"; }
 
 /**
  * Run in the initialization phase of the game.
@@ -13,10 +14,19 @@ NTTTPlayer::OrderChoice NTTTPlayerIce::chooseOrder(const NTTTGame& game)
 	m_boardSize = game.getBoardSize();
 	m_lineSize = game.getLineSize();
 
+#if !NEW_VERSION
 	if (isNumberEven(m_lineSize * m_boardCount))
 		return FIRST;
 	else
 	    return LAST;
+#else
+	std::cout << "IsBoardWon: " << isBoardWon(game.getBoards()[0]) << std::endl;
+
+	if (isBoardWon(game.getBoards()[0]))
+		return FIRST;
+	else
+		return LAST;
+#endif
 } // end of chooseOrder
 
 const bool NTTTPlayerIce::isNumberEven(const int number) const{
@@ -30,6 +40,7 @@ const bool NTTTPlayerIce::isNumberEven(const int number) const{
  */
 NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game)
 {
+#if !NEW_VERSION
 	std::vector<int> almostDeadBoards;
 	std::vector<int> almostDeadLegalMoves;
 	std::vector<int> aliveBoards;
@@ -138,6 +149,33 @@ NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game)
 		}
 	}
 
+#else
+	unsigned int aliveBoards = 0;
+
+	for (unsigned int index = 0; index < (unsigned int)m_boardCount; index++){
+		NTTTBoard board = game.getBoards()[index];
+		if (board.getCurrentState() == NTTTBoard::ALIVE)
+			aliveBoards++;
+	}
+
+	for (unsigned int index = 0; index < (unsigned int) m_boardCount; index++){
+		NTTTBoard board = game.getBoards()[index];
+		if (board.getCurrentState() == NTTTBoard::DEAD)
+			continue;
+		if (isBoardWon(board))
+			return playBestMove(index, board, aliveBoards);
+	}
+	unsigned int index = rand() % m_boardCount;
+	while (game.getBoards()[index].getCurrentState() == NTTTBoard::DEAD){
+		index = rand() % m_boardCount;
+	}
+
+	return playBestMove(index, NTTTBoard(game.getBoards()[index]), aliveBoards);
+
+#endif
+
+	// Unreachable code (at least when NEW_VERSION is 1)
+
 	std::vector<NTTTMove> possibleMoves = getPossibleMoves(game);
 	if (possibleMoves.size() > 0)
 		return possibleMoves[rand() % possibleMoves.size()];
@@ -145,11 +183,125 @@ NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game)
 	return NTTTMove(0, 0, 0);
 } // end of performMove
 
+#if !NEW_VERSION
 const bool NTTTPlayerIce::tryMove(const NTTTGame game, const int boardIndex, const int squareX, const int squareY) const {
 	NTTTBoard board = game.getBoards()[boardIndex];
 	
 	return !board.makeMove(squareX, squareY, NTTTBoard::BLUE);
 }
+#else
+
+const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
+
+	bool isWon = false;
+
+	if (m_boardSize == 4 || m_boardSize == 5){ //TODO: Change this to search for files
+		unsigned int boardPosition = 0;
+		for (unsigned int index = 0; index < (unsigned int)(m_boardSize * m_boardSize); index++){
+			int squareX = index % m_boardSize;
+			int squareY = (int)(index / m_boardSize);
+			if (board.getSquareStates()[squareX][squareY] != NTTTBoard::UNMARKED){
+				boardPosition |= (1 << index);
+			}
+		}
+
+		std::string filePath; //TODO: Generate filePath for every possible boardsize
+		if (m_boardSize == 4){
+			filePath = "egtb-4x4.dat";
+		}
+		else if (m_boardSize == 5){
+			filePath = "egtb-5x5.dat";
+		}
+
+		std::ifstream inputFileStream(filePath, std::ifstream::binary);
+
+		if (inputFileStream){
+			inputFileStream.seekg(0, inputFileStream.end);
+			int length = inputFileStream.tellg();
+			if (length <= boardPosition){
+				boardPosition = 0;
+			}
+			inputFileStream.seekg(boardPosition, inputFileStream.beg);
+
+			char* buffer = new char;
+
+			inputFileStream.read(buffer, 1);
+			inputFileStream.close();
+
+			if (*buffer == 1)
+				isWon = true;
+
+			delete buffer;
+		}
+	}
+	else {
+		if (rand() % 2 == 0)
+			isWon = true;
+	}
+
+	return isWon;
+
+	//TODO
+
+}
+
+const NTTTMove NTTTPlayerIce::playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const {
+	unsigned int numOfNonKillingMoves = 0;
+	bool shouldKill = false;
+	if (isNumberEven(otherBoards)){
+		shouldKill = !isBoardWon(board); //TODO
+	}
+	else {
+		if (otherBoards != 0)
+			shouldKill = isBoardWon(board);
+	}
+	for (unsigned int index = 0; index < (unsigned int)(m_boardSize * m_boardSize); index++){
+		int squareX = index % m_boardSize;
+		int squareY = (int)(index / m_boardSize);
+		if (board.getSquareStates()[squareX][squareY] != NTTTBoard::UNMARKED)
+			continue;
+		NTTTBoard tryBoard(board);
+		if (!shouldKill){
+			if (!tryBoard.makeMove(squareX, squareY, NTTTBoard::BLUE))
+				continue;
+			numOfNonKillingMoves++;
+			if (!isBoardWon(tryBoard))
+				return NTTTMove(boardNumber, squareX, squareY);
+		}
+		else {
+			if (!tryBoard.makeMove(squareX, squareY, NTTTBoard::BLUE))
+				return NTTTMove(boardNumber, squareX, squareY);
+		}
+	}
+
+	int squareX = rand() % m_boardSize;
+	int squareY = rand() % m_boardSize;
+	
+	if (numOfNonKillingMoves > 0){
+		NTTTBoard tryBoard(board);
+		while (true){
+			tryBoard = NTTTBoard(board);
+			do{
+				squareX = rand() % m_boardSize;
+				squareY = rand() % m_boardSize;
+			}
+			while (board.getSquareStates()[squareX][squareY] != NTTTBoard::UNMARKED);
+			if (tryBoard.makeMove(squareX, squareY, NTTTBoard::BLUE))
+				break;
+		}
+	}
+	else {
+		while (board.getSquareStates()[squareX][squareY] != NTTTBoard::UNMARKED){
+			squareX = rand() % m_boardSize;
+			squareY = rand() % m_boardSize;
+		}
+	}
+
+	return NTTTMove(boardNumber, squareX, squareY);
+
+}
+
+#endif
 
 std::vector<NTTTMove> NTTTPlayerIce::getPossibleMoves(const NTTTGame& game) const{
 	std::vector<NTTTMove> possibleMoves;

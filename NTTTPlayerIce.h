@@ -3,6 +3,8 @@
 
 #include "NTTTPlayer.h"
 
+#define NEW_VERSION 0
+
 /**
  * This is an abstract base class that is to be derived from.
  * To implement a player, you should write something like:
@@ -20,7 +22,12 @@ private:
 	std::vector<NTTTMove> getPossibleMoves(const NTTTGame& game) const;
 	const bool isNumberEven(const int number) const;
 
+#if NEW_VERSION
+	const bool isBoardWon(const NTTTBoard board) const;
+	const NTTTMove playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const;
+#else
 	const bool tryMove(const NTTTGame game, const int boardIndex, const int squareX, const int squareY) const;
+#endif
 
 public:
 	/**
