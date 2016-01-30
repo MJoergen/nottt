@@ -1,12 +1,8 @@
 #include <sstream>
 #include <iomanip>
 #include <assert.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <assert.h>
+#include <fstream>
 
 #include "NTTTPlayerMike.h"
 
@@ -42,13 +38,8 @@ void Board::init(const NTTTGame& game)
 {
     if (m_egtb)
     {
-        munmap(m_egtb, m_fileSize);
+        delete [] m_egtb;
         m_egtb = nullptr;
-    }
-    if (m_fd >= 0)
-    {
-        close(m_fd);
-        m_fd = -1;
     }
 
     m_boardCount = game.getBoardCount();
@@ -82,20 +73,14 @@ void Board::init(const NTTTGame& game)
         m_fileSize = 33554432; // 2^25 = 32 MB 
     }
 
-    if (m_filePath.length())
-    {
-        m_fd = open(m_filePath.c_str(), O_RDONLY); // Read from existing file.
-        if (m_fd < 0)
-        {
-            perror("open");
-        }
+    std::ifstream file(m_filePath, std::ios::binary | std::ios::in);
 
-        m_egtb = (val_t *) mmap(nullptr, m_fileSize, PROT_READ, MAP_SHARED, m_fd, 0);
-        if (m_egtb == MAP_FAILED) // Map the file to a pointer
-        {
-            perror("mmap");
-            m_egtb = nullptr;
-        }
+    m_egtb = new val_t[m_fileSize];
+    if (!file.read((char *) m_egtb, m_fileSize))
+    {
+        perror("read");
+        delete [] m_egtb;
+        m_egtb = nullptr;
     }
 
 } // end of init
