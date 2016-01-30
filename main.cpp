@@ -1,4 +1,5 @@
 #include <limits>
+#include <iomanip>
 
 #include "NTTTPlayerMike.h"
 #include "NTTTPlayerIce.h"
@@ -49,10 +50,13 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
  */
 static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boardSize, int lineSize, int count)
 {
-    std::vector<int> wins; // Contains the number of wins for each player.
+    // Contains the number of wins for each player against each other player.
+    std::vector< std::vector<int> > table;
+
     for (unsigned int player=0; player<players.size(); ++player)
     {
-        wins.push_back(0);
+        std::vector<int> wins(players.size(), 0);
+        table.push_back(wins);
     }
 
     int order[2] = {0, 0}; // Separate statistics for whether the first or second player wins.
@@ -74,26 +78,43 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
                 unsigned int winner = playGame(game, players, first, second, seed);
 
                 std::cout << std::endl;
-                wins[winner]++;
                 if (first == winner)
+                {
+                    table[first][second]++;
                     order[0]++; // First player won
+                }
                 else
+                {
+                    table[second][first]++;
                     order[1]++; // Second player won
+                }
             }
         }
     }
 
-    int totalGames = 0; // Calculate total number of games. 
-    for (unsigned int player=0; player<players.size(); ++player)
-    {
-        totalGames += wins[player];
-    }
+    // Calculate total number of games. 
+    int totalGames = players.size() * (players.size()-1) * count;
+    int maxPoints = (players.size()-1) * count * 2;
 
     for (unsigned int player=0; player<players.size(); ++player)
     {
-        std::cout << "Player " << player+1 << " (" << players[player]->getName() << ") wins: " << wins[player];
-        std::cout << " (" << (wins[player]*100)/totalGames << "%)" << std::endl;
+        std::cout << "Player " << player+1 << " (" << std::setw(10) << players[player]->getName() << ") : ";
+        int sum = 0;
+        for (unsigned int opponent=0; opponent<players.size(); ++opponent)
+        {
+            if (player == opponent)
+                std::cout << "XXX ";
+            else
+            {
+                std::cout << std::setw(3) << table[player][opponent] << " ";
+                sum += table[player][opponent];
+            }
+        }
+        float win_percent = sum*100.0/maxPoints;
+        win_percent = floor(win_percent + 0.5);
+        std::cout << " : " << std::setw(3) << sum << " (" << win_percent << "%)" << std::endl;
     }
+    std::cout << std::endl;
 
     std::cout << "First player wins: " << order[0];
     std::cout << " (" << (order[0]*100)/totalGames << "%)" << std::endl;
@@ -106,7 +127,6 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
  */
 int main(int argc, char *argv[]) {
 
-/*
     NTTTPlayerIce  playerIce;
     NTTTPlayerMike playerMike1;
     playerMike1.setVersion(1);
@@ -118,9 +138,8 @@ int main(int argc, char *argv[]) {
     playerMike4.setVersion(4);
     std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerIce};
 
-    playMatch(players, 2, 5, 3, 1000);
+    playMatch(players, 2, 5, 3, 2);
     exit(0);
-*/
 
 	std::cout << "Program starts" << std::endl;
 
