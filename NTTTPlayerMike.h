@@ -6,12 +6,25 @@
 
 #define DEBUG_MIKE false
 
+/*
+ * The " __attribute__ ((__packed__)) " part is to ensure, that
+ * only one byte is used by the enum. Otherwise, it uses 4 bytes.
+ */
+typedef enum __attribute__ ((__packed__))
+{
+    POS_UNKNOWN = 0,
+    POS_WIN = 1,
+    POS_LOST = 2
+} val_t;
+
 /**
  * A representation of the board using bitmasks
  */
 class Board
 {
     public:
+        Board() : m_fd(-1), m_egtb(nullptr) {}
+
         /**
          * Run in the initialization phase of the game.
          */
@@ -66,7 +79,12 @@ class Board
         std::vector<uint64_t> m_bits;
         std::vector<uint64_t> m_lines;
         bool m_debug = DEBUG_MIKE;
-        int  m_version = 2;
+        int  m_version = 3;
+
+        std::string m_filePath;
+        int         m_fileSize;
+        int         m_fd;
+        val_t       *m_egtb;
 }; // end of class Board
 
 

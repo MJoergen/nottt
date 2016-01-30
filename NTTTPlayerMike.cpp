@@ -1,6 +1,12 @@
 #include <sstream>
 #include <iomanip>
 #include <assert.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <assert.h>
 
 #include "NTTTPlayerMike.h"
 
@@ -15,12 +21,12 @@ std::string NTTTPlayerMike::getName()
  * Converts a given line segment (start, direction, length)
  * into a 64-bit mask.
  */
-static uint64_t makeLine(int x, int y, int dx, int dy, int size)
+static uint64_t makeLine(int x, int y, int dx, int dy, int size, int boardSize)
 {
     uint64_t res = 0;
     for (int i=0; i<size; ++i)
     {
-        res |= 1ULL << (x*8+y);
+        res |= 1ULL << (x*boardSize+y);
         x += dx;
         y += dy;
     }
@@ -34,6 +40,17 @@ static uint64_t makeLine(int x, int y, int dx, int dy, int size)
  */
 void Board::init(const NTTTGame& game)
 {
+    if (m_egtb)
+    {
+        munmap(m_egtb, m_fileSize);
+        m_egtb = nullptr;
+    }
+    if (m_fd >= 0)
+    {
+        close(m_fd);
+        m_fd = -1;
+    }
+
     m_boardCount = game.getBoardCount();
     m_boardSize  = game.getBoardSize();
     m_lineSize   = game.getLineSize();
@@ -46,15 +63,41 @@ void Board::init(const NTTTGame& game)
         for (int y=0; y<m_boardSize; ++y)
         {
             if (x+m_lineSize <= m_boardSize) // Horizontal
-                m_lines.push_back(makeLine(x, y, 1, 0, m_lineSize));
+                m_lines.push_back(makeLine(x, y, 1, 0, m_lineSize, m_boardSize));
             if (y+m_lineSize <= m_boardSize) // Vertical
-                m_lines.push_back(makeLine(x, y, 0, 1, m_lineSize));
+                m_lines.push_back(makeLine(x, y, 0, 1, m_lineSize, m_boardSize));
             if (x+m_lineSize <= m_boardSize && y+m_lineSize <= m_boardSize) // Diagonal
-                m_lines.push_back(makeLine(x, y, 1, 1, m_lineSize));
+                m_lines.push_back(makeLine(x, y, 1, 1, m_lineSize, m_boardSize));
             if (x >= m_lineSize-1 && y+m_lineSize <= m_boardSize) // Diagonal
-                m_lines.push_back(makeLine(x, y, -1, 1, m_lineSize));
+                m_lines.push_back(makeLine(x, y, -1, 1, m_lineSize, m_boardSize));
         }
     }
+
+    if (m_boardSize == 4){
+        m_filePath = "egtb-4x4.dat";
+        m_fileSize = 65536; // 2^16
+    }
+    else if (m_boardSize == 5){
+        m_filePath = "egtb-5x5.dat";
+        m_fileSize = 33554432; // 2^25 = 32 MB 
+    }
+
+    if (m_filePath.length())
+    {
+        m_fd = open(m_filePath.c_str(), O_RDONLY); // Read from existing file.
+        if (m_fd < 0)
+        {
+            perror("open");
+        }
+
+        m_egtb = (val_t *) mmap(nullptr, m_fileSize, PROT_READ, MAP_SHARED, m_fd, 0);
+        if (m_egtb == MAP_FAILED) // Map the file to a pointer
+        {
+            perror("mmap");
+            m_egtb = nullptr;
+        }
+    }
+
 } // end of init
 
 
@@ -102,7 +145,7 @@ int Board::makeBits(const NTTTGame& game)
             {
                 if (squareStates[x][y] != NTTTBoard::UNMARKED)
                     continue;
-                val |= 1ULL << (x*8+y);
+                val |= 1ULL << (x*m_boardSize+y);
             }
         }
 
@@ -151,10 +194,14 @@ int Board::evaluate() const
     int sum = (rand() % 201) - 100;
     if (m_version==2)
         sum=0;
+    int lastActive = 0;
     for (int board=0; board<m_boardCount; ++board)
     {
         if (!isBoardDead(m_bits[board]))
+        {
+            lastActive = board;
             numActive++;
+        }
         if (m_version==2)
         {
             // Count the number of moves that don't kill the board
@@ -163,7 +210,7 @@ int Board::evaluate() const
             {
                 for (int y=0; y<m_boardSize; ++y)
                 {
-                    int bit = x*8+y;
+                    int bit = x*m_boardSize+y;
                     uint64_t mask = 1ULL << bit;
                     if (m_bits[board] & mask)
                     {
@@ -177,6 +224,24 @@ int Board::evaluate() const
                 }
             }
             sum += count % 2;
+        }
+    }
+
+    if (m_version == 3) 
+    {
+        if (numActive == 1 and m_egtb != nullptr)
+        {
+            uint64_t bits = m_bits[lastActive];
+            assert(!isBoardDead(bits));
+
+            bits = ~bits & (m_fileSize-1);
+
+            switch (m_egtb[bits])
+            {
+                case POS_WIN: return 99999;
+                case POS_LOST: return -99999;
+                default: assert(false);
+            }
         }
     }
 
@@ -215,7 +280,7 @@ int Board::alphaBeta(int alpha, int beta, int level)
         {
             for (int y=0; y<m_boardSize; ++y)
             {
-                int bit = x*8+y;
+                int bit = x*m_boardSize+y;
                 uint64_t mask = 1ULL << bit;
                 if (m_bits[board] & mask)
                 {
@@ -286,7 +351,7 @@ NTTTMove Board::findMove(int level)
         {
             for (int y=0; y<m_boardSize; ++y)
             {
-                int bit = x*8+y;
+                int bit = x*m_boardSize+y;
                 uint64_t mask = 1ULL << bit;
                 if (m_bits[board] & mask)
                 {
