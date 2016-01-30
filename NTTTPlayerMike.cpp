@@ -219,9 +219,9 @@ int Board::evaluate() const
             {
                 // Count the number of boards that are almost dead
                 bool kills = false;
-                for (int x=0; x<m_boardSize and not kills; ++x)
+                for (int x=0; x<m_boardSize && !kills; ++x)
                 {
-                    for (int y=0; y<m_boardSize and not kills; ++y)
+                    for (int y=0; y<m_boardSize && !kills; ++y)
                     {
                         int bit = x*m_boardSize+y;
                         uint64_t mask = 1ULL << bit;
@@ -245,7 +245,7 @@ int Board::evaluate() const
 
     if (m_version >= 3) 
     {
-        if (numActive == 1 and m_egtb != nullptr)
+        if (numActive == 1 && m_egtb != nullptr)
         {
             uint64_t bits = m_bits[lastActive];
             assert(!isBoardDead(bits));
