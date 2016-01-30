@@ -135,6 +135,7 @@ GameScreen::GameScreen(GameData data){
 
 	m_redCross = data.redCross;
 	m_blueCross = data.blueCross;
+    m_isInitialized = false;
 }
 
 GameScreen::~GameScreen(){
