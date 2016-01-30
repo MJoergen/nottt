@@ -79,7 +79,7 @@ class Board
         std::vector<uint64_t> m_bits;
         std::vector<uint64_t> m_lines;
         bool m_debug = DEBUG_MIKE;
-        int  m_version = 3;
+        int  m_version = 4;
 
         std::string m_filePath;
         int         m_fileSize;
