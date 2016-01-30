@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
     playerMike4.setVersion(4);
     std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerIce};
 
-    playMatch(players, 2, 5, 3, 3);
+    playMatch(players, 2, 5, 3, 25);
     exit(0);
 */
 
