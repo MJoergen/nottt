@@ -61,6 +61,7 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
 
     int order[2] = {0, 0}; // Separate statistics for whether the first or second player wins.
 
+    // Play all the games
     for (int i=0; i<count; ++i)
     {
         int seed = i+1017;
@@ -96,23 +97,38 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
     int totalGames = players.size() * (players.size()-1) * count;
     int maxPoints = (players.size()-1) * count * 2;
 
+    // Calculate the totals and sort them.
+    std::vector< std::pair<int, int> > total;
     for (unsigned int player=0; player<players.size(); ++player)
     {
-        std::cout << "Player " << player+1 << " (" << std::setw(10) << players[player]->getName() << ") : ";
         int sum = 0;
         for (unsigned int opponent=0; opponent<players.size(); ++opponent)
         {
+            sum += table[player][opponent];
+        }
+        total.push_back(std::make_pair(sum, player));
+    }
+    std::stable_sort(total.rbegin(), total.rend()); // Sort descending.
+
+    // Display the results
+    for (unsigned int i=0; i<players.size(); ++i)
+    {
+        int player = total[i].second;
+
+        std::cout << "Player " << player+1;
+        std::cout << " (" << std::setw(10) << players[player]->getName() << ") : ";
+        for (unsigned int j=0; j<players.size(); ++j)
+        {
+            int opponent = total[j].second;
+
             if (player == opponent)
                 std::cout << "XXX ";
             else
-            {
                 std::cout << std::setw(3) << table[player][opponent] << " ";
-                sum += table[player][opponent];
-            }
         }
-        float win_percent = sum*100.0/maxPoints;
-        win_percent = floor(win_percent + 0.5);
-        std::cout << " : " << std::setw(3) << sum << " (" << win_percent << "%)" << std::endl;
+        int points = total[i].first;
+        float win_percent = floor(points*100.0/maxPoints + 0.5);
+        std::cout << " : " << std::setw(3) << points << " (" << win_percent << "%)" << std::endl;
     }
     std::cout << std::endl;
 
@@ -127,6 +143,7 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
  */
 int main(int argc, char *argv[]) {
 
+/*
     NTTTPlayerIce  playerIce;
     NTTTPlayerMike playerMike1;
     playerMike1.setVersion(1);
@@ -138,8 +155,9 @@ int main(int argc, char *argv[]) {
     playerMike4.setVersion(4);
     std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerIce};
 
-    playMatch(players, 2, 5, 3, 2);
+    playMatch(players, 2, 5, 3, 3);
     exit(0);
+*/
 
 	std::cout << "Program starts" << std::endl;
 
