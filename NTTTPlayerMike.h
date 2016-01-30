@@ -23,7 +23,14 @@ typedef enum __attribute__ ((__packed__))
 class Board
 {
     public:
-        Board() : m_fd(-1), m_egtb(nullptr) {}
+        Board() : m_egtb(nullptr) {}
+        ~Board() {
+            if (m_egtb)
+            {
+                delete [] m_egtb;
+                m_egtb = nullptr;
+            }
+        }
 
         /**
          * Run in the initialization phase of the game.
@@ -83,7 +90,6 @@ class Board
 
         std::string m_filePath;
         int         m_fileSize;
-        int         m_fd;
         val_t       *m_egtb;
 }; // end of class Board
 
