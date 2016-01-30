@@ -7,10 +7,9 @@
 #define DEBUG_MIKE false
 
 /*
- * The " __attribute__ ((__packed__)) " part is to ensure, that
- * only one byte is used by the enum. Otherwise, it uses 4 bytes.
+ * It is important that the size of the enum is only 1 byte.
  */
-typedef enum __attribute__ ((__packed__))
+typedef enum : char
 {
     POS_UNKNOWN = 0,
     POS_WIN = 1,
