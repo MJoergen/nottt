@@ -59,7 +59,7 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
 
     for (int i=0; i<count; ++i)
     {
-        int seed = i+101;
+        int seed = i+1017;
 
         for (unsigned int diff = 1; diff<players.size(); diff++)
         {
@@ -112,9 +112,13 @@ int main(int argc, char *argv[]) {
     playerMike1.setVersion(1);
     NTTTPlayerMike playerMike2;
     playerMike2.setVersion(2);
-    std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerIce};
+    NTTTPlayerMike playerMike3;
+    playerMike3.setVersion(3);
+    NTTTPlayerMike playerMike4;
+    playerMike4.setVersion(4);
+    std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerIce};
 
-    playMatch(players, 3, 5, 3, 50);
+    playMatch(players, 2, 5, 3, 1000);
     exit(0);
 */
 

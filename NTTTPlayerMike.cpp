@@ -186,48 +186,79 @@ void Board::undoMove(int board, uint64_t mask)
 
 
 /**
- * Return an estimate of the current position
+ * Return an estimate of the current position, relative to the player to move.
  */
 int Board::evaluate() const
 {
-    int numActive = 0;
-    int sum = (rand() % 201) - 100;
-    if (m_version==2)
-        sum=0;
+    int numActive  = 0;
+    int almostDead = 0;
     int lastActive = 0;
+
+    int sum = 0;
+
+    if (m_version==1)
+        sum = (rand() % 201) - 100;
+
     for (int board=0; board<m_boardCount; ++board)
     {
         if (!isBoardDead(m_bits[board]))
         {
             lastActive = board;
             numActive++;
-        }
-        if (m_version==2)
-        {
-            // Count the number of moves that don't kill the board
-            int count = 0;
-            for (int x=0; x<m_boardSize; ++x)
+
+            if (m_version==2)
             {
-                for (int y=0; y<m_boardSize; ++y)
+                // Count the number of moves that don't kill the board
+                int count = 0;
+                for (int x=0; x<m_boardSize; ++x)
                 {
-                    int bit = x*m_boardSize+y;
-                    uint64_t mask = 1ULL << bit;
-                    if (m_bits[board] & mask)
+                    for (int y=0; y<m_boardSize; ++y)
                     {
-                        ((Board *)this)->makeMove(board, mask);
-                        if (!isBoardDead(m_bits[board]))
+                        int bit = x*m_boardSize+y;
+                        uint64_t mask = 1ULL << bit;
+                        if (m_bits[board] & mask)
                         {
-                            count++;
+                            ((Board *)this)->makeMove(board, mask);
+                            if (!isBoardDead(m_bits[board]))
+                            {
+                                count++;
+                            }
+                            ((Board *)this)->undoMove(board, mask);
                         }
-                        ((Board *)this)->undoMove(board, mask);
                     }
                 }
+                sum += count % 2;
             }
-            sum += count % 2;
-        }
-    }
 
-    if (m_version == 3) 
+            if (m_version==4)
+            {
+                // Count the number of boards that are almost dead
+                bool kills = false;
+                for (int x=0; x<m_boardSize and not kills; ++x)
+                {
+                    for (int y=0; y<m_boardSize and not kills; ++y)
+                    {
+                        int bit = x*m_boardSize+y;
+                        uint64_t mask = 1ULL << bit;
+                        if (m_bits[board] & mask)
+                        {
+                            ((Board *)this)->makeMove(board, mask);
+                            kills = isBoardDead(m_bits[board]);
+                            ((Board *)this)->undoMove(board, mask);
+                            if (kills)
+                            {
+                                almostDead++;
+                            }
+                        }
+                    }
+                }
+                sum += almostDead;
+            }
+
+        } // if (!isBoardDead(m_bits[board]))
+    } // for (int board=0; board<m_boardCount; ++board)
+
+    if (m_version >= 3) 
     {
         if (numActive == 1 and m_egtb != nullptr)
         {
@@ -238,7 +269,7 @@ int Board::evaluate() const
 
             switch (m_egtb[bits])
             {
-                case POS_WIN: return 99999;
+                case POS_WIN:  return 99999;
                 case POS_LOST: return -99999;
                 default: assert(false);
             }
@@ -418,6 +449,6 @@ NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
     if (m_debug)
         std::cout << game;
     int numAlive = m_board.makeBits(game);
-    return m_board.findMove(numAlive==1 ? 4 : (numAlive==2 ? 2 : 0));
+    return m_board.findMove(numAlive==1 ? 0 : (numAlive==2 ? 2 : 0));
 } // end of performMove
 
