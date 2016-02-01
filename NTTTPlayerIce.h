@@ -3,7 +3,7 @@
 
 #include "NTTTPlayer.h"
 
-#define NEW_VERSION 0
+#define NEW_VERSION 1
 
 /**
  * This is an abstract base class that is to be derived from.

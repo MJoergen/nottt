@@ -249,11 +249,10 @@ const NTTTMove NTTTPlayerIce::playBestMove(const int boardNumber, const NTTTBoar
 	unsigned int numOfNonKillingMoves = 0;
 	bool shouldKill = false;
 	if (isNumberEven(otherBoards)){
-		shouldKill = !isBoardWon(board); //TODO
+		shouldKill = true;
 	}
 	else {
-		if (otherBoards != 0)
-			shouldKill = isBoardWon(board);
+		shouldKill = false;
 	}
 	for (unsigned int index = 0; index < (unsigned int)(m_boardSize * m_boardSize); index++){
 		int squareX = index % m_boardSize;
@@ -261,16 +260,16 @@ const NTTTMove NTTTPlayerIce::playBestMove(const int boardNumber, const NTTTBoar
 		if (board.getSquareStates()[squareX][squareY] != NTTTBoard::UNMARKED)
 			continue;
 		NTTTBoard tryBoard(board);
-		if (!shouldKill){
-			if (!tryBoard.makeMove(squareX, squareY, NTTTBoard::BLUE))
-				continue;
+		bool survives = tryBoard.makeMove(squareX, squareY, NTTTBoard::BLUE);
+		if (survives){
 			numOfNonKillingMoves++;
-			if (!isBoardWon(tryBoard))
+			if (shouldKill && isBoardWon(tryBoard))
+				return NTTTMove(boardNumber, squareX, squareY);
+			if (!shouldKill && !isBoardWon(tryBoard))
 				return NTTTMove(boardNumber, squareX, squareY);
 		}
-		else {
-			if (!tryBoard.makeMove(squareX, squareY, NTTTBoard::BLUE))
-				return NTTTMove(boardNumber, squareX, squareY);
+		else if (shouldKill){
+			return NTTTMove(boardNumber, squareX, squareY);
 		}
 	}
 
