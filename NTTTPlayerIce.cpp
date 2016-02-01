@@ -217,7 +217,7 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
 
 		if (inputFileStream){
 			inputFileStream.seekg(0, inputFileStream.end);
-			int length = inputFileStream.tellg();
+			unsigned int length = inputFileStream.tellg();
 			if (length <= boardPosition){
 				boardPosition = 0;
 			}
