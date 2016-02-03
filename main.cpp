@@ -28,7 +28,7 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
         NTTTMove move(0, 0, 0);
         LOG(game);
         move = players[player]->performMove(game);
-        LOG("Player " << players[player]->getName() << " played: " << move << std::endl);
+        LOG("Player (" << player+1 << ") " << players[player]->getName() << " played: " << move << std::endl);
 
         if (player == first)
             game.makeMove(move, NTTTBoard::RED);
