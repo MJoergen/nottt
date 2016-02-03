@@ -87,6 +87,14 @@
 #include <unistd.h>
 #endif
 
+#if 0
+#define LINE_SIZE            3
+#define BOARD_SIZE           3
+#define NUM_SQUARES          9
+#define NUM_POSITIONS     512UL /* 2^9 */
+#define FILE_NAME "egtb-3x3.dat"
+#endif
+
 #if 1
 #define LINE_SIZE            3
 #define BOARD_SIZE           4
