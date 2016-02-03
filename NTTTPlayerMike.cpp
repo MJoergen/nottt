@@ -257,8 +257,8 @@ int Board::evaluate() const
 
             switch (m_egtb[bits])
             {
-                case POS_WIN:  return 99999;
-                case POS_LOST: return -99999;
+                case POS_WIN:  return 99990;
+                case POS_LOST: return -99990;
                 default: assert(false);
             }
         }
