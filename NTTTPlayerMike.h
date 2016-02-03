@@ -22,7 +22,10 @@ typedef enum : char
 class Board
 {
     public:
-        Board() : m_egtb(nullptr) {}
+        Board() : 
+            m_filePath(""),
+            m_fileSize(0),
+            m_egtb(nullptr) {}
         ~Board() {
             if (m_egtb)
             {

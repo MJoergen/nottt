@@ -73,14 +73,17 @@ void Board::init(const NTTTGame& game)
         m_fileSize = 33554432; // 2^25 = 32 MB 
     }
 
-    std::ifstream file(m_filePath, std::ios::binary | std::ios::in);
-
-    m_egtb = new val_t[m_fileSize];
-    if (!file.read((char *) m_egtb, m_fileSize))
+    if (m_fileSize)
     {
-        perror("read");
-        delete [] m_egtb;
-        m_egtb = nullptr;
+        std::ifstream file(m_filePath, std::ios::binary | std::ios::in);
+
+        m_egtb = new val_t[m_fileSize];
+        if (!file.read((char *) m_egtb, m_fileSize))
+        {
+            perror("read");
+            delete [] m_egtb;
+            m_egtb = nullptr;
+        }
     }
 
 } // end of init
