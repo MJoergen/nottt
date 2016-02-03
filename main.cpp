@@ -143,21 +143,27 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
  */
 int main(int argc, char *argv[]) {
 
-/*
-    NTTTPlayerIce  playerIce;
-    NTTTPlayerMike playerMike1;
-    playerMike1.setVersion(1);
-    NTTTPlayerMike playerMike2;
-    playerMike2.setVersion(2);
-    NTTTPlayerMike playerMike3;
-    playerMike3.setVersion(3);
-    NTTTPlayerMike playerMike4;
-    playerMike4.setVersion(4);
-    std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerIce};
+    if (argc == 5)
+    {
+        int boardCount = atol(argv[1]);
+        int boardSize  = atol(argv[2]);
+        int lineSize   = atol(argv[3]);
+        int numGames   = atol(argv[4]);
 
-    playMatch(players, 2, 5, 3, 25);
-    exit(0);
-*/
+        NTTTPlayerIce  playerIce;
+        NTTTPlayerMike playerMike1;
+        playerMike1.setVersion(1);
+        NTTTPlayerMike playerMike2;
+        playerMike2.setVersion(2);
+        NTTTPlayerMike playerMike3;
+        playerMike3.setVersion(3);
+        NTTTPlayerMike playerMike4;
+        playerMike4.setVersion(4);
+        std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerIce};
+
+        playMatch(players, boardCount, boardSize, lineSize, numGames);
+        exit(0);
+    }
 
 	std::cout << "Program starts" << std::endl;
 
