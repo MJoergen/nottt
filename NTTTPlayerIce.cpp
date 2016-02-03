@@ -20,7 +20,7 @@ NTTTPlayer::OrderChoice NTTTPlayerIce::chooseOrder(const NTTTGame& game)
 	else
 	    return LAST;
 #else
-	std::cout << "IsBoardWon: " << isBoardWon(game.getBoards()[0]) << std::endl;
+//	std::cout << "IsBoardWon: " << isBoardWon(game.getBoards()[0]) << std::endl;
 
 	if (isBoardWon(game.getBoards()[0]))
 		return FIRST;
@@ -195,7 +195,7 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
 
 	bool isWon = false;
 
-	if (m_boardSize == 4 || m_boardSize == 5){ //TODO: Change this to search for files
+	if (m_boardSize == 3 || m_boardSize == 4 || m_boardSize == 5){ //TODO: Change this to search for files
 		unsigned int boardPosition = 0;
 		for (unsigned int index = 0; index < (unsigned int)(m_boardSize * m_boardSize); index++){
 			int squareX = index % m_boardSize;
@@ -206,7 +206,10 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
 		}
 
 		std::string filePath; //TODO: Generate filePath for every possible boardsize
-		if (m_boardSize == 4){
+		if (m_boardSize == 3){
+			filePath = "egtb-3x3.dat";
+		}
+        else if (m_boardSize == 4){
 			filePath = "egtb-4x4.dat";
 		}
 		else if (m_boardSize == 5){
