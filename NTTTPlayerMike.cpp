@@ -373,7 +373,7 @@ NTTTMove Board::findMove(const NTTTGame& game)
     int level = 4;
     if (m_boardSize*numAlive > 4)
         level = 2;
-    if (m_boardSize*numAlive > 5)
+    if (m_boardSize*numAlive > 6)
         level = 0;
     if (m_egtb && numAlive == 1)
         level = 0;
