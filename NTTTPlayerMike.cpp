@@ -64,7 +64,11 @@ void Board::init(const NTTTGame& game)
         }
     }
 
-    if (m_boardSize == 4){
+    if (m_boardSize == 3){
+        m_filePath = "egtb-3x3.dat";
+        m_fileSize = 512; // 2^9
+    }
+    else if (m_boardSize == 4){
         m_filePath = "egtb-4x4.dat";
         m_fileSize = 65536; // 2^16
     }
@@ -367,9 +371,9 @@ NTTTMove Board::findMove(const NTTTGame& game)
 
     // Determine search depth
     int level = 4;
-    if (m_boardSize > 4)
+    if (m_boardSize*numAlive > 4)
         level = 2;
-    if (m_boardSize > 5)
+    if (m_boardSize*numAlive > 5)
         level = 0;
     if (m_egtb && numAlive == 1)
         level = 0;
