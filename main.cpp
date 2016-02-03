@@ -142,7 +142,9 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
             }
         }
 
-        std::cout << std::endl << "Results from round " << i+1 << ":" << std::endl;
+        std::cout << std::endl << "Results from round " << i+1;
+        std::cout << " with boardCount=" << boardCount << ", boardSize=" << boardSize;
+        std::cout << ", and lineSize=" << lineSize << std::endl;
         dispResults(players, table, order, i+1);
 
     }
