@@ -4,6 +4,9 @@
 #include "NTTTPlayerMike.h"
 #include "NTTTPlayerIce.h"
 #include "NTTTManager.h"
+#include "trace.h"
+
+std::ostream *gpLog = nullptr;
 
 /*
  * Play a single game between two players.
@@ -12,9 +15,9 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
 {
     srand(seed);
 
-    std::cout << "Playing game between " << players[first]->getName();
-    std::cout << " and " << players[second]->getName();
-    std::cout << " with seed " << seed << std::endl;
+    LOG("Playing game between " << players[first]->getName());
+    LOG(" and " << players[second]->getName());
+    LOG(" with seed " << seed << std::endl);
 
 	players[first]->chooseOrder(game);
 	players[second]->chooseOrder(game);
@@ -23,9 +26,9 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
     while (true)
     {
         NTTTMove move(0, 0, 0);
-        std::cout << game;
+        LOG(game);
         move = players[player]->performMove(game);
-        std::cout << "Player " << players[player]->getName() << " played: " << move << std::endl;
+        LOG("Player " << players[player]->getName() << " played: " << move << std::endl);
 
         if (player == first)
             game.makeMove(move, NTTTBoard::RED);
@@ -36,63 +39,18 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
 
         if (!game.isActive())
         {
-            std::cout << "Player " << players[player]->getName() << " won!" << std::endl;
+            LOG("Player " << players[player]->getName() << " won!" << std::endl);
             break;
         }
-        std::cout << std::endl;
+        LOG(std::endl);
     }
 
     return player;
 } // end of playGame
 
-/*
- * Play an entire tournament (round robin) between an array of players.
- */
-static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boardSize, int lineSize, int count)
+static void dispResults(std::vector<NTTTPlayer *> players,
+        const std::vector< std::vector<int> > & table, int order[2], int count)
 {
-    // Contains the number of wins for each player against each other player.
-    std::vector< std::vector<int> > table;
-
-    for (unsigned int player=0; player<players.size(); ++player)
-    {
-        std::vector<int> wins(players.size(), 0);
-        table.push_back(wins);
-    }
-
-    int order[2] = {0, 0}; // Separate statistics for whether the first or second player wins.
-
-    // Play all the games
-    for (int i=0; i<count; ++i)
-    {
-        int seed = i+1017;
-
-        for (unsigned int diff = 1; diff<players.size(); diff++)
-        {
-            for (unsigned int first = 0; first < players.size(); first++)
-            {
-                int second = (first + diff) % players.size();
-
-                std::cout << "Game " << i+1 << ":" << std::endl;
-
-                NTTTGame game;
-                game.NewGame(boardCount, boardSize, lineSize);
-                unsigned int winner = playGame(game, players, first, second, seed);
-
-                std::cout << std::endl;
-                if (first == winner)
-                {
-                    table[first][second]++;
-                    order[0]++; // First player won
-                }
-                else
-                {
-                    table[second][first]++;
-                    order[1]++; // Second player won
-                }
-            }
-        }
-    }
-
     // Calculate total number of games. 
     int totalGames = players.size() * (players.size()-1) * count;
     int maxPoints = (players.size()-1) * count * 2;
@@ -130,12 +88,65 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
         float win_percent = floor(points*100.0/maxPoints + 0.5);
         std::cout << " : " << std::setw(3) << points << " (" << win_percent << "%)" << std::endl;
     }
-    std::cout << std::endl;
 
     std::cout << "First player wins: " << order[0];
     std::cout << " (" << (order[0]*100)/totalGames << "%)" << std::endl;
     std::cout << "Second player wins: " << order[1];
     std::cout << " (" << (order[1]*100)/totalGames << "%)" << std::endl;
+} // end of dispResults
+
+/*
+ * Play an entire tournament (round robin) between an array of players.
+ */
+static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boardSize, int lineSize, int count)
+{
+    // Contains the number of wins for each player against each other player.
+    std::vector< std::vector<int> > table;
+
+    for (unsigned int player=0; player<players.size(); ++player)
+    {
+        std::vector<int> wins(players.size(), 0);
+        table.push_back(wins);
+    }
+
+    int order[2] = {0, 0}; // Separate statistics for whether the first or second player wins.
+
+    // Play all the games
+    for (int i=0; i<count; ++i)
+    {
+        int seed = i+1017;
+
+        for (unsigned int diff = 1; diff<players.size(); diff++)
+        {
+            for (unsigned int first = 0; first < players.size(); first++)
+            {
+                int second = (first + diff) % players.size();
+
+                LOG("Game " << i+1 << ":" << std::endl);
+
+                NTTTGame game;
+                game.NewGame(boardCount, boardSize, lineSize);
+                unsigned int winner = playGame(game, players, first, second, seed);
+
+                LOG(std::endl);
+                if (first == winner)
+                {
+                    table[first][second]++;
+                    order[0]++; // First player won
+                }
+                else
+                {
+                    table[second][first]++;
+                    order[1]++; // Second player won
+                }
+            }
+        }
+
+        std::cout << std::endl << "Results from round " << i+1 << ":" << std::endl;
+        dispResults(players, table, order, i+1);
+
+    }
+
 } // end of playMatch
 
 /*
@@ -143,12 +154,18 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
  */
 int main(int argc, char *argv[]) {
 
-    if (argc == 5)
+    if (argc >= 5)
     {
+
         int boardCount = atol(argv[1]);
         int boardSize  = atol(argv[2]);
         int lineSize   = atol(argv[3]);
         int numGames   = atol(argv[4]);
+
+        if (argc == 6)
+        {
+            gpLog = new CTrace(argv[5]);
+        }
 
         NTTTPlayerIce  playerIce;
         NTTTPlayerMike playerMike1;
@@ -162,6 +179,9 @@ int main(int argc, char *argv[]) {
         std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerIce};
 
         playMatch(players, boardCount, boardSize, lineSize, numGames);
+
+        if (gpLog)
+            delete gpLog;
         exit(0);
     }
 
