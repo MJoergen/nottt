@@ -31,10 +31,22 @@ class Board
             }
         }
 
+        void setVersion(int version) {m_version = version;}
+
+        int getVersion() const {return m_version;}
+
         /**
          * Run in the initialization phase of the game.
          */
         void init(const NTTTGame& game);
+
+        /**
+         * Return the best move.
+         */
+        NTTTMove findMove(const NTTTGame& game);
+
+
+    private: // These methods are used internally only.
 
         /**
          */
@@ -66,15 +78,6 @@ class Board
          * Returns a value
          */
         int alphaBeta(int alpha, int beta, int level);
-
-        /**
-         * Return the best move.
-         */
-        NTTTMove findMove(int level);
-
-        void setVersion(int version) {m_version = version;}
-
-        int getVersion() const {return m_version;}
 
     private:
         int m_boardCount;

@@ -355,8 +355,22 @@ int Board::alphaBeta(int alpha, int beta, int level)
 /**
  * Return the best move.
  */
-NTTTMove Board::findMove(int level)
+NTTTMove Board::findMove(const NTTTGame& game)
 {
+    if (m_debug)
+        std::cout << game;
+
+    int numAlive = makeBits(game);
+
+    // Determine search depth
+    int level = 4;
+    if (m_boardSize > 4)
+        level = 2;
+    if (m_boardSize > 5)
+        level = 0;
+    if (m_egtb && numAlive == 1)
+        level = 0;
+
     m_nodes = 0;
     int bestVal = -999999;
     std::vector<NTTTMove> bestMoves;
@@ -431,9 +445,6 @@ NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game)
  */
 NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game)
 {
-    if (m_debug)
-        std::cout << game;
-    int numAlive = m_board.makeBits(game);
-    return m_board.findMove(numAlive==1 ? 0 : (numAlive==2 ? 2 : 0));
+    return m_board.findMove(game);
 } // end of performMove
 
