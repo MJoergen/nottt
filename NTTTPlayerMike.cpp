@@ -65,22 +65,16 @@ void Board::init(const NTTTGame& game)
         }
     }
 
-    if (m_boardSize == 3){
-        m_filePath = "egtb-3x3.bit";
-        m_fileSize = 512/8; // 2^9
-    }
-    else if (m_boardSize == 4){
-        m_filePath = "egtb-4x4.bit";
-        m_fileSize = 65536/8; // 2^16
-    }
-    else if (m_boardSize == 5){
-        m_filePath = "egtb-5x5.bit";
-        m_fileSize = 33554432/8; // 2^25 = 32 MB 
-    }
+    if (m_boardSize <= 5) {
+        std::ostringstream oss;
+        oss << "egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
+        std::string m_filePath = oss.str();
 
-    if (m_fileSize)
-    {
         std::ifstream file(m_filePath, std::ios::binary | std::ios::in);
+
+        file.seekg (0, file.end);
+        m_fileSize = file.tellg();
+        file.seekg (0, file.beg);
 
         m_egtb = new uint8_t[m_fileSize];
         if (!file.read((char *) m_egtb, m_fileSize))
