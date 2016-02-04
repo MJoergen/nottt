@@ -1,5 +1,6 @@
 #include "NTTTPlayerIce.h"
 #include <fstream>
+#include <sstream>
 
 std::string NTTTPlayerIce::getName() { return "IceBot v2"; }
 
@@ -205,37 +206,28 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
 			}
 		}
 
-		std::string filePath; //TODO: Generate filePath for every possible boardsize
-		if (m_boardSize == 3){
-			filePath = "egtb-3x3.dat";
-		}
-        else if (m_boardSize == 4){
-			filePath = "egtb-4x4.dat";
-		}
-		else if (m_boardSize == 5){
-			filePath = "egtb-5x5.dat";
-		}
+        std::ostringstream oss;
+        oss << "egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
+        std::string filePath = oss.str();
 
 		std::ifstream inputFileStream(filePath, std::ifstream::binary);
 
-		if (inputFileStream){
-			inputFileStream.seekg(0, inputFileStream.end);
-			unsigned int length = inputFileStream.tellg();
-			if (length <= boardPosition){
-				boardPosition = 0;
-			}
-			inputFileStream.seekg(boardPosition, inputFileStream.beg);
+        if (inputFileStream){
+            inputFileStream.seekg(0, inputFileStream.end);
+            unsigned int length = inputFileStream.tellg();
+            if (length <= boardPosition/8){
+                boardPosition = 0;
+            }
+            inputFileStream.seekg(boardPosition/8, inputFileStream.beg);
 
-			char* buffer = new char;
+            char buffer;
 
-			inputFileStream.read(buffer, 1);
-			inputFileStream.close();
+            inputFileStream.read(&buffer, 1);
+            inputFileStream.close();
 
-			if (*buffer == 1)
-				isWon = true;
-
-			delete buffer;
-		}
+            if (((buffer) >> (boardPosition%8)) & 1)
+                isWon = true;
+        }
 	}
 	else {
 		if (rand() % 2 == 0)
