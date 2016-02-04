@@ -62,7 +62,7 @@
  *
  * Caveat: This currently only works on Linux
  */
-//#define USE_MMAP
+#define USE_MMAP
 
 /*
  * Uncomment the following line to dump all the solutions as ASCII.
@@ -78,6 +78,7 @@
 #include <iomanip>
 #include <vector>
 #include <stdint.h>
+#include <sstream>
 
 #ifdef USE_MMAP
 #include <sys/mman.h>
@@ -87,64 +88,32 @@
 #include <unistd.h>
 #endif
 
-#if 0
-#define LINE_SIZE            3
-#define BOARD_SIZE           3
-#define NUM_SQUARES          9
-#define NUM_POSITIONS     512UL /* 2^9 */
-#define FILE_NAME "egtb-3x3.dat"
-#endif
-
-#if 1
-#define LINE_SIZE            3
-#define BOARD_SIZE           4
-#define NUM_SQUARES         16
-#define NUM_POSITIONS   65536UL /* 2^16 = 65 kB */
-#define FILE_NAME "egtb-4x4.dat"
-#endif
-
-#if 0
-#define LINE_SIZE             3
-#define BOARD_SIZE            5
-#define NUM_SQUARES          25
-#define NUM_POSITIONS  33554432UL /* 2^25 = 32 MB */
-#define FILE_NAME "egtb-5x5.dat"
-#endif
-
-#if 0 // This doesn't work on my 32-bit machine.
-#define LINE_SIZE                3
-#define BOARD_SIZE               6
-#define NUM_SQUARES             36
-#define NUM_POSITIONS  68719476736ULL /* 2^36 = 64 GB */
-#define FILE_NAME "/home2/mike/egtb-6x6.dat"
-#endif
-
 /*
  * This is a helper class to quickly determine
  * whether the position contains a complete line.
  *
  * This currently only works up to 5x5 boards. To work on 6x6 boards all the
- * uint32_t variables must be changed to uint32_t.
+ * uint32_t variables must be changed to uint64_t.
  */
 class Lines
 {
     public:
-        Lines() // Constructor
+        Lines(uint32_t boardSize, uint32_t lineSize) // Constructor
         {
             m_lines.clear();
 
-            for (int x=0; x<BOARD_SIZE; ++x)
+            for (unsigned int x=0; x<boardSize; ++x)
             {
-                for (int y=0; y<BOARD_SIZE; ++y)
+                for (unsigned int y=0; y<boardSize; ++y)
                 {
-                    if (x+LINE_SIZE <= BOARD_SIZE) // Horizontal
-                        m_lines.push_back(makeLine(x, y, 1, 0, LINE_SIZE));
-                    if (y+LINE_SIZE <= BOARD_SIZE) // Vertical
-                        m_lines.push_back(makeLine(x, y, 0, 1, LINE_SIZE));
-                    if (x+LINE_SIZE <= BOARD_SIZE && y+LINE_SIZE <= BOARD_SIZE) // Diagonal
-                        m_lines.push_back(makeLine(x, y, 1, 1, LINE_SIZE));
-                    if (x >= LINE_SIZE-1 && y+LINE_SIZE <= BOARD_SIZE) // Diagonal
-                        m_lines.push_back(makeLine(x, y, -1, 1, LINE_SIZE));
+                    if (x+lineSize <= boardSize) // Horizontal
+                        m_lines.push_back(makeLine(boardSize, x, y, 1, 0, lineSize));
+                    if (y+lineSize <= boardSize) // Vertical
+                        m_lines.push_back(makeLine(boardSize, x, y, 0, 1, lineSize));
+                    if (x+lineSize <= boardSize && y+lineSize <= boardSize) // Diagonal
+                        m_lines.push_back(makeLine(boardSize, x, y, 1, 1, lineSize));
+                    if (x >= lineSize-1 && y+lineSize <= boardSize) // Diagonal
+                        m_lines.push_back(makeLine(boardSize, x, y, -1, 1, lineSize));
                 }
             }
         }; // end of init
@@ -174,12 +143,12 @@ class Lines
          * Converts a given line segment (start, direction, length)
          * into a 16-bit mask.
          */     
-        uint32_t makeLine(int x, int y, int dx, int dy, int size)
+        uint32_t makeLine(uint32_t boardSize, int x, int y, int dx, int dy, int size)
         {
             uint32_t res = 0;
             for (int i=0; i<size; ++i)
             {
-                res |= 1ULL << (x*BOARD_SIZE+y);
+                res |= 1ULL << (x*boardSize+y);
                 x += dx;
                 y += dy;
             }   
@@ -187,34 +156,6 @@ class Lines
         } // end of makeLine
 
 }; // end of Lines
-
-/*
- * The " __attribute__ ((__packed__)) " part is to ensure, that
- * only one byte is used by the enum. Otherwise, it uses 4 bytes.
- */
-typedef enum __attribute__ ((__packed__))
-{
-    POS_UNKNOWN = 0,
-    POS_WIN = 1,
-    POS_LOST = 2
-} val_t;
-
-/*
- * This prints out an ASCII representation of the board.
- */
-void printBoard(uint32_t pos)
-{
-    for (unsigned int i=0; i<NUM_SQUARES; ++i)
-    {
-        if (i%BOARD_SIZE == 0 && i>0)
-            std::cout << std::endl;
-        uint32_t mask = 1ULL << i;
-        if (pos & mask)
-            std::cout << "x";
-        else
-            std::cout << ".";
-    }
-}; // end of printBoard
 
 /*
  * This counts the number of '1' bits in the variable.
@@ -228,38 +169,101 @@ int countBits(uint32_t pos)
     return count;
 }; // end of countBits
 
-#ifndef USE_MMAP
-val_t egtb[NUM_POSITIONS];
-#endif
-
-int main()
+static int readPos(uint32_t pos, uint8_t *array)
 {
-    Lines lines;
+    return (array[pos/8] >> (pos%8)) & 1;
+}
+
+static void setPos(uint32_t pos, uint8_t *array, int val)
+{
+    if (val)
+        array[pos/8] |= (1 << (pos%8));
+}
+
+static uint32_t pow(uint32_t e)
+{
+    uint32_t res = 1;
+    for (uint32_t i=0; i<e; ++i)
+        res = res*2;
+
+    return res;
+}
+
+// Global variables
+uint32_t g_boardSize;
+uint32_t g_lineSize;
+uint32_t g_numSquares;
+uint32_t g_numPositions;
+
+/*
+ * This prints out an ASCII representation of the board.
+ */
+static void printBoard(uint32_t pos)
+{
+    for (unsigned int i=0; i<g_numSquares; ++i)
+    {
+        if (i%g_boardSize == 0 && i>0)
+            std::cout << std::endl;
+        uint32_t mask = 1ULL << i;
+        if (pos & mask)
+            std::cout << "x";
+        else
+            std::cout << ".";
+    }
+}; // end of printBoard
+
+int main(int argc, char *argv[])
+{
+    if (argc != 3)
+    {
+        std::cout << "Wrong number of arguments" << std::endl;
+        std::cout << "Usage: egtb <boardSize> <lineSize>" << std::endl;
+        exit(-1);
+    }
+
+    g_boardSize = atol(argv[1]);
+    g_lineSize  = atol(argv[2]);
+
+    g_numSquares = g_boardSize * g_boardSize;
+    g_numPositions = pow(g_numSquares);
+
+    Lines lines(g_boardSize, g_lineSize);
 
 #ifdef USE_MMAP
-    int fd = open(FILE_NAME, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR); // Read from existing file or create new.
+    std::ostringstream oss;
+    oss << "egtb-" << g_boardSize << "-" << g_lineSize << ".bit";
+    std::string fileName = oss.str();
+
+    std::cout << fileName << std::endl;
+
+    int fd = open(fileName.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR); // Read from existing file or create new.
     if (fd < 0)
     {
         perror("open");
         return (-1);
     }
 
-    if (posix_fallocate(fd, 0, NUM_POSITIONS)) // Make sure new file has the right size
+    if (posix_fallocate(fd, 0, g_numPositions/8)) // Make sure new file has the right size
     {
         perror("fallocate");
         return (-1);
     }
 
-    val_t *egtb = (val_t *) mmap(nullptr, NUM_POSITIONS, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    uint8_t *egtb = (uint8_t *) mmap(nullptr, g_numPositions/8, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (egtb == MAP_FAILED) // Map the file to a pointer
     {
         perror("mmap");
         return (-1);
     }
 #else
-    for (uint32_t pos=0; pos<NUM_POSITIONS; ++pos)
-        egtb[pos] = POS_UNKNOWN;
+    uint8_t *egtb  = new uint8_t[g_numPositions/8];
+    for (uint32_t pos=0; pos<g_numPositions/8; ++pos)
+        egtb[pos] = 0;
 #endif
+
+    uint8_t *known = new uint8_t[g_numPositions/8];
+    for (uint32_t pos=0; pos<g_numPositions/8; ++pos)
+        known[pos] = 0;
 
     bool updated = true;
     // Repeat until no more updates.
@@ -268,19 +272,20 @@ int main()
         std::cout << "." << std::flush;
         updated = false;
         // Loop through all positions
-        for (uint32_t pos=0; pos<NUM_POSITIONS; ++pos)
+        for (uint32_t pos=0; pos<g_numPositions; ++pos)
         {
-            if (egtb[pos] != POS_UNKNOWN)
-                continue;
-            // This is a currently unknown position
+            if (readPos(pos, known))
+                continue; // Skip if the position is already known.
 
-            val_t thisVal = POS_WIN; // This is the value, if the board is dead.
+            // This is a currently unknown position
+            bool isKnown = true;
+            bool win = true; // This is the value, if the board is dead.
             if (!lines.isBoardDead(pos))
             { 
-                thisVal = POS_LOST; // Ok, the board is alive. Assume the worst
+                win = false; // Ok, the board is alive. Assume the worst
 
                 // Loop through all legal moves
-                for (int i=0; i<NUM_SQUARES; ++i)
+                for (unsigned int i=0; i<g_numSquares; ++i)
                 {
                     uint32_t mask = 1ULL << i;
                     if (pos & mask) // Is square already occupied?
@@ -288,45 +293,45 @@ int main()
                     // Now we have a legal move
 
                     uint32_t new_pos = pos | mask;
-                    val_t new_val = egtb[new_pos];
-                    if (new_val == POS_UNKNOWN)
+                    if (!readPos(new_pos, known))
                     {
                         // If one child is unknown, then we can stop immediately.
-                        thisVal = POS_UNKNOWN;
+                        isKnown = false;
                         break;
                     }
-                    if (new_val == POS_LOST)
+                    if (!readPos(new_pos, egtb))
                     {
                         // If one child is lost, then we are winning, and can stop immediately.
-                        thisVal = POS_WIN;
+                        win = true;
                         break;
                     }
                     // If all children are won, then we are losing.
                 } // Loop through all legal moves
             }
 
-            egtb[pos] = thisVal;
-            if (thisVal != POS_UNKNOWN)
+            if (isKnown)
+            {
+                setPos(pos, known, true);
+                setPos(pos, egtb, win);
                 updated = true;
+            }
         } // Loop through all positions
 
     } // Repeat until no more updates.
 
     std::cout << std::endl;
-    std::cout << std::endl;
 
 #ifdef DUMP_SOLUTIONS
-    for (uint32_t pos=0; pos<NUM_POSITIONS; ++pos)
+    for (uint32_t pos=0; pos<g_numPositions; ++pos)
     {
-        if (!lines.isBoardDead(pos))
+//        if (!lines.isBoardDead(pos))
         {
             printBoard(pos);
             std::cout << "Value = ";
-            switch (egtb[pos])
+            switch (readPos(pos, egtb))
             {
-                case POS_WIN     : std::cout << "Win"; break;
-                case POS_LOST    : std::cout << "Lost"; break;
-                case POS_UNKNOWN : std::cout << "Unknown"; break;
+                case true  : std::cout << "Win"; break;
+                case false : std::cout << "Lost"; break;
             }
             std::cout << "  ";
             if (lines.isBoardDead(pos))
@@ -340,44 +345,46 @@ int main()
 #endif
 
 #ifdef DUMP_STATISTICS
-    int numWins[NUM_SQUARES+1];
-    int numLost[NUM_SQUARES+1];
-    int numDead[NUM_SQUARES+1];
+    int numWins[g_numSquares+1];
+    int numLost[g_numSquares+1];
+    int numDead[g_numSquares+1];
 
-    for (int i=0; i<=NUM_SQUARES; ++i)
+    for (unsigned int i=0; i<=g_numSquares; ++i)
     {
         numWins[i] = 0;
         numLost[i] = 0;
         numDead[i] = 0;
     }
 
-    for (uint32_t pos=0; pos<NUM_POSITIONS; ++pos)
+    for (uint32_t pos=0; pos<g_numPositions; ++pos)
     {
         int numBits = countBits(pos);
         if (!lines.isBoardDead(pos))
         {
-            if (egtb[pos] == POS_WIN)
+            if (readPos(pos, egtb))
                 numWins[numBits]++;
-            else if (egtb[pos] == POS_LOST)
+            else
                 numLost[numBits]++;
         }
         else
             numDead[numBits]++;
     }
 
-    for (int i=0; i<=NUM_SQUARES; ++i)
+    for (unsigned int i=0; i<=g_numSquares; ++i)
     {
         std::cout << std::setw(2) <<  i << ": ";
-        std::cout << "Wins = " << std::setw(6) << numWins[i];
-        std::cout << ", Lost = " << std::setw(5) << numLost[i];
+        std::cout << "Wins = " << std::setw(7) << numWins[i];
+        std::cout << ", Lost = " << std::setw(7) << numLost[i];
         std::cout << ", Dead = " << std::setw(7) << numDead[i] << std::endl;
     }
 #endif
 
 #ifdef USE_MMAP
-    munmap(egtb, NUM_POSITIONS);
+    munmap(egtb, g_numPositions/8);
     close(fd);
 #endif
+
+    std::cout << std::endl;
 
     return 0;
 }

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <assert.h>
 #include <fstream>
+#include "trace.h"
 
 #include "NTTTPlayerMike.h"
 
@@ -65,23 +66,23 @@ void Board::init(const NTTTGame& game)
     }
 
     if (m_boardSize == 3){
-        m_filePath = "egtb-3x3.dat";
-        m_fileSize = 512; // 2^9
+        m_filePath = "egtb-3x3.bit";
+        m_fileSize = 512/8; // 2^9
     }
     else if (m_boardSize == 4){
-        m_filePath = "egtb-4x4.dat";
-        m_fileSize = 65536; // 2^16
+        m_filePath = "egtb-4x4.bit";
+        m_fileSize = 65536/8; // 2^16
     }
     else if (m_boardSize == 5){
-        m_filePath = "egtb-5x5.dat";
-        m_fileSize = 33554432; // 2^25 = 32 MB 
+        m_filePath = "egtb-5x5.bit";
+        m_fileSize = 33554432/8; // 2^25 = 32 MB 
     }
 
     if (m_fileSize)
     {
         std::ifstream file(m_filePath, std::ios::binary | std::ios::in);
 
-        m_egtb = new val_t[m_fileSize];
+        m_egtb = new uint8_t[m_fileSize];
         if (!file.read((char *) m_egtb, m_fileSize))
         {
             perror("read");
@@ -257,12 +258,12 @@ int Board::evaluate() const
             uint64_t bits = m_bits[lastActive];
             assert(!isBoardDead(bits));
 
-            bits = ~bits & (m_fileSize-1);
+            bits = ~bits & (m_fileSize*8-1);
 
-            switch (m_egtb[bits])
+            switch ((m_egtb[bits/8] >> (bits%8)) & 1)
             {
-                case POS_WIN:  return 99990;
-                case POS_LOST: return -99990;
+                case true : return 99990;
+                case false: return -99990;
                 default: assert(false);
             }
         }
@@ -400,6 +401,7 @@ NTTTMove Board::findMove(const NTTTGame& game)
                     int val = -alphaBeta(-99999, 99999, level);
                     undoMove(board, mask);
 
+                    LOG("Move " << move << " => " << std::dec << val << std::endl);
                     if (m_debug)
                         std::cout << "Move " << move << " => " << std::dec << val << std::endl;
 

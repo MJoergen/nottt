@@ -6,6 +6,7 @@
 
 #define DEBUG_MIKE false
 
+#if 0
 /*
  * It is important that the size of the enum is only 1 byte.
  */
@@ -15,6 +16,7 @@ typedef enum : char
     POS_WIN = 1,
     POS_LOST = 2
 } val_t;
+#endif
 
 /**
  * A representation of the board using bitmasks
@@ -95,7 +97,7 @@ class Board
 
         std::string m_filePath;
         int         m_fileSize;
-        val_t       *m_egtb;
+        uint8_t     *m_egtb;
 }; // end of class Board
 
 

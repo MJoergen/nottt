@@ -1,0 +1,210 @@
+egtb-2-2.bit
+....
+ 0: Wins =       1, Lost =       0, Dead =       0
+ 1: Wins =       0, Lost =       4, Dead =       0
+ 2: Wins =       0, Lost =       0, Dead =       6
+ 3: Wins =       0, Lost =       0, Dead =       4
+ 4: Wins =       0, Lost =       0, Dead =       1
+
+egtb-3-2.bit
+.......
+ 0: Wins =       1, Lost =       0, Dead =       0
+ 1: Wins =       8, Lost =       1, Dead =       0
+ 2: Wins =      12, Lost =       4, Dead =      20
+ 3: Wins =       4, Lost =       4, Dead =      76
+ 4: Wins =       0, Lost =       1, Dead =     125
+ 5: Wins =       0, Lost =       0, Dead =     126
+ 6: Wins =       0, Lost =       0, Dead =      84
+ 7: Wins =       0, Lost =       0, Dead =      36
+ 8: Wins =       0, Lost =       0, Dead =       9
+ 9: Wins =       0, Lost =       0, Dead =       1
+
+egtb-3-3.bit
+.........
+ 0: Wins =       1, Lost =       0, Dead =       0
+ 1: Wins =       8, Lost =       1, Dead =       0
+ 2: Wins =      28, Lost =       8, Dead =       0
+ 3: Wins =      52, Lost =      24, Dead =       8
+ 4: Wins =      56, Lost =      22, Dead =      48
+ 5: Wins =      12, Lost =      16, Dead =      98
+ 6: Wins =       0, Lost =       2, Dead =      82
+ 7: Wins =       0, Lost =       0, Dead =      36
+ 8: Wins =       0, Lost =       0, Dead =       9
+ 9: Wins =       0, Lost =       0, Dead =       1
+
+egtb-4-2.bit
+.......
+ 0: Wins =       0, Lost =       1, Dead =       0
+ 1: Wins =      16, Lost =       0, Dead =       0
+ 2: Wins =       0, Lost =      78, Dead =      42
+ 3: Wins =     140, Lost =       0, Dead =     420
+ 4: Wins =       0, Lost =      79, Dead =    1741
+ 5: Wins =       0, Lost =       0, Dead =    4368
+ 6: Wins =       0, Lost =       0, Dead =    8008
+ 7: Wins =       0, Lost =       0, Dead =   11440
+ 8: Wins =       0, Lost =       0, Dead =   12870
+ 9: Wins =       0, Lost =       0, Dead =   11440
+10: Wins =       0, Lost =       0, Dead =    8008
+11: Wins =       0, Lost =       0, Dead =    4368
+12: Wins =       0, Lost =       0, Dead =    1820
+13: Wins =       0, Lost =       0, Dead =     560
+14: Wins =       0, Lost =       0, Dead =     120
+15: Wins =       0, Lost =       0, Dead =      16
+16: Wins =       0, Lost =       0, Dead =       1
+
+egtb-4-3.bit
+............
+ 0: Wins =       1, Lost =       0, Dead =       0
+ 1: Wins =      12, Lost =       4, Dead =       0
+ 2: Wins =     110, Lost =      10, Dead =       0
+ 3: Wins =     392, Lost =     144, Dead =      24
+ 4: Wins =    1089, Lost =     429, Dead =     302
+ 5: Wins =    1888, Lost =     852, Dead =    1628
+ 6: Wins =    2236, Lost =     838, Dead =    4934
+ 7: Wins =     892, Lost =    1104, Dead =    9444
+ 8: Wins =     496, Lost =     159, Dead =   12215
+ 9: Wins =       0, Lost =      76, Dead =   11364
+10: Wins =       0, Lost =       0, Dead =    8008
+11: Wins =       0, Lost =       0, Dead =    4368
+12: Wins =       0, Lost =       0, Dead =    1820
+13: Wins =       0, Lost =       0, Dead =     560
+14: Wins =       0, Lost =       0, Dead =     120
+15: Wins =       0, Lost =       0, Dead =      16
+16: Wins =       0, Lost =       0, Dead =       1
+
+egtb-4-4.bit
+...............
+ 0: Wins =       0, Lost =       1, Dead =       0
+ 1: Wins =      16, Lost =       0, Dead =       0
+ 2: Wins =      80, Lost =      40, Dead =       0
+ 3: Wins =     432, Lost =     128, Dead =       0
+ 4: Wins =    1204, Lost =     606, Dead =      10
+ 5: Wins =    3336, Lost =     912, Dead =     120
+ 6: Wins =    5096, Lost =    2252, Dead =     660
+ 7: Wins =    6688, Lost =    2584, Dead =    2168
+ 8: Wins =    5868, Lost =    2353, Dead =    4649
+ 9: Wins =    3072, Lost =    1680, Dead =    6688
+10: Wins =     932, Lost =     632, Dead =    6444
+11: Wins =     120, Lost =     112, Dead =    4136
+12: Wins =       0, Lost =      10, Dead =    1810
+13: Wins =       0, Lost =       0, Dead =     560
+14: Wins =       0, Lost =       0, Dead =     120
+15: Wins =       0, Lost =       0, Dead =      16
+16: Wins =       0, Lost =       0, Dead =       1
+
+egtb-5-2.bit
+............
+ 0: Wins =       1, Lost =       0, Dead =       0
+ 1: Wins =      24, Lost =       1, Dead =       0
+ 2: Wins =     184, Lost =      44, Dead =      72
+ 3: Wins =     784, Lost =     180, Dead =    1336
+ 4: Wins =    1566, Lost =     421, Dead =   10663
+ 5: Wins =    1380, Lost =     594, Dead =   51156
+ 6: Wins =     590, Lost =     388, Dead =  176122
+ 7: Wins =     132, Lost =     110, Dead =  480458
+ 8: Wins =       9, Lost =      18, Dead = 1081548
+ 9: Wins =       0, Lost =       1, Dead = 2042974
+10: Wins =       0, Lost =       0, Dead = 3268760
+11: Wins =       0, Lost =       0, Dead = 4457400
+12: Wins =       0, Lost =       0, Dead = 5200300
+13: Wins =       0, Lost =       0, Dead = 5200300
+14: Wins =       0, Lost =       0, Dead = 4457400
+15: Wins =       0, Lost =       0, Dead = 3268760
+16: Wins =       0, Lost =       0, Dead = 2042975
+17: Wins =       0, Lost =       0, Dead = 1081575
+18: Wins =       0, Lost =       0, Dead =  480700
+19: Wins =       0, Lost =       0, Dead =  177100
+20: Wins =       0, Lost =       0, Dead =   53130
+21: Wins =       0, Lost =       0, Dead =   12650
+22: Wins =       0, Lost =       0, Dead =    2300
+23: Wins =       0, Lost =       0, Dead =     300
+24: Wins =       0, Lost =       0, Dead =      25
+25: Wins =       0, Lost =       0, Dead =       1
+
+egtb-5-3.bit
+...................
+ 0: Wins =       0, Lost =       1, Dead =       0
+ 1: Wins =      25, Lost =       0, Dead =       0
+ 2: Wins =     172, Lost =     128, Dead =       0
+ 3: Wins =    2128, Lost =     124, Dead =      48
+ 4: Wins =    8250, Lost =    3372, Dead =    1028
+ 5: Wins =   37478, Lost =    5498, Dead =   10154
+ 6: Wins =   86074, Lost =   29832, Dead =   61194
+ 7: Wins =  186676, Lost =   42250, Dead =  251774
+ 8: Wins =  236701, Lost =   92640, Dead =  752234
+ 9: Wins =  256387, Lost =   84249, Dead = 1702339
+10: Wins =  169158, Lost =   79160, Dead = 3020442
+11: Wins =   83384, Lost =   40818, Dead = 4333198
+12: Wins =   23580, Lost =   17577, Dead = 5159143
+13: Wins =    4717, Lost =    3904, Dead = 5191679
+14: Wins =     596, Lost =     452, Dead = 4456352
+15: Wins =      16, Lost =      44, Dead = 3268700
+16: Wins =       0, Lost =       1, Dead = 2042974
+17: Wins =       0, Lost =       0, Dead = 1081575
+18: Wins =       0, Lost =       0, Dead =  480700
+19: Wins =       0, Lost =       0, Dead =  177100
+20: Wins =       0, Lost =       0, Dead =   53130
+21: Wins =       0, Lost =       0, Dead =   12650
+22: Wins =       0, Lost =       0, Dead =    2300
+23: Wins =       0, Lost =       0, Dead =     300
+24: Wins =       0, Lost =       0, Dead =      25
+25: Wins =       0, Lost =       0, Dead =       1
+
+egtb-5-4.bit
+.....................
+ 0: Wins =       1, Lost =       0, Dead =       0
+ 1: Wins =       0, Lost =      25, Dead =       0
+ 2: Wins =     300, Lost =       0, Dead =       0
+ 3: Wins =     206, Lost =    2094, Dead =       0
+ 4: Wins =   12549, Lost =      73, Dead =      28
+ 5: Wins =   12839, Lost =   39715, Dead =     576
+ 6: Wins =  166100, Lost =    5360, Dead =    5640
+ 7: Wins =  180208, Lost =  265716, Dead =   34776
+ 8: Wins =  868238, Lost =   62751, Dead =  150586
+ 9: Wins =  835659, Lost =  723504, Dead =  483812
+10: Wins = 1831760, Lost =  247448, Dead = 1189552
+11: Wins = 1291162, Lost =  886086, Dead = 2280152
+12: Wins = 1439007, Lost =  312892, Dead = 3448401
+13: Wins =  608906, Lost =  440007, Dead = 4151387
+14: Wins =  335338, Lost =  110150, Dead = 4011912
+15: Wins =   55900, Lost =   68874, Dead = 3143986
+16: Wins =   13901, Lost =    6666, Dead = 2022408
+17: Wins =     600, Lost =    1065, Dead = 1079910
+18: Wins =       0, Lost =      36, Dead =  480664
+19: Wins =       0, Lost =       0, Dead =  177100
+20: Wins =       0, Lost =       0, Dead =   53130
+21: Wins =       0, Lost =       0, Dead =   12650
+22: Wins =       0, Lost =       0, Dead =    2300
+23: Wins =       0, Lost =       0, Dead =     300
+24: Wins =       0, Lost =       0, Dead =      25
+25: Wins =       0, Lost =       0, Dead =       1
+
+egtb-5-5.bit
+.......................
+ 0: Wins =       1, Lost =       0, Dead =       0
+ 1: Wins =       0, Lost =      25, Dead =       0
+ 2: Wins =     300, Lost =       0, Dead =       0
+ 3: Wins =      24, Lost =    2276, Dead =       0
+ 4: Wins =   12644, Lost =       6, Dead =       0
+ 5: Wins =    3866, Lost =   49252, Dead =      12
+ 6: Wins =  175708, Lost =    1152, Dead =     240
+ 7: Wins =  112012, Lost =  366408, Dead =    2280
+ 8: Wins = 1034401, Lost =   33494, Dead =   13680
+ 9: Wins =  850290, Lost = 1134591, Dead =   58094
+10: Wins = 2852224, Lost =  231244, Dead =  185292
+11: Wins = 2251800, Lost = 1746300, Dead =  459300
+12: Wins = 3758816, Lost =  539056, Dead =  902428
+13: Wins = 2309808, Lost = 1470896, Dead = 1419596
+14: Wins = 2217744, Lost =  446804, Dead = 1792852
+15: Wins =  849700, Lost =  606872, Dead = 1812188
+16: Wins =  469564, Lost =  118371, Dead = 1455040
+17: Wins =   84574, Lost =   77788, Dead =  919213
+18: Wins =   18104, Lost =    8984, Dead =  453612
+19: Wins =     960, Lost =    1216, Dead =  174924
+20: Wins =       0, Lost =      48, Dead =   53082
+21: Wins =       0, Lost =       0, Dead =   12650
+22: Wins =       0, Lost =       0, Dead =    2300
+23: Wins =       0, Lost =       0, Dead =     300
+24: Wins =       0, Lost =       0, Dead =      25
+25: Wins =       0, Lost =       0, Dead =       1
+
