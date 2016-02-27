@@ -79,6 +79,7 @@
 #include <vector>
 #include <stdint.h>
 #include <sstream>
+#include <assert.h>
 
 #ifdef USE_MMAP
 #include <sys/mman.h>
@@ -87,6 +88,24 @@
 #include <fcntl.h>
 #include <unistd.h>
 #endif
+
+// Global variables
+uint32_t g_boardSize;
+uint32_t g_lineSize;
+uint32_t g_numSquares;
+uint32_t g_numPositions;
+
+/*
+ * This counts the number of '1' bits in the variable.
+ * This corresponds to the number of X's on the board.
+ */
+int countBits(uint32_t pos)
+{
+    int count;
+    for (count=0; pos; count++)
+        pos &= pos-1;
+    return count;
+}; // end of countBits
 
 /*
  * This is a helper class to quickly determine
@@ -134,6 +153,55 @@ class Lines
 
         }; // end of isBoardDead
 
+        void getLineCounts(uint32_t pos, uint32_t sq, int cnt[4]) const
+        {
+            for (uint32_t lineMask : m_lines)
+            {
+                if (!(sq & lineMask))
+                    continue;
+                int ix = countBits(pos & lineMask); // Will be between 0 and 3.
+                cnt[ix]++;
+            }
+        }
+
+        /*
+        */
+        void getStats(uint32_t pos, int sum[6]) const
+        {
+            sum[0] = 0;
+            sum[1] = 0;
+            sum[2] = 0;
+            sum[3] = 0;
+            sum[4] = 0;
+            sum[5] = 0;
+
+            // Loop through all legal moves
+            for (unsigned int i=0; i<g_numSquares; ++i)
+            {
+                uint32_t mask = 1ULL << i;
+
+                if (pos & mask) // Is square already occupied?
+                    continue;
+
+                int cnt[4] = {0, 0, 0, 0};
+                getLineCounts(pos, mask, cnt);
+
+                assert(cnt[3] == 0);
+                if (cnt[2])
+                    sum[5] ++;
+                else if (cnt[1] == 4)
+                    sum[4] ++;
+                else if (cnt[1] == 3)
+                    sum[3] ++;
+                else if (cnt[1] == 2)
+                    sum[2] ++;
+                else if (cnt[1] == 1)
+                    sum[1] ++;
+                else if (cnt[0])
+                    sum[0] ++;
+            }
+        } // end of getStats
+
     private:
         std::vector<uint32_t> m_lines;
 
@@ -157,18 +225,6 @@ class Lines
 
 }; // end of Lines
 
-/*
- * This counts the number of '1' bits in the variable.
- * This corresponds to the number of X's on the board.
- */
-int countBits(uint32_t pos)
-{
-    int count;
-    for (count=0; pos; count++)
-        pos &= pos-1;
-    return count;
-}; // end of countBits
-
 static int readPos(uint32_t pos, uint8_t *array)
 {
     return (array[pos/8] >> (pos%8)) & 1;
@@ -189,12 +245,6 @@ static uint32_t pow(uint32_t e)
     return res;
 }
 
-// Global variables
-uint32_t g_boardSize;
-uint32_t g_lineSize;
-uint32_t g_numSquares;
-uint32_t g_numPositions;
-
 /*
  * This prints out an ASCII representation of the board.
  */
@@ -202,13 +252,11 @@ static void printBoard(uint32_t pos)
 {
     for (unsigned int i=0; i<g_numSquares; ++i)
     {
-        if (i%g_boardSize == 0 && i>0)
-            std::cout << std::endl;
         uint32_t mask = 1ULL << i;
         if (pos & mask)
-            std::cout << "x";
+            std::cout << "1";
         else
-            std::cout << ".";
+            std::cout << "0";
     }
 }; // end of printBoard
 
@@ -324,21 +372,16 @@ int main(int argc, char *argv[])
 #ifdef DUMP_SOLUTIONS
     for (uint32_t pos=0; pos<g_numPositions; ++pos)
     {
-//        if (!lines.isBoardDead(pos))
+        if (!lines.isBoardDead(pos))
         {
             printBoard(pos);
-            std::cout << "Value = ";
+            std::cout << " ";
+
             switch (readPos(pos, egtb))
             {
-                case true  : std::cout << "Win"; break;
-                case false : std::cout << "Lost"; break;
+                case true  : std::cout << "1"; break;
+                case false : std::cout << "0"; break;
             }
-            std::cout << "  ";
-            if (lines.isBoardDead(pos))
-                std::cout << "Dead";
-            else
-                std::cout << "Alive";
-            std::cout << std::endl;
             std::cout << std::endl;
         }
     }
@@ -356,15 +399,41 @@ int main(int argc, char *argv[])
         numDead[i] = 0;
     }
 
+    int statWins[64];
+    int statLost[64];
+
+    for (int i=0; i<64; ++i)
+    {
+        statWins[i] = 0;
+        statLost[i] = 0;
+    }
+
     for (uint32_t pos=0; pos<g_numPositions; ++pos)
     {
         int numBits = countBits(pos);
         if (!lines.isBoardDead(pos))
         {
+            int sum[6];
+            lines.getStats(pos, sum);
+            int par0 = sum[0] & 1;
+            int par1 = sum[1] & 1;
+            int par2 = sum[2] & 1;
+            int par3 = sum[3] & 1;
+            int par4 = sum[4] & 1;
+            int par5 = sum[5] & 1;
+
+            int index = (par0 << 5) + (par1 << 4) + (par2 << 3) + (par3 << 2) + (par4 << 1) + par5;
+
             if (readPos(pos, egtb))
+            {
                 numWins[numBits]++;
+                statWins[index]++;
+            }
             else
+            {
                 numLost[numBits]++;
+                statLost[index]++;
+            }
         }
         else
             numDead[numBits]++;
@@ -376,6 +445,15 @@ int main(int argc, char *argv[])
         std::cout << "Wins = " << std::setw(7) << numWins[i];
         std::cout << ", Lost = " << std::setw(7) << numLost[i];
         std::cout << ", Dead = " << std::setw(7) << numDead[i] << std::endl;
+    }
+    
+    std::cout << "Index Wins Lost Score" << std::endl;
+    for (int i=0; i<64; ++i)
+    {
+        std::cout << std::setw(2) << i << " " << statWins[i] << " " << std::setw(5) << statLost[i];
+        int total = statWins[i] + statLost[i];
+        int score = (statWins[i]*1000 + total/2)/total;
+        std::cout << " " << score << std::endl;
     }
 #endif
 
