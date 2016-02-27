@@ -195,7 +195,7 @@ void Board::undoMove(int board, uint64_t mask)
     m_bits[board] |= mask;
 } // end of makeMove
 
-
+// These numbers are generated in egtb.cpp from the file egtb-5-3.bit
 static const int values[64] = {
     625, 560, 725, 770, 742, 790, 747, 708,
     741, 783, 726, 702, 672, 637, 741, 760,
