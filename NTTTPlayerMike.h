@@ -58,6 +58,10 @@ class Board
         bool isBoardDead(uint64_t bits) const;
 
         /**
+         */
+        void getLineCounts(uint64_t pos, uint64_t sq, int cnt[4]) const;
+
+        /**
          * Converts to internal representation
          * Returns number of boards still alive.
          */

@@ -30,6 +30,18 @@ static uint64_t makeLine(int x, int y, int dx, int dy, int size, int boardSize)
     return res;
 } // end of makeLine
 
+/*
+ * This counts the number of '1' bits in the variable.
+ * This corresponds to the number of X's on the board.
+ */
+static int countBits(uint64_t pos)
+{
+    int count;
+    for (count=0; pos; count++)
+        pos &= pos-1;
+    return count;
+}; // end of countBits
+
 
 /**
  * Initializes data structures, particularly bit masks for lines.
@@ -102,6 +114,18 @@ bool Board::isBoardDead(uint64_t bits) const
     return false;
 } // end of isBoardDead
 
+/**
+ */
+void Board::getLineCounts(uint64_t pos, uint64_t sq, int cnt[4]) const
+{
+    for (uint64_t lineMask : m_lines)
+    {
+        if (!(sq & lineMask))
+            continue;
+        int ix = countBits((~pos) & lineMask); // Will be between 0 and 3.
+        cnt[ix]++;
+    }
+} // end of getLineCounts
 
 /**
  * Converts to internal bitmask representation
@@ -172,6 +196,17 @@ void Board::undoMove(int board, uint64_t mask)
 } // end of makeMove
 
 
+static const int values[64] = {
+    625, 560, 725, 770, 742, 790, 747, 708,
+    741, 783, 726, 702, 672, 637, 741, 760,
+    704, 780, 773, 713, 750, 691, 714, 775,
+    720, 656, 709, 774, 689, 793, 784, 733,
+    737, 776, 780, 740, 741, 702, 720, 762,
+    732, 705, 732, 772, 694, 769, 799, 762,
+    777, 703, 716, 800, 727, 801, 796, 738,
+    719, 787, 806, 723, 779, 710, 744, 789 };
+
+
 /**
  * Return an estimate of the current position, relative to the player to move.
  */
@@ -183,7 +218,7 @@ int Board::evaluate() const
 
     int sum = 0;
 
-    if (m_version==1)
+    if (m_version == 1)
         sum = (rand() % 201) - 100;
 
     for (int board=0; board<m_boardCount; ++board)
@@ -193,7 +228,7 @@ int Board::evaluate() const
             lastActive = board;
             numActive++;
 
-            if (m_version==2)
+            if (m_version == 2)
             {
                 // Count the number of moves that don't kill the board
                 int count = 0;
@@ -217,7 +252,7 @@ int Board::evaluate() const
                 sum += count % 2;
             }
 
-            if (m_version==4)
+            if (m_version >= 4)
             {
                 // Count the number of boards that are almost dead
                 bool kills = false;
@@ -239,7 +274,53 @@ int Board::evaluate() const
                         }
                     }
                 }
-                sum += almostDead;
+                sum += almostDead*2000;
+            }
+
+            if (m_version >= 5)
+            {
+                int sum0 = 0;
+                int sum1 = 0;
+                int sum2 = 0;
+                int sum3 = 0;
+                int sum4 = 0;
+                int sum5 = 0;
+
+                // Loop through all legal moves
+                for (int i=0; i<m_boardSize*m_boardSize; ++i)
+                {
+                    uint64_t mask = 1ULL << i;
+
+                    if (!(m_bits[board] & mask)) // Is square already occupied?
+                        continue;
+                    int cnt[4] = {0, 0, 0, 0};
+                    getLineCounts(m_bits[board], mask, cnt);
+
+                    assert(cnt[3] == 0);
+                    if (cnt[2])
+                        sum5 ++;
+                    else if (cnt[1] == 4)
+                        sum4 ++;
+                    else if (cnt[1] == 3)
+                        sum3 ++;
+                    else if (cnt[1] == 2)
+                        sum2 ++;
+                    else if (cnt[1] == 1)
+                        sum1 ++;
+                    else if (cnt[0])
+                        sum0 ++;
+                }
+
+                int par0 = sum0 & 1;
+                int par1 = sum1 & 1;
+                int par2 = sum2 & 1;
+                int par3 = sum3 & 1;
+                int par4 = sum4 & 1;
+                int par5 = sum5 & 1;
+
+                int index = (par0 << 5) + (par1 << 4) + (par2 << 3) + (par3 << 2) + (par4 << 1) + par5;
+                sum += values[index];
+
             }
 
         } // if (!isBoardDead(m_bits[board]))
@@ -283,9 +364,9 @@ int Board::alphaBeta(int alpha, int beta, int level)
     }
 
     if (m_debug)
-        std::cout << "alpha=" << std::dec << alpha << ", beta=" << beta << ", level=" << level << std::endl;
+        LOG("alpha=" << std::dec << alpha << ", beta=" << beta << ", level=" << level << std::endl);
 
-    int bestVal = -99999;
+    int bestVal = -99990;
 
     int numActive = 0;
     for (int board=0; board<m_boardCount; ++board)
@@ -306,8 +387,8 @@ int Board::alphaBeta(int alpha, int beta, int level)
                     {
                         NTTTMove move(board, x, y);
                         for (int i=level; i<4; ++i)
-                            std::cout << "  ";
-                        std::cout << move << std::endl;
+                            LOG("  ");
+                        LOG(move << std::endl);
                     }
                     makeMove(board, mask);
                     int val = -alphaBeta(-beta, -alpha, level-1);
@@ -317,8 +398,8 @@ int Board::alphaBeta(int alpha, int beta, int level)
                     {
                         NTTTMove move(board, x, y);
                         for (int i=level; i<4; ++i)
-                            std::cout << "  ";
-                        std::cout << move << " -> " << std::dec << val << std::endl;
+                            LOG("  ");
+                        LOG(move << " -> " << std::dec << val << std::endl);
                     }
 
                     if (val > bestVal)
@@ -360,7 +441,7 @@ int Board::alphaBeta(int alpha, int beta, int level)
 NTTTMove Board::findMove(const NTTTGame& game)
 {
     if (m_debug)
-        std::cout << game;
+        LOG(game);
 
     int numAlive = makeBits(game);
 
@@ -371,7 +452,7 @@ NTTTMove Board::findMove(const NTTTGame& game)
     if (m_boardSize*numAlive > 6)
         level = 0;
     if (m_egtb && numAlive == 1)
-        level = 0;
+       level = 0;
 
     m_nodes = 0;
     int bestVal = -999999;
@@ -389,15 +470,13 @@ NTTTMove Board::findMove(const NTTTGame& game)
                 {
                     NTTTMove move(board, x, y);
                     if (m_debug)
-                        std::cout << "Move " << move << std::endl;
+                        LOG("Move " << move << std::endl);
 
                     makeMove(board, mask);
                     int val = -alphaBeta(-99999, 99999, level);
                     undoMove(board, mask);
 
                     LOG("Move " << move << " => " << std::dec << val << std::endl);
-                    if (m_debug)
-                        std::cout << "Move " << move << " => " << std::dec << val << std::endl;
 
                     if (val > bestVal)
                     {
