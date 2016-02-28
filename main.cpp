@@ -180,7 +180,9 @@ int main(int argc, char *argv[]) {
         playerMike4.setVersion(4);
         NTTTPlayerMike playerMike5;
         playerMike5.setVersion(5);
-        std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerMike5, &playerIce};
+        NTTTPlayerMike playerMike6;
+        playerMike6.setVersion(6);
+        std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerMike5, &playerMike6, &playerIce};
 
         playMatch(players, boardCount, boardSize, lineSize, numGames);
 
