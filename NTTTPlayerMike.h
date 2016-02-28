@@ -6,18 +6,6 @@
 
 #define DEBUG_MIKE false
 
-#if 0
-/*
- * It is important that the size of the enum is only 1 byte.
- */
-typedef enum : char
-{
-    POS_UNKNOWN = 0,
-    POS_WIN = 1,
-    POS_LOST = 2
-} val_t;
-#endif
-
 /**
  * A representation of the board using bitmasks
  */
@@ -97,7 +85,7 @@ class Board
         std::vector<uint64_t> m_bits;
         std::vector<uint64_t> m_lines;
         bool m_debug = DEBUG_MIKE;
-        int  m_version = 4;
+        int  m_version = 6;
 
         std::string m_filePath;
         int         m_fileSize;
