@@ -98,18 +98,9 @@ class Lines
 
         /*
         */
-        void getStats(uint32_t pos, int sum[10]) const
+        void getStats(uint32_t pos, int& index) const
         {
-            sum[0] = 0;
-            sum[1] = 0;
-            sum[2] = 0;
-            sum[3] = 0;
-            sum[4] = 0;
-            sum[5] = 0;
-            sum[6] = 0;
-            sum[7] = 0;
-            sum[8] = 0;
-            sum[9] = 0;
+            index = 0;
 
             // Loop through all legal moves
             for (unsigned int i=0; i<g_numSquares; ++i)
@@ -124,25 +115,25 @@ class Lines
 
                 assert(cnt[3] == 0);
                 if (cnt[2])
-                    sum[9] ++;
+                    index ^= 0x001;
                 else if (cnt[1] >= 8)
-                    sum[8] ++;
+                    index ^= 0x002;
                 else if (cnt[1] == 7)
-                    sum[7] ++;
+                    index ^= 0x004;
                 else if (cnt[1] == 6)
-                    sum[6] ++;
+                    index ^= 0x008;
                 else if (cnt[1] == 5)
-                    sum[5] ++;
+                    index ^= 0x010;
                 else if (cnt[1] == 4)
-                    sum[4] ++;
+                    index ^= 0x020;
                 else if (cnt[1] == 3)
-                    sum[3] ++;
+                    index ^= 0x040;
                 else if (cnt[1] == 2)
-                    sum[2] ++;
+                    index ^= 0x080;
                 else if (cnt[1] == 1)
-                    sum[1] ++;
+                    index ^= 0x100;
                 else if (cnt[0])
-                    sum[0] ++;
+                    index ^= 0x200;
             }
         } // end of getStats
 
@@ -239,15 +230,8 @@ int main(int argc, char *argv[])
         int numBits = countBits(pos);
         if (!lines.isBoardDead(pos))
         {
-            int sum[10];
-            lines.getStats(pos, sum);
-
-            int index = 0;
-            for (int i=0; i<10; ++i)
-            {
-                index += (sum[i] & 1) << (9-i);
-
-            }
+            int index;
+            lines.getStats(pos, index);
 
             if (readPos(pos, egtb))
             {
@@ -303,6 +287,8 @@ int main(int argc, char *argv[])
 
             chi2 += chi2Wins + chi2Lost;
         }
+        else
+            std::cout << " 0";
 
         std::cout << std::endl;
     }
