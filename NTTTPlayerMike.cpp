@@ -164,13 +164,13 @@ int Board::makeBits(const NTTTGame& game)
             val = 0;
 
         if (m_debug)
-            std::cout << std::hex << std::setw(16) << std::setfill('0') << val << std::endl;
+            LOG(std::hex << std::setw(16) << std::setfill('0') << val << std::endl);
         m_bits.push_back(val);
         if (val)
             numAlive++;
     }
     if (m_debug)
-        std::cout << "numAlive = " << numAlive << std::endl;
+        LOG("numAlive = " << numAlive << std::endl);
     return numAlive;
 } // end of makeBits
 
@@ -338,6 +338,86 @@ static const int values_v6[1024] = {
 744, 889, 1000, 500, 1000, 1000, 0, 0
 };
 
+void Board::initHash()
+{
+    for (int i=0; i<HASH_SIZE; ++i)
+    {
+        m_hashBoard[i] = 0;
+        m_hashVal[i]   = 0;
+    }
+
+    m_statLookup    = 0;
+    m_statFound     = 0;
+    m_statWrote     = 0;
+    m_statCollision = 0;
+} // end of initHash
+
+/**
+ */
+int Board::evaluateBoardV6(uint64_t board)
+{
+    uint64_t hash = board + (board >> 1) + (board >> 3) + (board >> 6) + (board >> 10) + (board >> 15);
+    hash %= HASH_SIZE;
+
+    m_statLookup ++;
+    if (m_hashBoard[hash] == board)
+    {
+        m_statFound ++;
+        return m_hashVal[hash];
+    }
+
+    int index = 0;
+
+    // Loop through all legal moves
+    for (int i=0; i<m_boardSize*m_boardSize; ++i)
+    {
+        uint64_t mask = 1ULL << i;
+
+        if (!(board & mask)) // Is square already occupied?
+            continue;
+        int cnt[4] = {0, 0, 0, 0};
+        getLineCounts(board, mask, cnt);
+
+        assert(cnt[3] == 0);
+        if (cnt[2])
+            index ^= 0x001;
+        else if (cnt[1] >= 8)
+            index ^= 0x002;
+        else if (cnt[1] == 7)
+            index ^= 0x004;
+        else if (cnt[1] == 6)
+            index ^= 0x008;
+        else if (cnt[1] == 5)
+            index ^= 0x010;
+        else if (cnt[1] == 4)
+            index ^= 0x020;
+        else if (cnt[1] == 3)
+            index ^= 0x040;
+        else if (cnt[1] == 2)
+            index ^= 0x080;
+        else if (cnt[1] == 1)
+            index ^= 0x100;
+        else if (cnt[0])
+            index ^= 0x200;
+    }
+
+    int val = values_v6[index];
+
+    if (m_hashBoard[hash])
+    {
+        m_statCollision ++;
+    }
+    else
+    {
+        m_statWrote ++;
+    }
+
+    m_hashVal[hash] = val;
+    m_hashBoard[hash] = board;
+
+    return val;
+
+}; // end of evaluateBoardV6
 
 /**
  * Return an estimate of the current position, relative to the player to move.
@@ -457,43 +537,7 @@ int Board::evaluate() const
 
             if (m_version == 6)
             {
-                int index = 0;
-
-                // Loop through all legal moves
-                for (int i=0; i<m_boardSize*m_boardSize; ++i)
-                {
-                    uint64_t mask = 1ULL << i;
-
-                    if (!(m_bits[board] & mask)) // Is square already occupied?
-                        continue;
-                    int cnt[4] = {0, 0, 0, 0};
-                    getLineCounts(m_bits[board], mask, cnt);
-
-                    assert(cnt[3] == 0);
-                    if (cnt[2])
-                        index ^= 0x001;
-                    else if (cnt[1] >= 8)
-                        index ^= 0x002;
-                    else if (cnt[1] == 7)
-                        index ^= 0x004;
-                    else if (cnt[1] == 6)
-                        index ^= 0x008;
-                    else if (cnt[1] == 5)
-                        index ^= 0x010;
-                    else if (cnt[1] == 4)
-                        index ^= 0x020;
-                    else if (cnt[1] == 3)
-                        index ^= 0x040;
-                    else if (cnt[1] == 2)
-                        index ^= 0x080;
-                    else if (cnt[1] == 1)
-                        index ^= 0x100;
-                    else if (cnt[0])
-                        index ^= 0x200;
-                }
-
-                sum += values_v6[index];
-
+                sum += ((Board *)this)->evaluateBoardV6(m_bits[board]);
             }
 
         } // if (!isBoardDead(m_bits[board]))
@@ -667,11 +711,11 @@ NTTTMove Board::findMove(const NTTTGame& game)
     assert(bestVal > -999999);
     assert(bestMoves.size() > 0);
     NTTTMove bestMove = bestMoves[rand() % bestMoves.size()];
-    if (m_debug)
-    {
-        std::cout << "nodes=" << m_nodes << std::endl;
-        std::cout << "Best mode: " << bestMove << std::endl;
-    }
+    LOG("nodes=" << m_nodes << std::endl);
+    LOG("m_statLookup=" << m_statLookup << std::endl);
+    LOG("m_statFound=" << m_statFound << std::endl);
+    LOG("m_statWrote=" << m_statWrote << std::endl);
+    LOG("m_statCollision=" << m_statCollision << std::endl);
     return bestMove;
 } // end of findMove
 

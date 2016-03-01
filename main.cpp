@@ -169,20 +169,20 @@ int main(int argc, char *argv[]) {
             gpLog = new CTrace(argv[5]);
         }
 
-        NTTTPlayerIce  playerIce;
-        NTTTPlayerMike playerMike1;
-        playerMike1.setVersion(1);
-        NTTTPlayerMike playerMike2;
-        playerMike2.setVersion(2);
-        NTTTPlayerMike playerMike3;
-        playerMike3.setVersion(3);
-        NTTTPlayerMike playerMike4;
-        playerMike4.setVersion(4);
-        NTTTPlayerMike playerMike5;
-        playerMike5.setVersion(5);
-        NTTTPlayerMike playerMike6;
-        playerMike6.setVersion(6);
-        std::vector<NTTTPlayer *> players = {&playerMike1, &playerMike2, &playerMike3, &playerMike4, &playerMike5, &playerMike6, &playerIce};
+        NTTTPlayerIce  *playerIce = new NTTTPlayerIce;
+        NTTTPlayerMike *playerMike1 = new NTTTPlayerMike;
+        playerMike1->setVersion(1);
+        NTTTPlayerMike *playerMike2 = new NTTTPlayerMike;
+        playerMike2->setVersion(2);
+        NTTTPlayerMike *playerMike3 = new NTTTPlayerMike;
+        playerMike3->setVersion(3);
+        NTTTPlayerMike *playerMike4 = new NTTTPlayerMike;
+        playerMike4->setVersion(4);
+        NTTTPlayerMike *playerMike5 = new NTTTPlayerMike;
+        playerMike5->setVersion(5);
+        NTTTPlayerMike *playerMike6 = new NTTTPlayerMike;
+        playerMike6->setVersion(6);
+        std::vector<NTTTPlayer *> players = {playerMike1, playerMike2, playerMike3, playerMike4, playerMike5, playerMike6, playerIce};
 
         playMatch(players, boardCount, boardSize, lineSize, numGames);
 

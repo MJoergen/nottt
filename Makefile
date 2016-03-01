@@ -27,7 +27,7 @@ DEFINES += -D__USE_STD_IOSTREAM
 DEFINES += -std=c++11
 DEFINES += -Wall
 
-#DEFINES += -g -pg
+DEFINES += -g -pg
 DEFINES += -O3 
 
 LIBS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_ttf -lm

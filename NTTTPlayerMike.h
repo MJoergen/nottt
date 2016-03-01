@@ -15,7 +15,9 @@ class Board
         Board() : 
             m_filePath(""),
             m_fileSize(0),
-            m_egtb(nullptr) {}
+            m_egtb(nullptr) {
+                initHash();
+            }
         ~Board() {
             if (m_egtb)
             {
@@ -76,7 +78,25 @@ class Board
          */
         int alphaBeta(int alpha, int beta, int level);
 
+        /**
+         */
+        int evaluateBoardV6(uint64_t board);
+
+        /**
+         */
+        void initHash();
+
     private:
+
+#define HASH_SIZE (65536*16)
+        uint64_t m_hashBoard[HASH_SIZE];
+        int      m_hashVal[HASH_SIZE];
+
+        int      m_statLookup;
+        int      m_statFound;
+        int      m_statWrote;
+        int      m_statCollision;
+
         int m_boardCount;
         int m_boardSize;
         int m_lineSize;
