@@ -33,6 +33,9 @@ public:
 	void onClickReturn();
 	void onClickStart();
 private:
+	const int MAX_BOARD_COUNT = 25;					//More boards do not fit on the game screen
+
+
 	int *m_boardCount = nullptr, *m_boardSize = nullptr, *m_lineSize = nullptr, *m_gameSeed = nullptr;
 	bool *m_manualMode = nullptr, *m_writeLog = nullptr;
 	std::string *m_logName = nullptr;
@@ -49,6 +52,12 @@ private:
 	RadioButton* m_writeLogRadioButton = nullptr;
 	TextField* m_logNameTextField = nullptr;
 	Button* m_returnButton = nullptr;
+
+	TTF_Font* m_guiFont = nullptr;
+	unsigned int m_width = 0;
+	std::string m_errorMessage;						//Shown when the game settings are invalid
+	bool m_errorChanged = false;
+	Text* m_errorText = nullptr;
 };
 
 #endif

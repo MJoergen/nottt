@@ -1,5 +1,8 @@
 #include <limits>
 #include <iomanip>
+#include <cerrno>
+#include <climits>
+#include <cstdlib>
 
 #include "NTTTPlayerMike.h"
 #include "NTTTPlayerIce.h"
@@ -152,17 +155,51 @@ static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boa
 } // end of playMatch
 
 /*
+ * Convert a command line argument to an integer.
+ * Returns false if it is not a whole number.
+ */
+static bool parseInt(const char *str, int& value)
+{
+    char *end;
+    errno = 0;
+    long res = strtol(str, &end, 10);
+    if (end == str || *end != '\0' || errno == ERANGE || res < INT_MIN || res > INT_MAX)
+        return false;
+
+    value = res;
+    return true;
+} // end of parseInt
+
+/*
  * Main entry point
  */
 int main(int argc, char *argv[]) {
 
+    if (argc != 1 && argc != 5 && argc != 6)
+    {
+        std::cout << "Usage: " << argv[0] << " [<boardCount> <boardSize> <lineSize> <numGames> [logFile]]" << std::endl;
+        std::cout << "Without arguments, the GUI is started." << std::endl;
+        return 1;
+    }
+
     if (argc >= 5)
     {
+        int boardCount, boardSize, lineSize, numGames;
+        if (!parseInt(argv[1], boardCount) || !parseInt(argv[2], boardSize) ||
+            !parseInt(argv[3], lineSize) || !parseInt(argv[4], numGames))
+        {
+            std::cout << "boardCount, boardSize, lineSize and numGames must be whole numbers" << std::endl;
+            return 1;
+        }
 
-        int boardCount = atol(argv[1]);
-        int boardSize  = atol(argv[2]);
-        int lineSize   = atol(argv[3]);
-        int numGames   = atol(argv[4]);
+        std::string error = NTTTGame::checkSettings(boardCount, boardSize, lineSize);
+        if (error.empty() && numGames < 1)
+            error = "numGames must be at least 1";
+        if (!error.empty())
+        {
+            std::cout << error << std::endl;
+            return 1;
+        }
 
         if (argc == 6)
         {

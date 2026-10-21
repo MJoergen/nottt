@@ -179,12 +179,19 @@ int main(int argc, char *argv[])
     if (argc != 3)
     {
         std::cout << "Wrong number of arguments" << std::endl;
-        std::cout << "Usage: egtb <boardSize> <lineSize>" << std::endl;
+        std::cout << "Usage: egtb-stats <boardSize> <lineSize>" << std::endl;
         exit(-1);
     }
 
     g_boardSize = atol(argv[1]);
     g_lineSize  = atol(argv[2]);
+
+    // A board must fit in 32 bits, and the table must be at least one byte.
+    if (g_boardSize < 2 || g_boardSize > 5 || g_lineSize < 1 || g_lineSize > g_boardSize)
+    {
+        std::cout << "boardSize must be between 2 and 5, and lineSize between 1 and boardSize" << std::endl;
+        exit(-1);
+    }
 
     g_numSquares = g_boardSize * g_boardSize;
     g_numPositions = pow(g_numSquares);

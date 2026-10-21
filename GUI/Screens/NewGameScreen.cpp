@@ -1,5 +1,7 @@
 #include <climits>
+#include <cstdlib>
 #include "NewGameScreen.h"
+#include "../../NTTTGame.h"
 
 static void onClickNewGameReturn(void *data){
 	NewGameScreen *pNewGameScreen = static_cast<NewGameScreen *> (data);
@@ -7,6 +9,8 @@ static void onClickNewGameReturn(void *data){
 }
 
 void NewGameScreen::onClickReturn(){
+	m_errorMessage = "";
+	m_errorChanged = true;
 	(*m_currentState) = MAIN_MENU;
 }
 
@@ -15,11 +19,30 @@ static void onClickNewGameStart(void *data){
 	pNewGameScreen->onClickStart();
 }
 
+//The number fields only accept digits, and return "0" when empty.
+//Numbers that are too large become INT_MAX.
+static int toNumber(const std::string& content){
+	long long number = std::strtoll(content.c_str(), nullptr, 10); //Saturates at LLONG_MAX
+	return number > INT_MAX ? INT_MAX : (int) number;
+}
+
 void NewGameScreen::onClickStart(){
-	(*m_boardCount) = std::stoi(m_boardCountTextField->getContent());
-	(*m_boardSize) = std::stoi(m_boardSizeTextField->getContent());
-	(*m_lineSize) = std::stoi(m_lineSizeTextField->getContent());
-	(*m_gameSeed) = std::stoi(m_gameSeedTextField->getContent());
+	const int boardCount = toNumber(m_boardCountTextField->getContent());
+	const int boardSize = toNumber(m_boardSizeTextField->getContent());
+	const int lineSize = toNumber(m_lineSizeTextField->getContent());
+	const int gameSeed = toNumber(m_gameSeedTextField->getContent());
+
+	m_errorMessage = NTTTGame::checkSettings(boardCount, boardSize, lineSize);
+	if (m_errorMessage.empty() && boardCount > MAX_BOARD_COUNT)
+		m_errorMessage = "Board count must be at most " + std::to_string(MAX_BOARD_COUNT);
+	m_errorChanged = true;
+	if (!m_errorMessage.empty())
+		return;
+
+	(*m_boardCount) = boardCount;
+	(*m_boardSize) = boardSize;
+	(*m_lineSize) = lineSize;
+	(*m_gameSeed) = gameSeed;
 
 	(*m_manualMode) = m_manualModeRadioButton->isChecked();
 	
@@ -56,6 +79,17 @@ void NewGameScreen::update(SDL_Renderer *renderer) {
 	m_gameSeedTextField->updateTextField(renderer);
 
 	m_logNameTextField->updateTextField(renderer);
+
+	if (m_errorChanged){
+		delete m_errorText;
+		m_errorText = nullptr;
+		if (!m_errorMessage.empty()){
+			const SDL_Color red = { 255, 0, 0, 255 };
+			m_errorText = new Text(renderer, m_errorMessage, m_guiFont, red, 0, m_startGameButton->getY() + m_startGameButton->getHeight() + PADDING_Y);
+			m_errorText->setX(m_width / 2 - m_errorText->getWidth() / 2);
+		}
+		m_errorChanged = false;
+	}
 }
 
 void NewGameScreen::prepareForQuit(){
@@ -66,6 +100,9 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 
 	const unsigned int halfWidth = width / 2;
 	const SDL_Color black = { 0, 0, 0, 255 };
+
+	m_guiFont = guiFont;
+	m_width = width;
 
 	m_headlineText = new Text(renderer, "New Game", headlineFont, black, 0, HEADLINE_PADDING);
 	m_headlineText->setX(halfWidth - m_headlineText->getWidth() / 2);
@@ -163,6 +200,8 @@ void NewGameScreen::render(SDL_Renderer* renderer) const{ // The renderer will b
 	m_manualModeRadioButton->renderRadioButton(renderer, m_checkMark);
 
 	m_startGameButton->renderButton(renderer);
+	if (m_errorText)
+		m_errorText->renderText(renderer);
 
 	m_writeLogText->renderText(renderer);
 
@@ -267,6 +306,9 @@ void NewGameScreen::cleanUp(){
 
 	delete m_startGameButton;
 	m_startGameButton = nullptr;
+
+	delete m_errorText;
+	m_errorText = nullptr;
 
 	delete m_writeLogText;
 	m_writeLogText = nullptr;

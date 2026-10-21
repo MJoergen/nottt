@@ -102,7 +102,8 @@ nottt <boardCount> <boardSize> <lineSize> <numGames> [logFile]
 
 Plays a round robin between all bots (Mike v1–v6 and Ice) on
 `boardCount` boards of size `boardSize`×`boardSize`, where `lineSize` marks
-in a row kill a board. Results are printed after each round; if `logFile`
+in a row kill a board. `boardSize` can be 1–8, and `lineSize` 1–`boardSize`
+(the GUI also allows at most 25 boards). Results are printed after each round; if `logFile`
 is given, every game is traced to it. `stats.sh` runs a series of such
 tournaments.
 
@@ -120,7 +121,7 @@ implement `chooseOrder`, `performMove` and `getName`.
 
 `egtb <boardSize> <lineSize>` solves every position on a single board by
 retrograde analysis and writes `egtb-<boardSize>-<lineSize>.bit`, one bit per
-position (bit set = the side to move wins). Boards up to 5×5 are supported.
+position (bit set = the side to move wins). Board sizes 2–5 are supported.
 `egtb.sh` regenerates all tablebases from 2×2 to 5×5, and `egtb.log` holds
 the resulting per-move-count statistics. `egtb-stats` reads a generated
 tablebase and prints further statistics.

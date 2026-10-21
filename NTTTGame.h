@@ -1,11 +1,32 @@
 #ifndef _NTTTGAME_H_
 #define _NTTTGAME_H_
 
+#include <string>
 #include "NTTTBoard.h"
 #include "NTTTMove.h"
 
 class NTTTGame {
     public:
+
+        /**
+         * The largest supported board size. The bots store a board in 64 bits.
+         */
+        static const int MAX_BOARD_SIZE = 8;
+
+        /**
+         * Checks whether the game settings are supported.
+         * @return An empty string if they are, otherwise a description of the problem.
+         */
+        static std::string checkSettings(int boardCount, int boardSize, int lineSize)
+        {
+            if (boardCount < 1)
+                return "Board count must be at least 1";
+            if (boardSize < 1 || boardSize > MAX_BOARD_SIZE)
+                return "Board size must be between 1 and " + std::to_string(MAX_BOARD_SIZE);
+            if (lineSize < 1 || lineSize > boardSize)
+                return "Line size must be between 1 and the board size";
+            return "";
+        }
 
         /**
          * @return An integer representing the number of boards in the game.
