@@ -36,7 +36,7 @@ class NTTTGame {
         /** 
          * @return An integer representing the size. (e.g. 4, which represents a board size of 4x4)
          */
-        int getBoardSize() const {return m_boards[0].getSquareStates().size();}
+        int getBoardSize() const {return m_boards.empty() ? 0 : m_boards[0].getSquareStates().size();}
 
         /**
          * @return An integer representing the number of consecutive marks before a board has died.
@@ -128,7 +128,7 @@ class NTTTGame {
         }
 
     private:
-        int m_lineSize;
+        int m_lineSize = 0;
         std::vector<NTTTBoard> m_boards;
 
 }; // end of class NTTTGame 

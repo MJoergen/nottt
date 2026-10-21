@@ -84,9 +84,6 @@ ordered by importance within each group.
 
 ## Game core and tournament mode
 
-- [ ] Uninitialised members before `init()`/`chooseOrder()`/`reset()`/
-  `NewGame()` in `Board`, `NTTTPlayerIce`, `NTTTBoard` and `NTTTGame`.
-  `NTTTGame::getBoardSize()` indexes `m_boards[0]` without checking.
 - [ ] `Texture`, `Text`, `Button` and `TextField` own raw pointers but can be
   copied, which would free the same memory twice. Delete their copy
   operations, or use smart pointers.

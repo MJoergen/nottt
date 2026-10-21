@@ -93,10 +93,10 @@ class NTTTBoard {
         void renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
 
     private:
-        int m_lineSize;
-        State m_state;
+        int m_lineSize = 0;
+        State m_state = DEAD;
         std::vector< std::vector<SquareState> > m_squareStates;
-        Line m_line;
+        Line m_line = {};
         void renderDiagonalLineRight(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
         void renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
 }; // end of class NTTTBoard

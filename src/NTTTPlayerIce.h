@@ -18,7 +18,7 @@
 
 class NTTTPlayerIce : public NTTTPlayer {
 private:
-    int m_boardCount, m_boardSize, m_lineSize;
+    int m_boardCount = 0, m_boardSize = 0, m_lineSize = 0;
     std::vector<NTTTMove> getPossibleMoves(const NTTTGame& game) const;
     const bool isNumberEven(const int number) const;
 

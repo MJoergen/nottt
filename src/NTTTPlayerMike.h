@@ -89,11 +89,11 @@ class Board
         int      m_statWrote     = 0;
         int      m_statCollision = 0;
 
-        int m_boardCount;
-        int m_boardSize;
-        int m_lineSize;
-        int m_maxBits;
-        int m_nodes;
+        int m_boardCount = 0;
+        int m_boardSize = 0;
+        int m_lineSize = 0;
+        int m_maxBits = 0;
+        int m_nodes = 0;
         std::vector<uint64_t> m_bits;
         std::vector<uint64_t> m_lines;
         bool m_debug = DEBUG_MIKE;
