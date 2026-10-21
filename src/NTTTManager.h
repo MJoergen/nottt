@@ -6,7 +6,7 @@
 #include "GUI/Button.h"
 #include "GUI/Text.h"
 #include "GUI/TextField.h"
-#include "GUI/RadioButton.h"
+#include "GUI/CheckBox.h"
 #include "GUI/Texture.h"
 #include <algorithm>
 #include <atomic>

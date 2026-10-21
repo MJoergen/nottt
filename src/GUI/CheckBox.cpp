@@ -1,25 +1,25 @@
-#include "RadioButton.h"
+#include "CheckBox.h"
 #include "../NTTTManager.h"
 
-RadioButton::RadioButton(const bool isChecked, const int x, const int y, const int size) {
+CheckBox::CheckBox(const bool isChecked, const int x, const int y, const int size) {
     m_isChecked = isChecked;
     m_x         = x;
     m_y         = y;
     m_size      = size;
 }
 
-RadioButton::~RadioButton() {
+CheckBox::~CheckBox() {
 }
 
-int RadioButton::getWidth() const {
+int CheckBox::getWidth() const {
     return m_size;
 }
 
-int RadioButton::getHeight() const {
+int CheckBox::getHeight() const {
     return getWidth();
 }
 
-void RadioButton::render(SDL_Renderer *renderer, Texture *checkMark) const {
+void CheckBox::render(SDL_Renderer *renderer, Texture *checkMark) const {
     if (m_isChecked)
         checkMark->render(renderer, m_x + PADDING_X, m_y + PADDING_Y,
                           getWidth() - PADDING_X * 2, getHeight() - PADDING_Y * 2);
@@ -27,6 +27,6 @@ void RadioButton::render(SDL_Renderer *renderer, Texture *checkMark) const {
     SDL_RenderDrawRect(renderer, &rect);
 }
 
-bool RadioButton::isInside(const int& x, const int& y) const {
+bool CheckBox::isInside(const int& x, const int& y) const {
     return m_x <= x && x < m_x + getWidth() && m_y <= y && y < m_y + getHeight();
 }

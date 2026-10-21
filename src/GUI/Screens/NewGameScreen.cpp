@@ -44,9 +44,9 @@ void NewGameScreen::onClickStart() {
     (*m_lineSize)   = lineSize;
     (*m_gameSeed)   = gameSeed;
 
-    (*m_manualMode) = m_manualModeRadioButton->isChecked();
+    (*m_manualMode) = m_manualModeCheckBox->isChecked();
 
-    (*m_writeLog) = m_writeLogRadioButton->isChecked();
+    (*m_writeLog) = m_writeLogCheckBox->isChecked();
     (*m_logName)  = m_logNameTextField->getContent();
 
     (*m_currentState) = GAME;
@@ -138,23 +138,23 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
 
     m_manualModeText = new Text(renderer, "Manual Mode:", guiFont, black, 0, m_gameSeedTextField->getY() + m_gameSeedTextField->getHeight() + PADDING_Y);
 
-    m_manualModeRadioButton = new RadioButton(*m_manualMode, 0, m_manualModeText->getY(), m_manualModeText->getHeight());
+    m_manualModeCheckBox = new CheckBox(*m_manualMode, 0, m_manualModeText->getY(), m_manualModeText->getHeight());
 
-    const unsigned int thirdLineWidth     = m_manualModeText->getWidth() + m_manualModeRadioButton->getWidth() + PADDING_X;
+    const unsigned int thirdLineWidth     = m_manualModeText->getWidth() + m_manualModeCheckBox->getWidth() + PADDING_X;
     const unsigned int halfThirdLineWidth = thirdLineWidth / 2;
 
     m_manualModeText->setX(halfWidth - halfThirdLineWidth);
-    m_manualModeRadioButton->setX(m_manualModeText->getX() + m_manualModeText->getWidth() + PADDING_X);
+    m_manualModeCheckBox->setX(m_manualModeText->getX() + m_manualModeText->getWidth() + PADDING_X);
 
     m_writeLogText = new Text(renderer, "Write log: ", guiFont, black, 0, m_manualModeText->getY() + m_manualModeText->getHeight() + PADDING_Y);
 
-    m_writeLogRadioButton = new RadioButton(*m_writeLog, 0, m_writeLogText->getY(), m_writeLogText->getHeight());
+    m_writeLogCheckBox = new CheckBox(*m_writeLog, 0, m_writeLogText->getY(), m_writeLogText->getHeight());
 
-    const unsigned int fourthLineWidth     = m_writeLogText->getWidth() + m_writeLogRadioButton->getWidth() + PADDING_X;
+    const unsigned int fourthLineWidth     = m_writeLogText->getWidth() + m_writeLogCheckBox->getWidth() + PADDING_X;
     const unsigned int halfFourthLineWidth = fourthLineWidth / 2;
 
     m_writeLogText->setX(halfWidth - halfFourthLineWidth);
-    m_writeLogRadioButton->setX(m_writeLogText->getX() + m_writeLogText->getWidth() + PADDING_X);
+    m_writeLogCheckBox->setX(m_writeLogText->getX() + m_writeLogText->getWidth() + PADDING_X);
 
     m_logNameText = new Text(renderer, "Log Name: ", guiFont, black, 0, m_writeLogText->getY() + m_writeLogText->getHeight() + PADDING_Y);
 
@@ -187,7 +187,7 @@ void NewGameScreen::render(SDL_Renderer *renderer) const {
     m_gameSeedTextField->render(renderer, SDL_GetTicks());
 
     m_manualModeText->render(renderer);
-    m_manualModeRadioButton->render(renderer, m_checkMark);
+    m_manualModeCheckBox->render(renderer, m_checkMark);
 
     m_startGameButton->render(renderer);
     if (m_errorText)
@@ -195,9 +195,9 @@ void NewGameScreen::render(SDL_Renderer *renderer) const {
 
     m_writeLogText->render(renderer);
 
-    m_writeLogRadioButton->render(renderer, m_checkMark);
+    m_writeLogCheckBox->render(renderer, m_checkMark);
 
-    if (m_writeLogRadioButton->isChecked()) {
+    if (m_writeLogCheckBox->isChecked()) {
         m_logNameText->render(renderer);
         m_logNameTextField->render(renderer, SDL_GetTicks());
     }
@@ -259,10 +259,10 @@ void NewGameScreen::input(const SDL_Event& event) {
             m_startGameButton->click();
         else if (m_returnButton->isInside(x, y))
             m_returnButton->click();
-        else if (m_manualModeRadioButton->isInside(x, y))
-            m_manualModeRadioButton->toggle();
-        else if (m_writeLogRadioButton->isInside(x, y))
-            m_writeLogRadioButton->toggle();
+        else if (m_manualModeCheckBox->isInside(x, y))
+            m_manualModeCheckBox->toggle();
+        else if (m_writeLogCheckBox->isInside(x, y))
+            m_writeLogCheckBox->toggle();
     }
 }
 
@@ -289,8 +289,8 @@ void NewGameScreen::cleanUp() {
     delete m_manualModeText;
     m_manualModeText = nullptr;
 
-    delete m_manualModeRadioButton;
-    m_manualModeRadioButton = nullptr;
+    delete m_manualModeCheckBox;
+    m_manualModeCheckBox = nullptr;
 
     delete m_startGameButton;
     m_startGameButton = nullptr;
@@ -303,8 +303,8 @@ void NewGameScreen::cleanUp() {
     delete m_logNameText;
     m_logNameText = nullptr;
 
-    delete m_writeLogRadioButton;
-    m_writeLogRadioButton = nullptr;
+    delete m_writeLogCheckBox;
+    m_writeLogCheckBox = nullptr;
 
     delete m_logNameTextField;
     m_logNameTextField = nullptr;

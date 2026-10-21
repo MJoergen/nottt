@@ -1,10 +1,10 @@
-#ifndef RADIOBUTTON_H
-#define RADIOBUTTON_H
+#ifndef CHECK_BOX_H
+#define CHECK_BOX_H
 
 #include <SDL.h>
 #include "Texture.h"
 
-class RadioButton {
+class CheckBox {
 private:
     int m_x, m_y;
     bool m_isChecked = false;
@@ -13,8 +13,8 @@ private:
     const int PADDING_X = 3, PADDING_Y = 3;
 
 public:
-    RadioButton(const bool isChecked, const int x, const int y, const int size);
-    virtual ~RadioButton();
+    CheckBox(const bool isChecked, const int x, const int y, const int size);
+    virtual ~CheckBox();
 
 
     void render(SDL_Renderer *renderer, Texture *checkMark) const;
@@ -37,8 +37,8 @@ public:
 
     bool isInside(const int& x, const int& y) const;
 
-    friend std::ostream& operator<<(std::ostream& os, const RadioButton& rhs) {
-        os << "RadioButton: { isChecked: " << rhs.m_isChecked << ", X: " << rhs.m_x << ", Y: " << rhs.m_y << ", Width: " << rhs.getWidth()
+    friend std::ostream& operator<<(std::ostream& os, const CheckBox& rhs) {
+        os << "CheckBox: { isChecked: " << rhs.m_isChecked << ", X: " << rhs.m_x << ", Y: " << rhs.m_y << ", Width: " << rhs.getWidth()
            << ", Height: " << rhs.getHeight() << " }" << std::endl;
         return os;
     }

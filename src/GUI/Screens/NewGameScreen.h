@@ -5,7 +5,7 @@
 #include "../Text.h"
 #include "../TextField.h"
 #include "../Button.h"
-#include "../RadioButton.h"
+#include "../CheckBox.h"
 
 
 class NewGameScreen : public Screen {
@@ -46,13 +46,13 @@ private:
     Text *m_headlineText   = nullptr;
     Text *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr, *m_gameSeedText = nullptr;
     TextField *m_boardCountTextField = nullptr, *m_boardSizeTextField = nullptr, *m_lineSizeTextField = nullptr, *m_gameSeedTextField = nullptr;
-    Text *m_manualModeText               = nullptr;
-    RadioButton *m_manualModeRadioButton = nullptr;
-    Button *m_startGameButton            = nullptr;
+    Text *m_manualModeText         = nullptr;
+    CheckBox *m_manualModeCheckBox = nullptr;
+    Button *m_startGameButton      = nullptr;
     Text *m_writeLogText = nullptr, *m_logNameText = nullptr;
-    RadioButton *m_writeLogRadioButton = nullptr;
-    TextField *m_logNameTextField      = nullptr;
-    Button *m_returnButton             = nullptr;
+    CheckBox *m_writeLogCheckBox  = nullptr;
+    TextField *m_logNameTextField = nullptr;
+    Button *m_returnButton        = nullptr;
 
     TTF_Font *m_guiFont  = nullptr;
     unsigned int m_width = 0;
