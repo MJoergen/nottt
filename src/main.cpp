@@ -64,18 +64,18 @@ static unsigned int playGame(NTTTGame& game, const std::vector<NTTTPlayer *>& pl
     return player;
 } // end of playGame
 
-static void dispResults(const std::vector<NTTTPlayer *>& players,
-                        const std::vector<std::vector<int>>& table, int order[2], int count) {
+static void printResults(const std::vector<NTTTPlayer *>& players,
+                         const std::vector<std::vector<int>>& wins, int winsBySeat[2], int numRounds) {
     // Calculate total number of games.
-    int totalGames = players.size() * (players.size() - 1) * count;
-    int maxPoints  = (players.size() - 1) * count * 2;
+    int totalGames = players.size() * (players.size() - 1) * numRounds;
+    int maxPoints  = (players.size() - 1) * numRounds * 2;
 
     // Calculate the totals and sort them.
     std::vector<std::pair<int, int>> total;
     for (unsigned int player = 0; player < players.size(); ++player) {
         int sum = 0;
         for (unsigned int opponent = 0; opponent < players.size(); ++opponent) {
-            sum += table[player][opponent];
+            sum += wins[player][opponent];
         }
         total.push_back(std::make_pair(sum, player));
     }
@@ -93,7 +93,7 @@ static void dispResults(const std::vector<NTTTPlayer *>& players,
             if (player == opponent)
                 std::cout << "XXX ";
             else
-                std::cout << std::setw(3) << table[player][opponent] << " ";
+                std::cout << std::setw(3) << wins[player][opponent] << " ";
         }
         int points       = total[i].first;
         float winPercent = floor(points * 100.0 / maxPoints + 0.5);
@@ -101,29 +101,29 @@ static void dispResults(const std::vector<NTTTPlayer *>& players,
     }
 
     // Round the first percentage, and derive the second, so they add up to 100%.
-    int firstPercent = floor(order[0] * 100.0 / totalGames + 0.5);
-    std::cout << "First player wins: " << order[0];
+    int firstPercent = floor(winsBySeat[0] * 100.0 / totalGames + 0.5);
+    std::cout << "First player wins: " << winsBySeat[0];
     std::cout << " (" << firstPercent << "%)" << std::endl;
-    std::cout << "Second player wins: " << order[1];
+    std::cout << "Second player wins: " << winsBySeat[1];
     std::cout << " (" << 100 - firstPercent << "%)" << std::endl;
-} // end of dispResults
+} // end of printResults
 
 /**
  * Play an entire tournament (round robin) between an array of players.
  */
-static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, int boardSize, int lineSize, int count) {
+static void playTournament(const std::vector<NTTTPlayer *>& players, int boardCount, int boardSize, int lineSize, int numRounds) {
     // Contains the number of wins for each player against each other player.
-    std::vector<std::vector<int>> table;
+    std::vector<std::vector<int>> wins;
 
     for (unsigned int player = 0; player < players.size(); ++player) {
-        std::vector<int> wins(players.size(), 0);
-        table.push_back(wins);
+        std::vector<int> row(players.size(), 0);
+        wins.push_back(row);
     }
 
-    int order[2] = {0, 0}; // Separate statistics for whether the first or second player wins.
+    int winsBySeat[2] = {0, 0}; // Separate statistics for whether the first or second player wins.
 
     // Play all the games
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; i < numRounds; ++i) {
         int seed = i + 1017;
 
         for (unsigned int diff = 1; diff < players.size(); diff++) {
@@ -146,11 +146,11 @@ static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, 
 
                 LOG(std::endl);
                 if (first == winner) {
-                    table[first][second]++;
-                    order[0]++; // First player won
+                    wins[first][second]++;
+                    winsBySeat[0]++; // First player won
                 } else {
-                    table[second][first]++;
-                    order[1]++; // Second player won
+                    wins[second][first]++;
+                    winsBySeat[1]++; // Second player won
                 }
             }
         }
@@ -159,10 +159,10 @@ static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, 
                   << "Results from round " << i + 1;
         std::cout << " with boardCount=" << boardCount << ", boardSize=" << boardSize;
         std::cout << ", and lineSize=" << lineSize << std::endl;
-        dispResults(players, table, order, i + 1);
+        printResults(players, wins, winsBySeat, i + 1);
     }
 
-} // end of playMatch
+} // end of playTournament
 
 /**
  * Convert a command line argument to an integer.
@@ -186,22 +186,22 @@ static bool parseInt(const char *str, int& value) {
 int main(int argc, char *argv[]) {
 
     if (argc != 1 && argc != 5 && argc != 6) {
-        std::cout << "Usage: " << argv[0] << " [<boardCount> <boardSize> <lineSize> <numGames> [logFile]]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " [<boardCount> <boardSize> <lineSize> <numRounds> [logFile]]" << std::endl;
         std::cout << "Without arguments, the GUI is started." << std::endl;
         return 1;
     }
 
     if (argc >= 5) {
-        int boardCount, boardSize, lineSize, numGames;
+        int boardCount, boardSize, lineSize, numRounds;
         if (!parseInt(argv[1], boardCount) || !parseInt(argv[2], boardSize) ||
-            !parseInt(argv[3], lineSize) || !parseInt(argv[4], numGames)) {
-            std::cout << "boardCount, boardSize, lineSize and numGames must be whole numbers" << std::endl;
+            !parseInt(argv[3], lineSize) || !parseInt(argv[4], numRounds)) {
+            std::cout << "boardCount, boardSize, lineSize and numRounds must be whole numbers" << std::endl;
             return 1;
         }
 
         std::string error = NTTTGame::checkSettings(boardCount, boardSize, lineSize);
-        if (error.empty() && numGames < 1)
-            error = "numGames must be at least 1";
+        if (error.empty() && numRounds < 1)
+            error = "numRounds must be at least 1";
         if (!error.empty()) {
             std::cout << error << std::endl;
             return 1;
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
         playerMike6->setVersion(6);
         std::vector<NTTTPlayer *> players = {playerMike1, playerMike2, playerMike3, playerMike4, playerMike5, playerMike6, playerIce};
 
-        playMatch(players, boardCount, boardSize, lineSize, numGames);
+        playTournament(players, boardCount, boardSize, lineSize, numRounds);
 
         for (NTTTPlayer *player : players)
             delete player;

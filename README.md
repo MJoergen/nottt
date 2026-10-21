@@ -113,7 +113,7 @@ The **Bots** screen lists the available bots. **Load Game** and
 ### Bot tournament
 
 ```sh
-nottt <boardCount> <boardSize> <lineSize> <numGames> [logFile]
+nottt <boardCount> <boardSize> <lineSize> <numRounds> [logFile]
 ```
 
 Plays a round robin between all bots (Mike v1–v6 and Ice) on
