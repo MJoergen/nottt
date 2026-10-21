@@ -94,6 +94,7 @@ private:
     std::vector<NTTTMove> m_moves;
     //<-----
 
+    void delayUnlessQuit(unsigned int ms) const;
     void initializeWinnerDisplayText(SDL_Renderer *renderer);
     void addMove(SDL_Renderer *renderer, NTTTMove move);
     void removeMove();

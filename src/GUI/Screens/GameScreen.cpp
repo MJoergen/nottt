@@ -19,6 +19,12 @@ void GameScreen::prepareForQuit(){
     }
 }
 
+// Sleeps like SDL_Delay(), but returns early when the program quits.
+void GameScreen::delayUnlessQuit(unsigned int ms) const{
+    for (unsigned int slept = 0; slept < ms && !*m_quit; slept += 10)
+        SDL_Delay(10);
+}
+
 void GameScreen::writeLog(const int winner) const{
     //TODO
 
@@ -85,7 +91,7 @@ int GameScreen::manageGame(){
                 std::cout << "Player " << player << " won!" << std::endl;
                 gameActive = false;
                 m_winner = player;
-                SDL_Delay(3000);
+                delayUnlessQuit(3000);
             }
             if (*m_manualMode){
                 do{
@@ -102,7 +108,7 @@ int GameScreen::manageGame(){
                 m_forward = false;
             }
             else{
-                SDL_Delay(1000);
+                delayUnlessQuit(1000);
             }
         }
     }

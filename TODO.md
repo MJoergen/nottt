@@ -49,8 +49,6 @@ section.
   shared flags are plain `bool`s.
 - [ ] 7. In manual mode, undoing a move after the game is over leaves the old
   winner and game-over state in place.
-- [ ] 8. After the last move, the game thread sleeps for 3 s without checking for
-  quit, so closing the window then takes up to about 4 s.
 - [ ] 9. The renderer is created with `SDL_RENDERER_ACCELERATED` only, with no
   software fallback, so the GUI fails without GPU acceleration.
 - [ ] 10. When `IMG_Load` or text rendering fails, `Texture` leaves its width and
