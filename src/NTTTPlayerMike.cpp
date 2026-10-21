@@ -92,7 +92,7 @@ void Board::init(const NTTTGame& game)
 
 /**
  * Prints a warning about a tablebase file.
- * Each file is only warned about once, since the tablebase is loaded for every game.
+ * Each file is only warned about once, since every MikeBot loads its own tablebase.
  */
 static void warnEgtb(const std::string& filePath, const std::string& problem)
 {
@@ -103,10 +103,16 @@ static void warnEgtb(const std::string& filePath, const std::string& problem)
 
 /**
  * Loads the endgame tablebase for the current board size and line size.
+ * It is kept across games, and only reloaded when the sizes change.
  * Leaves m_egtb empty if there is no usable tablebase. The search is then used instead.
  */
 void Board::loadEgtb()
 {
+    if (m_boardSize == m_egtbBoardSize && m_lineSize == m_egtbLineSize)
+        return;
+
+    m_egtbBoardSize = m_boardSize;
+    m_egtbLineSize = m_lineSize;
     m_egtb.clear();
 
     // Tablebases can only be generated for these board sizes, see egtb.cpp.

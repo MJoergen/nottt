@@ -20,9 +20,6 @@ section.
 - [ ] 2. **Evaluation tables for other sizes.** More generally, the same tables
   are used for every board size and line size, and are only valid for 5×5 with
   line size 3.
-- [ ] 7. Keep the loaded tablebase across games, like the hash table, and only
-  reload it when the board size or line size changes. It is currently re-read
-  for every game, which is 4 MB for 5×5.
 
 ## IceBot (`NTTTPlayerIce`)
 

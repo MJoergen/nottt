@@ -74,6 +74,7 @@ class Board
 
         /**
          * Loads the endgame tablebase for the current board size and line size.
+         * It is kept across games, and only reloaded when the sizes change.
          * Leaves m_egtb empty if there is no usable tablebase.
          */
         void loadEgtb();
@@ -101,6 +102,7 @@ class Board
         int  m_version = 6;
 
         std::vector<uint8_t> m_egtb;    // One bit per position. Empty if there is no tablebase.
+        int m_egtbBoardSize = 0, m_egtbLineSize = 0;    // The sizes m_egtb was loaded for.
 }; // end of class Board
 
 
