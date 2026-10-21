@@ -29,9 +29,6 @@ section.
 
 ## GUI
 
-- [ ] 3. **"Write log" always fails.** It writes to `logs/<name>`, but nothing
-  creates `logs/`. Log names are not sanitised either, so `../x` escapes the
-  directory.
 - [ ] 4. **"Load Game" and "Statistics" are not implemented.** They show a blank
   screen. `GUI/Screens/StatisticsScreen.h` is empty, and `onReadLogClick` is
   commented out.

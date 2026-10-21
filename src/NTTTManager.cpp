@@ -125,11 +125,12 @@ bool NTTTManager::init() {
 
 /*
 void NTTTManager::onReadLogClick(){
+    const std::string path = logPath(m_logFileInputTextField->getContent());
     std::ifstream inputFile;
-    inputFile.open("logs/" + m_logFileInputTextField->getContent());
+    inputFile.open(path);
 
     if (!inputFile.good()){
-        std::cout << "Failed to open logs/" << m_logFileInputTextField->getContent() << std::endl;
+        std::cout << "Failed to open log \"" << m_logFileInputTextField->getContent() << "\"" << std::endl;
         inputFile.close();
         return;
     }

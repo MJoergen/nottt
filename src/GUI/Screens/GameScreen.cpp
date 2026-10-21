@@ -1,6 +1,7 @@
 #include "GameScreen.h"
 #include "../../NTTTPlayerIce.h"
 #include "../../NTTTPlayerMike.h"
+#include "../../DataPath.h"
 #include <string>
 #include <algorithm>
 #include <fstream>
@@ -25,16 +26,21 @@ void GameScreen::delayUnlessQuit(unsigned int ms) const {
 }
 
 void GameScreen::writeLog(const int winner) const {
-    // TODO
+    const std::string path = logPath(*m_logName);
+    if (path.empty()) {
+        std::cout << "Invalid log name \"" << *m_logName << "\": use only letters, digits, '.', '_' and '-'" << std::endl;
+        return;
+    }
 
     std::ofstream outputFile;
-    outputFile.open("logs/" + *m_logName);
+    outputFile.open(path);
 
     if (!outputFile.good()) {
-        std::cout << "Failed to open logs/" << *m_logName << std::endl;
+        std::cout << "Failed to open " << path << std::endl;
         outputFile.close();
         return;
     }
+    std::cout << "Writing log to " << path << std::endl;
 
     outputFile << "# Players: " << std::endl;
     outputFile << "Player 1: " << m_player1->getName() << std::endl;

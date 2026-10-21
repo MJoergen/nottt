@@ -95,8 +95,10 @@ play. Choose **New Game** in the main menu and set:
 * **Manual Mode**: step through the game yourself instead of watching it
   play automatically (one move per second). Press → to play the next move
   and ← to take back the last one.
-* **Write log** and **Log Name**: save the moves to `logs/<name>`. The `logs/`
-  directory must exist; it is not created automatically.
+* **Write log** and **Log Name**: save the moves to `<name>` in the user's log
+  directory, which is created if needed: `~/.local/share/nottt/logs/` on Linux
+  and `%APPDATA%\nottt\logs\` on Windows. The name may only contain letters,
+  digits, `.`, `_` and `-`, and must not start with `.`.
 
 Which bot moves first follows the bots' own choice, or is decided by the seed
 when both want the same. After the last move, the winner is shown for a few

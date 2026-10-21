@@ -28,3 +28,28 @@ std::string dataPath(const std::string& relativePath) {
 
     return localPath;
 } // end of dataPath
+
+/*
+ * The logs are written to a directory the user can write to, wherever the
+ * program is installed or started from: ~/.local/share/nottt/logs/ on Linux
+ * and %APPDATA%\nottt\logs\ on Windows. SDL creates it if it is missing.
+ * The name must be a plain file name, so that it cannot leave the directory:
+ * only letters, digits, '.', '_' and '-', and not starting with '.'.
+ */
+std::string logPath(const std::string& name) {
+    if (name.empty() || name[0] == '.')
+        return "";
+    for (char c : name) {
+        const bool isPlain = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '.' || c == '_' || c == '-';
+        if (!isPlain)
+            return "";
+    }
+
+    char *prefPath = SDL_GetPrefPath("nottt", "logs");
+    if (prefPath == NULL)
+        return "";
+    const std::string logDir = prefPath; // Ends with a path separator
+    SDL_free(prefPath);
+
+    return logDir + name;
+} // end of logPath
