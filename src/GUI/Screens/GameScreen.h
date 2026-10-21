@@ -49,7 +49,7 @@ public:
 private:
     bool m_isThreadProperlyClosed = true;
 
-    void initialize(SDL_Renderer *renderer);
+    void startGame(SDL_Renderer *renderer);
     bool m_isInitialized;
     NTTTPlayer *m_player1, *m_player2;
     NTTTGame *m_game;

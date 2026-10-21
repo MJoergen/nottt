@@ -160,7 +160,7 @@ GameScreen::~GameScreen() {
 
 void GameScreen::update(SDL_Renderer *renderer) {
     if (!m_isInitialized) {
-        initialize(renderer);
+        startGame(renderer);
         m_isInitialized = true;
     } else if (!m_isGameThreadRunning && !m_isThreadProperlyClosed) {
         int status;
@@ -230,7 +230,7 @@ void GameScreen::initializeWinnerDisplayText(SDL_Renderer *renderer) {
     }
 }
 
-void GameScreen::initialize(SDL_Renderer *renderer) {
+void GameScreen::startGame(SDL_Renderer *renderer) {
     cleanUp();
 
     Texture texture(renderer, "0", m_movesFont, {0, 0, 0, 255});
