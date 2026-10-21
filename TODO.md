@@ -82,10 +82,6 @@ ordered by importance within each group.
 - [ ] A long number in the board count field is drawn past the edge of the
   field.
 
-## Game core and tournament mode
-
-- [ ] The tournament ignores the bots' `chooseOrder()` result.
-
 ## Build, scripts and repository
 
 - [ ] `make install` only installs `nottt`, not the tools.

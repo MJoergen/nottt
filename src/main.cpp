@@ -14,18 +14,25 @@
 std::ostream *gpLog = nullptr;
 
 /*
+ * Decide whether the players swap the scheduled order.
+ * They swap when one of them asks for it and the other does not object.
+ * If both want to start, or both want to go last, the schedule decides.
+ */
+static bool swapOrder(NTTTPlayer::OrderChoice firstChoice, NTTTPlayer::OrderChoice secondChoice)
+{
+    return (firstChoice == NTTTPlayer::LAST && secondChoice != NTTTPlayer::LAST) ||
+           (secondChoice == NTTTPlayer::FIRST && firstChoice != NTTTPlayer::FIRST);
+} // end of swapOrder
+
+/*
  * Play a single game between two players.
+ * The players have already been asked to choose the order.
  */
 static unsigned int playGame(NTTTGame& game, const std::vector<NTTTPlayer *>& players, unsigned int first, unsigned int second, int seed)
 {
-    srand(seed);
-
     LOG("Playing game between " << players[first]->getName());
     LOG(" and " << players[second]->getName());
     LOG(" with seed " << seed << std::endl);
-
-    players[first]->chooseOrder(game);
-    players[second]->chooseOrder(game);
 
     unsigned int player = first;
     while (true)
@@ -134,14 +141,22 @@ static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, 
 
         for (unsigned int diff = 1; diff<players.size(); diff++)
         {
-            for (unsigned int first = 0; first < players.size(); first++)
+            for (unsigned int scheduled = 0; scheduled < players.size(); scheduled++)
             {
-                int second = (first + diff) % players.size();
+                unsigned int first = scheduled;
+                unsigned int second = (scheduled + diff) % players.size();
 
                 LOG("Game " << i+1 << ":" << std::endl);
 
                 NTTTGame game;
                 game.NewGame(boardCount, boardSize, lineSize);
+
+                srand(seed);
+                NTTTPlayer::OrderChoice firstChoice = players[first]->chooseOrder(game);
+                NTTTPlayer::OrderChoice secondChoice = players[second]->chooseOrder(game);
+                if (swapOrder(firstChoice, secondChoice))
+                    std::swap(first, second);
+
                 unsigned int winner = playGame(game, players, first, second, seed);
 
                 LOG(std::endl);
