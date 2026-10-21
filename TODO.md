@@ -84,9 +84,6 @@ ordered by importance within each group.
 
 ## Game core and tournament mode
 
-- [ ] `Texture`, `Text`, `Button` and `TextField` own raw pointers but can be
-  copied, which would free the same memory twice. Delete their copy
-  operations, or use smart pointers.
 - [ ] The tournament ignores the bots' `chooseOrder()` result.
 - [ ] `main.cpp` never deletes the players. `dispResults()` takes the players
   vector by value.

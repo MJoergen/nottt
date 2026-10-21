@@ -15,6 +15,8 @@ public:
     Texture(SDL_Renderer *renderer, const std::string path);
     Texture(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color textColor);
     virtual ~Texture();
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
     void freeTexture();
     const unsigned int getWidth() const { return m_width; }
     const unsigned int getHeight() const { return m_height; }

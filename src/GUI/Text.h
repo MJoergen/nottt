@@ -11,6 +11,8 @@ private:
 public:
     Text(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color color, const unsigned int x, const unsigned int y);
     virtual ~Text();
+    Text(const Text&) = delete;
+    Text& operator=(const Text&) = delete;
     void renderText(SDL_Renderer *renderer) const;
     const unsigned int getWidth() const;
     const unsigned int getHeight() const;

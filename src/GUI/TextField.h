@@ -38,6 +38,8 @@ private:
 public:
     TextField(SDL_Renderer *renderer, const FieldType fieldType, const std::string content, TTF_Font *font, const int x, const int y, const int width, const int limit);
     virtual ~TextField();
+    TextField(const TextField&) = delete;
+    TextField& operator=(const TextField&) = delete;
     
     const std::string getContent() const {
         if (m_fieldType == NUMBER && m_content.length() == 0)

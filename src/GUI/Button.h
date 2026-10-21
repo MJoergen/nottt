@@ -18,6 +18,8 @@ private:
 public:
     Button(SDL_Renderer *renderer, const std::string text, TTF_Font *font, const unsigned int x, const unsigned int y);
     virtual ~Button();
+    Button(const Button&) = delete;
+    Button& operator=(const Button&) = delete;
 
     void renderButton(SDL_Renderer *renderer) const;
     
