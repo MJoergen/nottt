@@ -1,6 +1,5 @@
 # Build output
-*.o
-*.d
+build/
 nottt
 nottt.exe
 egtb

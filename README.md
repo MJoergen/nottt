@@ -111,17 +111,17 @@ Plays a round robin between all bots (Mike v1–v6 and Ice) on
 `boardCount` boards of size `boardSize`×`boardSize`, where `lineSize` marks
 in a row kill a board. `boardSize` can be 1–8, and `lineSize` 1–`boardSize`
 (the GUI also allows at most 25 boards). Results are printed after each round; if `logFile`
-is given, every game is traced to it. `stats.sh` runs a series of such
+is given, every game is traced to it. `tools/stats.sh` runs a series of such
 tournaments.
 
 ## Bots
 
 | Bot | Source | Description |
 |-----|--------|-------------|
-| Mike v1–v6 | `NTTTPlayerMike.cpp` | Bitboard-based alpha-beta search with a transposition table. The version number selects the evaluation function; v6 is the newest. When only one board is alive it plays perfectly from the tablebase. |
-| Ice | `NTTTPlayerIce.cpp` | Heuristic player. |
+| Mike v1–v6 | `src/NTTTPlayerMike.cpp` | Bitboard-based alpha-beta search with a transposition table. The version number selects the evaluation function; v6 is the newest. When only one board is alive it plays perfectly from the tablebase. |
+| Ice | `src/NTTTPlayerIce.cpp` | Heuristic player. |
 
-New bots derive from the abstract `NTTTPlayer` class (`NTTTPlayer.h`) and
+New bots derive from the abstract `NTTTPlayer` class (`src/NTTTPlayer.h`) and
 implement `chooseOrder`, `performMove` and `getName`.
 
 ## Endgame tablebases
@@ -129,12 +129,12 @@ implement `chooseOrder`, `performMove` and `getName`.
 `egtb <boardSize> <lineSize>` solves every position on a single board by
 retrograde analysis and writes `egtb-<boardSize>-<lineSize>.bit` to the
 current directory, one bit per position (bit set = the side to move wins).
-Board sizes 2–5 are supported. `egtb.sh` regenerates all tablebases from 2×2
-to 5×5 in `tables/`, and `tables/egtb.log` holds the resulting
+Board sizes 2–5 are supported. `tools/egtb.sh` regenerates all tablebases
+from 2×2 to 5×5 in `tables/`, and `tables/egtb.log` holds the resulting
 per-move-count statistics. `egtb-stats` reads a generated tablebase from the
 current directory and prints further statistics.
 
-Some results (see the comment at the top of `egtb.cpp`):
+Some results (see the comment at the top of `tools/egtb.cpp`):
 
 * The empty 4×4 board (line length 3) is a win for the first player, but only
   when starting in a corner.
@@ -144,21 +144,27 @@ Some results (see the comment at the top of `egtb.cpp`):
 ## Repository layout
 
 ```
-main.cpp              Entry point: GUI or tournament mode
-NTTTGame.h            Game state: a set of boards
-NTTTBoard.{h,cpp}     A single board and its alive/dead state
-NTTTMove.h            A move (board, x, y)
-NTTTPlayer.h          Abstract bot interface
-NTTTPlayerMike.*      Alpha-beta bot
-NTTTPlayerIce.*       Heuristic bot
-NTTTManager.*         SDL2 setup and main loop
-GUI/                  Widgets and screens
-egtb.cpp, egtb.sh     Tablebase generator
-egtb-stats.cpp        Tablebase statistics
-trace.h               Logging helper
-assets/               Images and font used by the GUI
-tables/               Generated tablebases and their statistics
+src/                        Game sources
+  main.cpp                  Entry point: GUI or tournament mode
+  NTTTGame.h                Game state: a set of boards
+  NTTTBoard.{h,cpp}         A single board and its alive/dead state
+  NTTTMove.h                A move (board, x, y)
+  NTTTPlayer.h              Abstract bot interface
+  NTTTPlayerMike.*          Alpha-beta bot
+  NTTTPlayerIce.*           Heuristic bot
+  NTTTManager.*             SDL2 setup and main loop
+  GUI/                      Widgets and screens
+  trace.h                   Logging helper
+tools/                      Tablebase tools and scripts
+  egtb.cpp, egtb.sh         Tablebase generator
+  egtb-stats.cpp            Tablebase statistics
+  stats.sh                  Series of tournaments
+assets/                     Images and font used by the GUI
+tables/                     Generated tablebases and their statistics
+docs/                       Screenshot for this README
 ```
+
+`make` builds into `build/` and puts the programs in the repository root.
 
 ## Known issues
 

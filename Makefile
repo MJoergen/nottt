@@ -1,3 +1,4 @@
+# Game sources, relative to src/. Object and dependency files go to build/.
 sources  = main.cpp
 sources += NTTTBoard.cpp
 sources += NTTTPlayerMike.cpp
@@ -18,8 +19,8 @@ program = nottt
 TARGET = linux
 #TARGET = windows
 
-objects = $(sources:.cpp=.o)
-depends = $(sources:.cpp=.d)
+objects = $(addprefix build/,$(sources:.cpp=.o))
+depends = $(objects:.o=.d)
 CC = gcc
 
 #DEFINES += -DNDEBUG
@@ -73,19 +74,20 @@ all: $(program) $(tools)
 $(program): $(objects) Makefile
 	$(CC) -o $@ $(DEFINES) $(objects) $(LIB_DIRS) $(LIBS)
 
-egtb: egtb.cpp Makefile
+egtb: tools/egtb.cpp Makefile
 	$(CC) -o $@ $(DEFINES) $< -lstdc++
 
-egtb-stats: egtb-stats.cpp Makefile
+egtb-stats: tools/egtb-stats.cpp Makefile
 	$(CC) -o $@ $(DEFINES) $< -lstdc++
 
 install: $(program)
 	mkdir -p $(BINDIR)
 	cp $(program) $(BINDIR)
 
-%.d: %.cpp
-	set -e; $(CC) -M -MT $*.o $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
-		| sed 's#\($*\)\.o[ :]*#\1.o $@ : #g' > $@; \
+build/%.d: src/%.cpp
+	@mkdir -p $(@D)
+	set -e; $(CC) -M -MT build/$*.o $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
+		| sed 's#\(build/$*\)\.o[ :]*#\1.o $@ : #g' > $@; \
 		[ -s $@ ] || rm -f $@
 
 # The dependency files are only needed when building, not for help or clean.
@@ -93,12 +95,11 @@ ifneq ($(filter-out help clean,$(MAKECMDGOALS)),)
 include $(depends)
 endif
 
-%.o :
+build/%.o: src/%.cpp
 	$(CC) $(DEFINES) $(INCLUDE_DIRS) -c $< -o $@
 
 clean:
-	-rm -f $(objects)
-	-rm -f $(depends)
+	-rm -rf build
 	-rm -f $(program) $(tools) gmon.out
 
 .PHONY: help all install clean
