@@ -54,6 +54,20 @@ endif
 
 BINDIR ?= $(HOME)/bin
 
+help_line = @printf "  make %-11s %s\n"
+
+help:
+	@echo "Targets:"
+	$(help_line) help "Show this list (the default)"
+	$(help_line) all "Build $(strip $(program) $(tools))"
+	$(help_line) $(program) "Build the game (GUI and tournament mode)"
+ifeq ($(TARGET),linux)
+	$(help_line) egtb "Build the tablebase generator"
+	$(help_line) egtb-stats "Build the tablebase statistics tool"
+endif
+	$(help_line) install "Copy $(program) to $(BINDIR) (override with BINDIR=...)"
+	$(help_line) clean "Remove all build output"
+
 all: $(program) $(tools)
 
 $(program): $(objects) Makefile
@@ -74,7 +88,10 @@ install: $(program)
 		| sed 's#\($*\)\.o[ :]*#\1.o $@ : #g' > $@; \
 		[ -s $@ ] || rm -f $@
 
+# The dependency files are only needed when building, not for help or clean.
+ifneq ($(filter-out help clean,$(MAKECMDGOALS)),)
 include $(depends)
+endif
 
 %.o :
 	$(CC) $(DEFINES) $(INCLUDE_DIRS) -c $< -o $@
@@ -84,5 +101,5 @@ clean:
 	-rm -f $(depends)
 	-rm -f $(program) $(tools) gmon.out
 
-.PHONY: all install clean
+.PHONY: help all install clean
 

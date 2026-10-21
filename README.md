@@ -28,7 +28,8 @@ Dependencies: a C++11 compiler, SDL2, SDL2_image and SDL2_ttf (see
 Then:
 
 ```sh
-make                # builds nottt, egtb and egtb-stats
+make                # lists all targets
+make all            # builds nottt, egtb and egtb-stats
 make install        # copies nottt to ~/bin (override with BINDIR=...)
 ```
 
