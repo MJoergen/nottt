@@ -181,7 +181,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
     m_returnButton->registerClickFunc(onClickNewGameReturn, this);
 }
 
-void NewGameScreen::render(SDL_Renderer *renderer) const { // The renderer will be used later
+void NewGameScreen::render(SDL_Renderer *renderer) const {
     m_boardCountText->renderText(renderer);
     m_boardSizeText->renderText(renderer);
     m_lineSizeText->renderText(renderer);

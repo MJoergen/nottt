@@ -101,7 +101,7 @@ void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fo
     m_newGameButton->registerClickFunc(onClickNewGameStatic, this);
 }
 
-void MainMenuScreen::render(SDL_Renderer *renderer) const { // The renderer will be used later
+void MainMenuScreen::render(SDL_Renderer *renderer) const {
     m_headlineText->renderText(renderer);
 
     m_newGameButton->renderButton(renderer);

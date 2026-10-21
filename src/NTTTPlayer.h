@@ -9,7 +9,7 @@
  * To implement a player, you should write something like:
  *
  * #include "NTTTPlayer.h"
- * class HTTPPlayerMike : HTTPPlayer
+ * class NTTTPlayerMike : public NTTTPlayer
  * {
  * }
  *

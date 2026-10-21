@@ -10,11 +10,11 @@
 #include "GUI/Screens/NewGameScreen.h"
 #include "GUI/Screens/GameScreen.h"
 
-/**git
- * Initializes SDL2, SDL2_image, SDL2_ttf and defines static variables.
- * @return A boolean representing the whether the everything initialized correctly or not.
- *  If true everything is correctly initialized.
- *  If false something went wrong in the initialization process.
+/**
+ * Initializes SDL2, SDL2_image and SDL2_ttf, and creates the window, the
+ * fonts, the textures and the screens.
+ * @return Whether everything was initialized. If not, everything created so
+ *  far has been released again.
  */
 bool NTTTManager::init() {
 

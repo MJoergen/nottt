@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
 
     NTTTManager ntttManager;
 
-    if (!ntttManager.init()) { // Initializes SDL2, SDL2_image, SDL2_ttf and global variables. If something went wrong. The program is terminated.
+    if (!ntttManager.init()) { // Initializes SDL and creates the window. If this fails, the program stops.
 #ifdef _WIN32
         // Keep the console window open, so the error message can be read.
         std::cout << "Press ENTER to continue..." << std::endl;

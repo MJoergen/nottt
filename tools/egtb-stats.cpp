@@ -62,7 +62,7 @@ public:
                     m_lines.push_back(makeLine(boardSize, x, y, -1, 1, lineSize));
             }
         }
-    }; // end of init
+    }; // end of Lines
 
     /*
      * Returns true if the board contains a complete line
@@ -136,7 +136,7 @@ private:
      * Private helper function. Used only in the constructor.
      *
      * Converts a given line segment (start, direction, length)
-     * into a 16-bit mask.
+     * into a 32-bit mask.
      */
     uint32_t makeLine(uint32_t boardSize, int x, int y, int dx, int dy, int size) {
         uint32_t res = 0;

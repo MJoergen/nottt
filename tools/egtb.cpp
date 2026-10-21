@@ -57,7 +57,8 @@
  */
 
 /*
- * Uncomment the following line to generate a binary file with the data.
+ * With the following line, the table is written to a binary file. Without it,
+ * the table is only kept in memory.
  * One bit is used for each position: set if the side to move wins.
  *
  * Caveat: This currently only works on Linux
@@ -70,7 +71,7 @@
 // #define DUMP_SOLUTIONS
 
 /*
- * Ucomment the following line to dump all the statistics.
+ * Comment out the following line to skip dumping the statistics.
  */
 #define DUMP_STATISTICS
 
@@ -133,7 +134,7 @@ public:
                     m_lines.push_back(makeLine(boardSize, x, y, -1, 1, lineSize));
             }
         }
-    }; // end of init
+    }; // end of Lines
 
     /*
      * Returns true if the board contains a complete line
@@ -204,7 +205,7 @@ private:
      * Private helper function. Used only in the constructor.
      *
      * Converts a given line segment (start, direction, length)
-     * into a 16-bit mask.
+     * into a 32-bit mask.
      */
     uint32_t makeLine(uint32_t boardSize, int x, int y, int dx, int dy, int size) {
         uint32_t res = 0;

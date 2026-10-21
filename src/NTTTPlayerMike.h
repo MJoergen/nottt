@@ -123,9 +123,6 @@ public:
 
     void setVersion(int version) { m_board.setVersion(version); }
 
-    /**
-     * The destructor must always be made virtual
-     */
     virtual ~NTTTPlayerMike() {}
 
 private:

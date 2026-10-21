@@ -36,8 +36,6 @@ void BotsScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *
 
     m_availableBotsText = new Text(renderer, "Available Bots: ", guiFont, black, PADDING_X, m_headline->getY() + m_headline->getHeight() + HEADLINE_PADDING + PADDING_Y);
 
-    // This part might need changing ------>
-
     NTTTPlayerMike mikeBot;
     Text *mikeBotText = new Text(renderer, mikeBot.getName(), guiFont, black, m_availableBotsText->getX() + PADDING_X, m_availableBotsText->getY() + m_availableBotsText->getHeight() + PADDING_Y);
 
@@ -50,11 +48,9 @@ void BotsScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *
     m_return = new Button(renderer, "Back to Main Menu", guiFont, 0, 0);
     m_return->set(halfWidth - m_return->getWidth() / 2, height - PADDING_Y - m_return->getHeight());
     m_return->registerClickFunc(onClickReturn, this);
-
-    // <-----
 }
 
-void BotsScreen::render(SDL_Renderer *renderer) const { // The renderer will be used later
+void BotsScreen::render(SDL_Renderer *renderer) const {
     m_headline->renderText(renderer);
     m_availableBotsText->renderText(renderer);
 

@@ -238,7 +238,7 @@ void GameScreen::initialize(SDL_Renderer *renderer) {
     m_movesHeight = texture.getHeight() + 2 * PADDING_Y;
 
 
-    // Maybe temporary ----->
+    // Start a new game between IceBot and MikeBot, and decide who starts.
     m_game->newGame(*m_boardCount, *m_boardSize, *m_lineSize);
 
     srand(*m_gameSeed);
@@ -272,7 +272,6 @@ void GameScreen::initialize(SDL_Renderer *renderer) {
 
     m_gridSize        = (int)ceil(sqrt(*m_boardCount));
     m_boardRenderSize = (m_playingFieldSize - (1 + m_gridSize) * BOARD_PADDING) / m_gridSize;
-    //<-----
 
     const int x           = m_playingFieldSize;
     const int width       = m_width - x;

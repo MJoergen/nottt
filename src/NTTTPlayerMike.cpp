@@ -40,7 +40,8 @@ static uint64_t makeLine(int x, int y, int dx, int dy, int size, int boardSize) 
 
 /*
  * This counts the number of '1' bits in the variable.
- * This corresponds to the number of X's on the board.
+ * The bits in m_bits are the unmarked squares, so callers invert them first
+ * to count X's.
  */
 static int countBits(uint64_t pos) {
     int count;
@@ -226,9 +227,9 @@ void Board::makeMove(int board, uint64_t mask) {
 void Board::undoMove(int board, uint64_t mask) {
     assert((~m_bits[board]) & mask);
     m_bits[board] |= mask;
-} // end of makeMove
+} // end of undoMove
 
-// These numbers are generated in egtb.cpp from the file egtb-5-3.bit
+// These numbers are printed by egtb.cpp when it generates egtb-5-3.bit.
 static const int VALUES[64] = {
     625, 560, 725, 770, 742, 790, 747, 708,
     741, 783, 726, 702, 672, 637, 741, 760,
@@ -240,6 +241,7 @@ static const int VALUES[64] = {
     719, 787, 806, 723, 779, 710, 744, 789};
 
 
+// These numbers are printed by egtb-stats.cpp from egtb-5-3.bit.
 static const int VALUES_V6[1024] = {
     545, 487, 701, 811, 654, 792, 857, 929,
     732, 766, 857, 653, 822, 654, 400, 923,
@@ -629,7 +631,7 @@ int Board::alphaBeta(int alpha, int beta, int level) {
                     // Now we check if the window has been closed.
                     // If so, then stop the search.
                     if (alpha >= beta) {
-                        // This is fail-soft, since we are returning the value best_val,
+                        // This is fail-soft, since we are returning the value bestVal,
                         // which might be outside the window.
                         return bestVal;
                     }

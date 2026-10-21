@@ -8,14 +8,8 @@
 #define NEW_VERSION 1
 
 /**
- * This is an abstract base class that is to be derived from.
- * To implement a player, you should write something like:
- *
- * #include "NTTTPlayer.h"
- * class HTTPPlayerIce : HTTPPlayer
- * {
- * }
- *
+ * IceBot. It plays from the endgame tablebase when there is one for the
+ * board size and line size.
  */
 
 class NTTTPlayerIce : public NTTTPlayer {
@@ -51,9 +45,6 @@ public:
 
     virtual std::string getName();
 
-    /**
-     * The destructor must always be made virtual
-     */
     virtual ~NTTTPlayerIce() {}
 }; // end of class NTTTPlayerIce
 

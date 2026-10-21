@@ -38,14 +38,13 @@ public:
     virtual void cleanUp();
     int manageGame();
 
-    // Modified copy from GameInfoViewer ----->
+    // The number of moves in the move list, including those that did not fit.
     unsigned int getMovesCount() {
         if (m_movesTexts.size() < m_maxMoves)
             return m_movesTexts.size();
         else
             return m_maxMoves + m_excessMoves;
     }
-    //<-----
 
 private:
     bool m_isThreadProperlyClosed = true;
@@ -81,7 +80,8 @@ private:
 
     Texture *m_redCross = nullptr, *m_blueCross = nullptr;
 
-    // Modified copy from GameInfoViewer ----->
+    // The panel to the right of the boards: the players, the settings, the
+    // winner and the list of moves.
     Text *m_player1Text = nullptr, *m_player2Text = nullptr, *m_vsText = nullptr, *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr;
     Text *m_winnerText = nullptr, *m_winnerDisplayText = nullptr;
     unsigned int m_amountInColumn, m_amountInRow;
@@ -91,9 +91,7 @@ private:
     TTF_Font *m_movesFont = nullptr;
     int m_headlineHeight, m_movesHeight, m_movesWidth;
     unsigned int m_maxMoves, m_excessMoves = 0;
-    //<-----
 
-    // Modified copy from NTTTManager ----->
     void writeLog(const int winner) const;
     const int BOARD_PADDING = 30; // The padding between the borders
 
@@ -102,7 +100,6 @@ private:
     int m_boardRenderSize;
 
     std::vector<NTTTMove> m_moves;
-    //<-----
 
     void delayUnlessQuit(unsigned int ms) const;
     void initializeWinnerDisplayText(SDL_Renderer *renderer);

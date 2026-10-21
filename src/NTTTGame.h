@@ -47,7 +47,7 @@ public:
     const std::vector<NTTTBoard>& getBoards() const { return m_boards; }
 
     /**
-     * @return An array of Board objects representing the current setting of the game.
+     * @return Whether any board is still alive, i.e. the game is not over.
      */
     bool isActive() const {
         for (const NTTTBoard& board : m_boards) {

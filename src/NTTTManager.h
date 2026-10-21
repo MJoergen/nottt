@@ -24,7 +24,6 @@ public:
     void onReadLogClick();
     void writeLog(const int winner) const;
 
-    // These variables are only used WITHIN the NTTTManager class
 private:
     Texture *m_redCross;
     Texture *m_blueCross;
