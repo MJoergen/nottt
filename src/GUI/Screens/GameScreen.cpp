@@ -63,7 +63,7 @@ int GameScreen::manageGame(){
     while (!*m_quit && gameActive)
     {
 
-        while (m_moves.size() != getMovesCount() && !*m_quit)
+        while (m_moves.size() != m_shownMoves && !*m_quit)
             SDL_Delay(5);
         if (*m_quit)
             break;
@@ -80,9 +80,10 @@ int GameScreen::manageGame(){
                 m_winner = 3 - player;
                 break;
             }
+            SDL_LockMutex(m_gameMutex);
             m_game->makeMove(move, player == 1 ? NTTTBoard::RED : NTTTBoard::BLUE);
-
             m_moves.push_back(move);
+            SDL_UnlockMutex(m_gameMutex);
 
             player = 3 - player;
 
@@ -99,8 +100,10 @@ int GameScreen::manageGame(){
                     if (m_backward){
                         if (m_moves.size() <= 1)
                             continue;
+                        SDL_LockMutex(m_gameMutex);
                         m_game->undoMove(m_moves[m_moves.size() - 1]);
                         m_moves.pop_back();
+                        SDL_UnlockMutex(m_gameMutex);
                         player = 3 - player;
                         m_backward = false;
                     }
@@ -143,10 +146,15 @@ GameScreen::GameScreen(GameData data){
     m_redCross = data.redCross;
     m_blueCross = data.blueCross;
     m_isInitialized = false;
+
+    m_gameMutex = SDL_CreateMutex();
+    if (m_gameMutex == NULL)
+        std::cout << "Failed to create mutex: " << SDL_GetError() << std::endl;
 }
 
 GameScreen::~GameScreen(){
     cleanUp();
+    SDL_DestroyMutex(m_gameMutex);
 }
 
 void GameScreen::update(SDL_Renderer *renderer) {
@@ -166,12 +174,15 @@ void GameScreen::update(SDL_Renderer *renderer) {
     if (m_winner != 0 && m_winnerDisplayText == nullptr){
         initializeWinnerDisplayText(renderer);
     }
+    SDL_LockMutex(m_gameMutex);
     for (unsigned int index = getMovesCount(); index < m_moves.size(); index++){
         addMove(renderer, m_moves[index]);
     }
     for (unsigned int index = getMovesCount(); index > m_moves.size(); index--){
         removeMove();
     }
+    SDL_UnlockMutex(m_gameMutex);
+    m_shownMoves = getMovesCount();
 }
 
 void GameScreen::removeMove(){
@@ -308,6 +319,7 @@ void GameScreen::initialize(SDL_Renderer *renderer){
     m_maxMoves = m_amountInColumn * m_amountInRow;
 
     m_moves.clear();
+    m_shownMoves = 0;
     m_isThreadProperlyClosed = false;
     m_isGameThreadRunning = true;
     m_gameThread = SDL_CreateThread(manageGameStatic, "Game Thread", this);
@@ -333,6 +345,7 @@ void GameScreen::render(SDL_Renderer* renderer) const{
     if (!m_isInitialized)
         return;
 
+    SDL_LockMutex(m_gameMutex);
     for (int index = 0; index < *m_boardCount; index++){
 
         int boardX = BOARD_PADDING * (index % m_gridSize + 1) + m_boardRenderSize * (index % m_gridSize);
@@ -350,6 +363,7 @@ void GameScreen::render(SDL_Renderer* renderer) const{
 
         m_game->getBoards()[index].renderBoard(renderer, m_redCross, m_blueCross, boardX, boardY, m_boardRenderSize);
     }
+    SDL_UnlockMutex(m_gameMutex);
 
     m_player1Text->renderText(renderer);
     m_player2Text->renderText(renderer);
@@ -391,6 +405,7 @@ void GameScreen::input(const SDL_Event & event){
         m_backward = true;
 }
 
+//Only called when the game thread is not running, so needs no locking.
 void GameScreen::cleanUp(){
 
     m_moves.clear();

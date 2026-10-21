@@ -9,6 +9,7 @@
 #include "GUI/RadioButton.h"
 #include "GUI/Texture.h"
 #include <algorithm>
+#include <atomic>
 
 #include "NTTTGame.h"
 #include "NTTTPlayer.h"
@@ -57,7 +58,7 @@ class NTTTManager
 
         SDL_Window* m_window = NULL;            //Pointer pointing to a struct representing the window
 
-        bool quit = false;
+        std::atomic<bool> quit{false};          //Also read by the game thread
 
 }; // end of NTTTManager
 

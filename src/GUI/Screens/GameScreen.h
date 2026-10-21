@@ -4,6 +4,7 @@
 #include "Screen.h"
 #include "../Text.h"
 #include <vector>
+#include <atomic>
 #include "../../NTTTGame.h"
 #include "../../NTTTPlayer.h"
 
@@ -22,7 +23,7 @@ public:
         bool *manualMode;
         bool *writeLog;
         std::string *logName;
-        bool *quit;
+        std::atomic<bool> *quit;
 
         Texture *redCross;
         Texture *blueCross;
@@ -54,20 +55,30 @@ private:
     bool m_isInitialized;
     NTTTPlayer *m_player1, *m_player2;
     NTTTGame *m_game;
-    unsigned int m_winner = 0;
+    std::atomic<unsigned int> m_winner{0};
 
+    //The game thread changes *m_game and m_moves while the main thread draws them.
+    //The game thread is the only writer, so it locks only around its changes,
+    //and the main thread locks while it reads them.
+    SDL_mutex *m_gameMutex = nullptr;
+
+    //The number of moves the main thread has shown. The game thread waits for
+    //it to catch up before making the next move.
+    std::atomic<unsigned int> m_shownMoves{0};
+
+    //These are only set before the game thread starts, so need no locking.
     int *m_boardCount = nullptr, *m_boardSize = nullptr, *m_lineSize = nullptr, *m_gameSeed = nullptr;
     bool *m_manualMode = nullptr, *m_writeLog = nullptr;
     std::string *m_logName = nullptr;
-    
-    bool m_forward = false, m_backward = false;
 
-    bool m_isGameThreadRunning = false;
+    std::atomic<bool> m_forward{false}, m_backward{false};
+
+    std::atomic<bool> m_isGameThreadRunning{false};
     SDL_Thread *m_gameThread = nullptr;
 
     TTF_Font *m_headlineFont = nullptr, *m_guiFont = nullptr;
     unsigned int m_width, m_height;
-    bool *m_quit = nullptr;
+    std::atomic<bool> *m_quit = nullptr;
 
     Texture *m_redCross = nullptr, *m_blueCross = nullptr;
 
