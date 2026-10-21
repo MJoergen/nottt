@@ -13,6 +13,13 @@ The project contains:
 * A command-line tournament mode for pitting the bots against each other.
 * Tools for generating endgame tablebases by retrograde analysis.
 
+![The GUI during a game on two 4×4 boards](docs/screenshot.png)
+
+*A game on two 4×4 boards with line size 3. The crosses are coloured by the
+bot that placed them (red: Ice, blue: MikeBot); the black line marks the
+left board as dead, and the last move is highlighted in grey. The list on
+the right shows the moves as board : (x, y).*
+
 ## Building
 
 Dependencies: a C++11 compiler, SDL2, SDL2_image and SDL2_ttf (see
