@@ -520,7 +520,6 @@ int Board::evaluate() const
                         }
                     }
                 }
-                sum += almostDead*2000;
             }
 
             if (m_version == 5)
@@ -577,7 +576,10 @@ int Board::evaluate() const
         } // if (!isBoardDead(m_bits[board]))
     } // for (int board=0; board<m_boardCount; ++board)
 
-    if (m_version >= 3) 
+    if (m_version >= 4)
+        sum += almostDead*2000;
+
+    if (m_version >= 3)
     {
         if (numActive == 1 && !m_egtb.empty())
         {
@@ -598,7 +600,9 @@ int Board::evaluate() const
     if (numActive == 0)
         return 99999;
 
-    return sum;
+    // Keep the estimate below the scores of won and lost positions,
+    // however many boards there are.
+    return std::max(-99989, std::min(sum, 99989));
 } // end of evaluate
 
 

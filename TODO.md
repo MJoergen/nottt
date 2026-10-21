@@ -24,9 +24,6 @@ section.
   the `break` on `alpha >= beta` only exits the `y` loop, so the search
   continues over the remaining rows and boards. Results stay correct, but most
   of the pruning is lost with several boards.
-- [ ] 4. **The `almostDead` bonus grows quadratically.** In `evaluate()`,
-  `sum += almostDead*2000` is inside the per-board loop while `almostDead`
-  keeps accumulating. With about 10 boards it can exceed the win score.
 - [ ] 5. **Inconsistent win/loss scores.** The code uses 99999, 99990 + level and
   ±99990 in different places, so all forced losses score the same and the bot
   does not prefer slower losses.
