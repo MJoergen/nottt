@@ -304,6 +304,7 @@ void NTTTManager::input(SDL_Event & event) {
 		break;
 	case Screen::GAME:
 		m_gameScreen->input(event);
+		break;
 	case Screen::BOTS:
 		m_botsScreen->input(event);
 		break;

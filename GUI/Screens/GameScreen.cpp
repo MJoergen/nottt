@@ -57,8 +57,10 @@ int GameScreen::manageGame(){
 	while (!*m_quit && gameActive)
 	{
 
-		while (m_moves.size() != getMovesCount())
+		while (m_moves.size() != getMovesCount() && !*m_quit)
 			SDL_Delay(5);
+		if (*m_quit)
+			break;
 
 		if (gameActive)
 		{
