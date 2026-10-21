@@ -21,8 +21,6 @@ public:
     bool init();
     void loop();
     void close();
-    void onReadLogClick();
-    void writeLog(const int winner) const;
 
 private:
     Texture *m_redCross;

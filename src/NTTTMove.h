@@ -7,12 +7,12 @@ private:
     int m_squareX;
     int m_squareY;
 
+public:
     /**
      * @param boardNumber An integer representing which of the boards the move is performed on.
      * @param squareX An integer representing the X-component of the selected square.
      * @param squareY An integer representing the Y-component of the selected square.
      */
-public:
     NTTTMove(int boardNumber, int squareX, int squareY) {
         m_boardNumber = boardNumber;
         m_squareX     = squareX;
@@ -27,14 +27,6 @@ public:
     }
 
     /**
-     * Sets the integer representing the board
-     * @param boardNumber An integer representing which of the boards the move is performed on.
-     */
-    void setBoardNumber(int boardNumber) {
-        m_boardNumber = boardNumber;
-    }
-
-    /**
      * @return An integer representing the X-component of the selected square.
      */
     int getSquareX() const {
@@ -42,26 +34,10 @@ public:
     }
 
     /**
-     * Sets the integer representing the X-compontent of the selected square
-     * @param squareX An integer representing the X-component of the selected square.
-     */
-    void setSquareX(int squareX) {
-        m_squareX = squareX;
-    }
-
-    /**
      * @return An integer representing the Y-component of the selected square.
      */
     int getSquareY() const {
         return m_squareY;
-    }
-
-    /**
-     * Sets the integer representing the Y-compontent of the selected square
-     * @param squareY An integer representing the Y-component of the selected square.
-     */
-    void setSquareY(int squareY) {
-        m_squareY = squareY;
     }
 
     /**

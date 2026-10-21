@@ -89,7 +89,7 @@ private:
     std::vector<Text *> m_movesTexts;
 
     TTF_Font *m_movesFont = nullptr;
-    int m_headlineHeight, m_movesHeight, m_movesWidth;
+    int m_movesHeight, m_movesWidth;
     unsigned int m_maxMoves, m_excessMoves = 0;
 
     void writeLog(const int winner) const;

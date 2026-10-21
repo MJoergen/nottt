@@ -30,7 +30,8 @@ section.
 ## GUI
 
 - [ ] 4. **"Load Game" and "Statistics" are not implemented.** They show a blank
-  screen. `GUI/Screens/StatisticsScreen.h` is empty, and `onReadLogClick` is
-  commented out.
+  screen. `GUI/Screens/StatisticsScreen.h` is empty. An unfinished log reader,
+  `NTTTManager::onReadLogClick`, was removed; it is in the history before
+  that commit.
 - [ ] 13. `srand()` is called before every move, so the bots get the same random
   sequence on every move.
