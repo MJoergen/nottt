@@ -102,13 +102,13 @@ void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fo
 }
 
 void MainMenuScreen::render(SDL_Renderer *renderer) const {
-    m_headlineText->renderText(renderer);
+    m_headlineText->render(renderer);
 
-    m_newGameButton->renderButton(renderer);
-    m_loadGameButton->renderButton(renderer);
-    m_botsButton->renderButton(renderer);
-    m_statisticsButton->renderButton(renderer);
-    m_exitButton->renderButton(renderer);
+    m_newGameButton->render(renderer);
+    m_loadGameButton->render(renderer);
+    m_botsButton->render(renderer);
+    m_statisticsButton->render(renderer);
+    m_exitButton->render(renderer);
 }
 
 void MainMenuScreen::input(const SDL_Event& event) {

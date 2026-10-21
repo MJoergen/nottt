@@ -15,8 +15,8 @@ public:
     };
 
 private:
-    /* unsigned */ int m_x, m_y;
-    /* unsigned */ int m_width;
+    int m_x, m_y;
+    int m_width;
 
     const int PADDING_X = 3, PADDING_Y = 5;
 
@@ -37,6 +37,7 @@ private:
     FieldType m_fieldType;
 
     Texture *m_texture = NULL;
+    bool m_changed     = false; // m_texture must be regenerated
     void genTexture(SDL_Renderer *renderer);
 
 public:
@@ -45,13 +46,13 @@ public:
     TextField(const TextField&)            = delete;
     TextField& operator=(const TextField&) = delete;
 
-    const std::string getContent() const {
+    std::string getContent() const {
         if (m_fieldType == NUMBER && m_content.length() == 0)
             return "0";
         return m_content;
     }
 
-    const bool isSelected() { return m_selected; }
+    bool isSelected() { return m_selected; }
     void select() {
         SDL_StartTextInput();
         m_selected = true;
@@ -62,19 +63,17 @@ public:
     }
     void click(const int& x);
 
-    bool m_changed = false;
-
-    void renderTextField(SDL_Renderer *renderer, const int& time) const;
-    void updateTextField(SDL_Renderer *renderer);
+    void render(SDL_Renderer *renderer, const int& time) const;
+    void update(SDL_Renderer *renderer);
 
     void onKeyPress(const SDL_Keysym& keysym);
     void onTextInput(const std::string& text);
-    const bool isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const;
+    bool isInside(const int& x, const int& y) const;
 
-    const unsigned int getWidth() const;
-    const unsigned int getHeight() const;
-    const unsigned int getX() const { return m_x; }
-    const unsigned int getY() const { return m_y; }
+    unsigned int getWidth() const;
+    unsigned int getHeight() const;
+    unsigned int getX() const { return m_x; }
+    unsigned int getY() const { return m_y; }
     void setX(const unsigned int x) { m_x = x; }
     void setY(const unsigned int y) { m_y = y; }
     void set(const unsigned int x, const unsigned int y) {

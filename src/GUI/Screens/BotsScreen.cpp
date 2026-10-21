@@ -51,14 +51,14 @@ void BotsScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *
 }
 
 void BotsScreen::render(SDL_Renderer *renderer) const {
-    m_headline->renderText(renderer);
-    m_availableBotsText->renderText(renderer);
+    m_headline->render(renderer);
+    m_availableBotsText->render(renderer);
 
     for (unsigned int index = 0; index < m_botsTexts.size(); index++) {
-        m_botsTexts[index]->renderText(renderer);
+        m_botsTexts[index]->render(renderer);
     }
 
-    m_return->renderButton(renderer);
+    m_return->render(renderer);
 }
 
 void BotsScreen::input(const SDL_Event& event) {

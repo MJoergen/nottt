@@ -3,7 +3,7 @@
 
 #include "DataPath.h"
 
-/*
+/**
  * The data files (assets/ and tables/) are looked up relative to the
  * executable, not the current directory. They are found next to it, as in the
  * repository, or in ../share/nottt/, as installed by "make install".
@@ -29,7 +29,7 @@ std::string dataPath(const std::string& relativePath) {
     return localPath;
 } // end of dataPath
 
-/*
+/**
  * The logs are written to a directory the user can write to, wherever the
  * program is installed or started from: ~/.local/share/nottt/logs/ on Linux
  * and %APPDATA%\nottt\logs\ on Windows. SDL creates it if it is missing.

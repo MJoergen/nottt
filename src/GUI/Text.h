@@ -14,11 +14,11 @@ public:
     virtual ~Text();
     Text(const Text&)            = delete;
     Text& operator=(const Text&) = delete;
-    void renderText(SDL_Renderer *renderer) const;
-    const unsigned int getWidth() const;
-    const unsigned int getHeight() const;
-    const unsigned int getX() const { return m_x; }
-    const unsigned int getY() const { return m_y; }
+    void render(SDL_Renderer *renderer) const;
+    unsigned int getWidth() const;
+    unsigned int getHeight() const;
+    unsigned int getX() const { return m_x; }
+    unsigned int getY() const { return m_y; }
     void setX(const unsigned int x) { m_x = x; }
     void setY(const unsigned int y) { m_y = y; }
     void set(const unsigned int x, const unsigned int y) {

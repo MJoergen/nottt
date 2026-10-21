@@ -80,11 +80,11 @@ void NTTTBoard::renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickne
     SDL_RenderDrawLine(renderer, x, y, x + width, y + width);
 }
 
-void NTTTBoard::renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const {
-    /* unsigned */ int boardSize  = m_squareStates.size();
-    /* unsigned */ int squareSize = size / boardSize;
+void NTTTBoard::render(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const int x, const int y, const unsigned int size) const {
+    int boardSize  = m_squareStates.size();
+    int squareSize = size / boardSize;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    for (/* unsigned */ int index = 0; index < boardSize - 1; index++) {
+    for (int index = 0; index < boardSize - 1; index++) {
         SDL_RenderDrawLine(renderer,
                            x + squareSize * (index + 1), y,
                            x + squareSize * (index + 1), y + size);
@@ -92,14 +92,14 @@ void NTTTBoard::renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *
                            x + size, y + squareSize * (index + 1),
                            x, y + squareSize * (index + 1));
     }
-    for (/* unsigned */ int squareX = 0; squareX < boardSize; squareX++) {
-        for (/* unsigned */ int squareY = 0; squareY < boardSize; squareY++) {
+    for (int squareX = 0; squareX < boardSize; squareX++) {
+        for (int squareY = 0; squareY < boardSize; squareY++) {
             if (m_squareStates[squareX][squareY] == RED)
-                redCross->renderTexture(renderer,
-                                        x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
+                redCross->render(renderer,
+                                 x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
             else if (m_squareStates[squareX][squareY] == BLUE)
-                blueCross->renderTexture(renderer,
-                                         x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
+                blueCross->render(renderer,
+                                  x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
         }
     }
     if (m_state == DEAD) {

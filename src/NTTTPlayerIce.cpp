@@ -63,7 +63,7 @@ void NTTTPlayerIce::loadEgtb() {
         m_egtb.clear();
 } // end of loadEgtb
 
-const bool NTTTPlayerIce::isNumberEven(const int number) const {
+bool NTTTPlayerIce::isNumberEven(const int number) const {
     return (number % 2) == 0;
 }
 
@@ -96,7 +96,7 @@ NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game) {
     return playBestMove(index, NTTTBoard(game.getBoards()[index]), aliveBoards);
 } // end of performMove
 
-const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const {
+bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const {
 
     bool isWon = false;
 
@@ -124,7 +124,7 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const {
     return isWon;
 }
 
-const NTTTMove NTTTPlayerIce::playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const {
+NTTTMove NTTTPlayerIce::playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const {
     unsigned int numOfNonKillingMoves = 0;
     bool shouldKill                   = false;
     if (isNumberEven(otherBoards)) {

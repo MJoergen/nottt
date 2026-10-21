@@ -12,18 +12,18 @@ Button::~Button() {
     m_texture = nullptr;
 }
 
-void Button::renderButton(SDL_Renderer *renderer) const {
-    m_texture->renderTexture(renderer, m_x + PADDING_X, m_y + PADDING_Y);
+void Button::render(SDL_Renderer *renderer) const {
+    m_texture->render(renderer, m_x + PADDING_X, m_y + PADDING_Y);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_Rect rect = {m_x, m_y, getWidth(), getHeight()};
     SDL_RenderDrawRect(renderer, &rect);
 }
 
-const int Button::getWidth() const {
+int Button::getWidth() const {
     return m_texture->getWidth() + PADDING_X * 2;
 }
 
-const int Button::getHeight() const {
+int Button::getHeight() const {
     return m_texture->getHeight() + PADDING_Y * 2;
 }
 
@@ -37,6 +37,6 @@ void Button::click() const {
         m_action(m_data);
 }
 
-const bool Button::isInside(const int& x, const int& y) const {
+bool Button::isInside(const int& x, const int& y) const {
     return m_x <= x && x < m_x + getWidth() && m_y <= y && y < m_y + getHeight();
 }

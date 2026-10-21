@@ -17,12 +17,12 @@ public:
     virtual ~RadioButton();
 
 
-    void renderRadioButton(SDL_Renderer *renderer, Texture *checkMark) const;
+    void render(SDL_Renderer *renderer, Texture *checkMark) const;
 
-    const int getWidth() const;
-    const int getHeight() const;
-    const int getX() const { return m_x; }
-    const int getY() const { return m_y; }
+    int getWidth() const;
+    int getHeight() const;
+    int getX() const { return m_x; }
+    int getY() const { return m_y; }
     void setX(const unsigned int x) { m_x = x; }
     void setY(const unsigned int y) { m_y = y; }
     void set(const unsigned int x, const unsigned int y) {
@@ -30,12 +30,12 @@ public:
         m_y = y;
     }
 
-    const bool isChecked() { return m_isChecked; }
+    bool isChecked() { return m_isChecked; }
     void check() { m_isChecked = true; }
     void uncheck() { m_isChecked = false; }
     void toggle() { m_isChecked = !m_isChecked; }
 
-    const bool isInside(const int& x, const int& y) const;
+    bool isInside(const int& x, const int& y) const;
 
     friend std::ostream& operator<<(std::ostream& os, const RadioButton& rhs) {
         os << "RadioButton: { isChecked: " << rhs.m_isChecked << ", X: " << rhs.m_x << ", Y: " << rhs.m_y << ", Width: " << rhs.getWidth()

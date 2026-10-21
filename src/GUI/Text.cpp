@@ -12,14 +12,14 @@ Text::~Text() {
     m_texture = nullptr;
 }
 
-void Text::renderText(SDL_Renderer *renderer) const {
-    m_texture->renderTexture(renderer, m_x, m_y);
+void Text::render(SDL_Renderer *renderer) const {
+    m_texture->render(renderer, m_x, m_y);
 }
 
-const unsigned int Text::getWidth() const {
+unsigned int Text::getWidth() const {
     return m_texture->getWidth();
 }
 
-const unsigned int Text::getHeight() const {
+unsigned int Text::getHeight() const {
     return m_texture->getHeight();
 }

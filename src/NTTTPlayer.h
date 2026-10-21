@@ -19,7 +19,6 @@ class NTTTPlayer {
 public:
     /**
      * An enum capable of describing the player's/bot's choice of order.
-     * @author Ice
      */
     enum OrderChoice {
         FIRST,

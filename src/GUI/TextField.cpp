@@ -48,12 +48,12 @@ void TextField::genTexture(SDL_Renderer *renderer) {
     m_changed = false;
 }
 
-void TextField::updateTextField(SDL_Renderer *renderer) {
+void TextField::update(SDL_Renderer *renderer) {
     if (m_changed)
         genTexture(renderer);
 }
 
-void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
+void TextField::render(SDL_Renderer *renderer, const int& time) const {
 
     SDL_Rect rect = {m_x, m_y, m_width, (int)(m_texture->getHeight() + PADDING_Y * 2)};
 
@@ -76,7 +76,7 @@ void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
         // Only draw the part of the text that fits inside the field.
         const int visibleWidth = std::min((int)m_texture->getWidth() - (int)m_scroll, m_width - PADDING_X * 2);
         const int height       = m_texture->getHeight();
-        m_texture->renderTexture(renderer, m_scroll, 0, visibleWidth, height, m_x + PADDING_X, m_y + PADDING_Y, visibleWidth, height);
+        m_texture->render(renderer, m_scroll, 0, visibleWidth, height, m_x + PADDING_X, m_y + PADDING_Y, visibleWidth, height);
         if (m_selected && time % 2000 >= 1000) {
             const int cursorX = m_x + PADDING_X + m_cursorPPos - m_scroll;
             SDL_RenderDrawLine(renderer, cursorX, m_y + m_texture->getHeight() + PADDING_Y, cursorX, m_y + PADDING_Y);
@@ -84,7 +84,7 @@ void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
     }
 }
 
-const bool TextField::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const {
+bool TextField::isInside(const int& x, const int& y) const {
     return m_x <= x && x < m_x + (int)getWidth() && m_y <= y && y < m_y + (int)getHeight();
 }
 
@@ -181,10 +181,10 @@ void TextField::updateScroll() {
     m_scroll   = scroll;
 }
 
-const unsigned int TextField::getWidth() const {
+unsigned int TextField::getWidth() const {
     return m_width;
 }
 
-const unsigned int TextField::getHeight() const {
+unsigned int TextField::getHeight() const {
     return m_texture->getHeight() + PADDING_Y * 2;
 }

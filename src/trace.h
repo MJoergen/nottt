@@ -5,12 +5,12 @@
 
 // The tournament log. It is null unless a log file was given on the command
 // line.
-extern std::ostream *gpLog;
+extern std::ostream *g_log;
 
 #define LOG(x)           \
     do {                 \
-        if (gpLog) {     \
-            *gpLog << x; \
+        if (g_log) {     \
+            *g_log << x; \
         }                \
     } while (0)
 

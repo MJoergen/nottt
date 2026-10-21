@@ -357,21 +357,21 @@ void GameScreen::render(SDL_Renderer *renderer) const {
             }
         }
 
-        m_game->getBoards()[index].renderBoard(renderer, m_redCross, m_blueCross, boardX, boardY, m_boardRenderSize);
+        m_game->getBoards()[index].render(renderer, m_redCross, m_blueCross, boardX, boardY, m_boardRenderSize);
     }
     SDL_UnlockMutex(m_gameMutex);
 
-    m_player1Text->renderText(renderer);
-    m_player2Text->renderText(renderer);
-    m_vsText->renderText(renderer);
+    m_player1Text->render(renderer);
+    m_player2Text->render(renderer);
+    m_vsText->render(renderer);
 
-    m_boardCountText->renderText(renderer);
-    m_boardSizeText->renderText(renderer);
-    m_lineSizeText->renderText(renderer);
+    m_boardCountText->render(renderer);
+    m_boardSizeText->render(renderer);
+    m_lineSizeText->render(renderer);
 
-    m_winnerText->renderText(renderer);
+    m_winnerText->render(renderer);
     if (m_winnerDisplayText != nullptr)
-        m_winnerDisplayText->renderText(renderer);
+        m_winnerDisplayText->render(renderer);
 
     for (unsigned int index = 0; index < m_movesTexts.size(); index++) {
         switch (index % 2) {
@@ -386,7 +386,7 @@ void GameScreen::render(SDL_Renderer *renderer) const {
         SDL_Rect rect = {(int)(x + 2 * PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth),
                          (int)(m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_amountInColumn) * m_movesHeight), m_movesWidth, m_movesHeight};
         SDL_RenderFillRect(renderer, &rect);
-        m_movesTexts[index]->renderText(renderer);
+        m_movesTexts[index]->render(renderer);
     }
 }
 

@@ -11,9 +11,9 @@
 #include "NTTTManager.h"
 #include "trace.h"
 
-std::ostream *gpLog = nullptr;
+std::ostream *g_log = nullptr;
 
-/*
+/**
  * Decide whether the players swap the scheduled order.
  * They swap when one of them asks for it and the other does not object.
  * If both want to start, or both want to go last, the schedule decides.
@@ -23,7 +23,7 @@ static bool swapOrder(NTTTPlayer::OrderChoice firstChoice, NTTTPlayer::OrderChoi
            (secondChoice == NTTTPlayer::FIRST && firstChoice != NTTTPlayer::FIRST);
 } // end of swapOrder
 
-/*
+/**
  * Play a single game between two players.
  * The players have already been asked to choose the order.
  */
@@ -108,7 +108,7 @@ static void dispResults(const std::vector<NTTTPlayer *>& players,
     std::cout << " (" << 100 - firstPercent << "%)" << std::endl;
 } // end of dispResults
 
-/*
+/**
  * Play an entire tournament (round robin) between an array of players.
  */
 static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, int boardSize, int lineSize, int count) {
@@ -164,7 +164,7 @@ static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, 
 
 } // end of playMatch
 
-/*
+/**
  * Convert a command line argument to an integer.
  * Returns false if it is not a whole number.
  */
@@ -179,7 +179,7 @@ static bool parseInt(const char *str, int& value) {
     return true;
 } // end of parseInt
 
-/*
+/**
  * Plays a tournament between the bots when the settings are given on the
  * command line, and starts the GUI otherwise.
  */
@@ -208,8 +208,8 @@ int main(int argc, char *argv[]) {
         }
 
         if (argc == 6) {
-            gpLog = new std::ofstream(argv[5]);
-            if (!*gpLog) {
+            g_log = new std::ofstream(argv[5]);
+            if (!*g_log) {
                 std::cout << "Cannot open log file " << argv[5] << ": " << strerror(errno) << std::endl;
                 return 1;
             }
@@ -235,10 +235,10 @@ int main(int argc, char *argv[]) {
         for (NTTTPlayer *player : players)
             delete player;
 
-        if (gpLog) {
-            if (!gpLog->flush())
+        if (g_log) {
+            if (!g_log->flush())
                 std::cout << "Error writing log file " << argv[5] << std::endl;
-            delete gpLog;
+            delete g_log;
         }
         exit(0);
     }

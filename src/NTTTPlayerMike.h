@@ -4,7 +4,7 @@
 #include "NTTTPlayer.h"
 #include <SDL.h>
 
-#define DEBUG_MIKE false
+constexpr bool DEBUG_MIKE = false;
 
 /**
  * A representation of the board using bitmasks
@@ -87,7 +87,7 @@ private: // These methods are used internally only.
     void loadEgtb();
 
 private:
-#define HASH_SIZE (65536 * 16)
+    static constexpr int HASH_SIZE = 65536 * 16;
     // Cache of evaluateBoardV6() results, and statistics about it.
     mutable std::vector<uint64_t> m_hashBoard;
     mutable std::vector<int> m_hashVal;

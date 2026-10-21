@@ -72,12 +72,12 @@ NewGameScreen::~NewGameScreen() {
 }
 
 void NewGameScreen::update(SDL_Renderer *renderer) {
-    m_boardCountTextField->updateTextField(renderer);
-    m_boardSizeTextField->updateTextField(renderer);
-    m_lineSizeTextField->updateTextField(renderer);
-    m_gameSeedTextField->updateTextField(renderer);
+    m_boardCountTextField->update(renderer);
+    m_boardSizeTextField->update(renderer);
+    m_lineSizeTextField->update(renderer);
+    m_gameSeedTextField->update(renderer);
 
-    m_logNameTextField->updateTextField(renderer);
+    m_logNameTextField->update(renderer);
 
     if (m_errorChanged) {
         delete m_errorText;
@@ -176,35 +176,35 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
 }
 
 void NewGameScreen::render(SDL_Renderer *renderer) const {
-    m_boardCountText->renderText(renderer);
-    m_boardSizeText->renderText(renderer);
-    m_lineSizeText->renderText(renderer);
-    m_gameSeedText->renderText(renderer);
+    m_boardCountText->render(renderer);
+    m_boardSizeText->render(renderer);
+    m_lineSizeText->render(renderer);
+    m_gameSeedText->render(renderer);
 
-    m_boardCountTextField->renderTextField(renderer, SDL_GetTicks());
-    m_boardSizeTextField->renderTextField(renderer, SDL_GetTicks());
-    m_lineSizeTextField->renderTextField(renderer, SDL_GetTicks());
-    m_gameSeedTextField->renderTextField(renderer, SDL_GetTicks());
+    m_boardCountTextField->render(renderer, SDL_GetTicks());
+    m_boardSizeTextField->render(renderer, SDL_GetTicks());
+    m_lineSizeTextField->render(renderer, SDL_GetTicks());
+    m_gameSeedTextField->render(renderer, SDL_GetTicks());
 
-    m_manualModeText->renderText(renderer);
-    m_manualModeRadioButton->renderRadioButton(renderer, m_checkMark);
+    m_manualModeText->render(renderer);
+    m_manualModeRadioButton->render(renderer, m_checkMark);
 
-    m_startGameButton->renderButton(renderer);
+    m_startGameButton->render(renderer);
     if (m_errorText)
-        m_errorText->renderText(renderer);
+        m_errorText->render(renderer);
 
-    m_writeLogText->renderText(renderer);
+    m_writeLogText->render(renderer);
 
-    m_writeLogRadioButton->renderRadioButton(renderer, m_checkMark);
+    m_writeLogRadioButton->render(renderer, m_checkMark);
 
     if (m_writeLogRadioButton->isChecked()) {
-        m_logNameText->renderText(renderer);
-        m_logNameTextField->renderTextField(renderer, SDL_GetTicks());
+        m_logNameText->render(renderer);
+        m_logNameTextField->render(renderer, SDL_GetTicks());
     }
 
-    m_headlineText->renderText(renderer);
+    m_headlineText->render(renderer);
 
-    m_returnButton->renderButton(renderer);
+    m_returnButton->render(renderer);
 }
 
 void NewGameScreen::input(const SDL_Event& event) {

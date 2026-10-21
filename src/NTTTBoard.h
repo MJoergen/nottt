@@ -15,7 +15,6 @@ class NTTTBoard {
 public:
     /**
      * An enum capable of describing whether or not a board is alive.
-     * @author Ice
      */
     enum State {
         DEAD,
@@ -24,7 +23,6 @@ public:
 
     /**
      * An enum capable of describing the state of a square.
-     * @author Ice
      */
     enum SquareState {
         BLUE,
@@ -96,7 +94,7 @@ public:
         return os;
     }
 
-    void renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
+    void render(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const int x, const int y, const unsigned int size) const;
 
 private:
     int m_lineSize = 0;

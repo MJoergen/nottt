@@ -38,7 +38,7 @@ static uint64_t makeLine(int x, int y, int dx, int dy, int size, int boardSize) 
     return res;
 } // end of makeLine
 
-/*
+/**
  * This counts the number of '1' bits in the variable.
  * The bits in m_bits are the unmarked squares, so callers invert them first
  * to count X's.

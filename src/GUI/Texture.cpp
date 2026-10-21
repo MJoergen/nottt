@@ -47,16 +47,16 @@ void Texture::freeTexture() {
     m_texture = NULL;
 }
 
-void Texture::renderTexture(SDL_Renderer *renderer) const {
+void Texture::render(SDL_Renderer *renderer) const {
     SDL_RenderCopy(renderer, m_texture, NULL, NULL);
 }
 
-void Texture::renderTexture(SDL_Renderer *renderer, const int x, const int y, const int width, const int height) const {
+void Texture::render(SDL_Renderer *renderer, const int x, const int y, const int width, const int height) const {
     SDL_Rect dstRect = {x, y, width, height};
     SDL_RenderCopy(renderer, m_texture, NULL, &dstRect);
 }
 
-void Texture::renderTexture(SDL_Renderer *renderer, const int sx, const int sy, const int swidth, const int sheight, const int dx, const int dy, const int dwidth, const int dheight) const {
+void Texture::render(SDL_Renderer *renderer, const int sx, const int sy, const int swidth, const int sheight, const int dx, const int dy, const int dwidth, const int dheight) const {
     SDL_Rect srcRect = {sx, sy, swidth, sheight};
     SDL_Rect dstRect = {dx, dy, dwidth, dheight};
     SDL_RenderCopy(renderer, m_texture, &srcRect, &dstRect);

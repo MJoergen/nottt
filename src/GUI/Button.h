@@ -21,12 +21,12 @@ public:
     Button(const Button&)            = delete;
     Button& operator=(const Button&) = delete;
 
-    void renderButton(SDL_Renderer *renderer) const;
+    void render(SDL_Renderer *renderer) const;
 
-    const int getWidth() const;
-    const int getHeight() const;
-    const int getX() const { return m_x; }
-    const int getY() const { return m_y; }
+    int getWidth() const;
+    int getHeight() const;
+    int getX() const { return m_x; }
+    int getY() const { return m_y; }
     void setX(const unsigned int x) { m_x = x; }
     void setY(const unsigned int y) { m_y = y; }
     void set(const unsigned int x, const unsigned int y) {
@@ -36,7 +36,7 @@ public:
 
     void click() const;
     void registerClickFunc(void (*action)(void *), void *);
-    const bool isInside(const int& x, const int& y) const;
+    bool isInside(const int& x, const int& y) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Button& rhs) {
         os << "Button: { X: " << rhs.m_x << ", Y: " << rhs.m_y << ", Width: " << rhs.getWidth()

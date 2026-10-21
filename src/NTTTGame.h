@@ -96,7 +96,7 @@ public:
         m_boards[boardNumber].makeMove(squareX, squareY, state);
     }
 
-    /*
+    /**
      * Undo a move
      */
     void undoMove(const NTTTMove& move) {

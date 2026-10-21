@@ -16,9 +16,9 @@ private:
     std::vector<uint8_t> m_egtb;                 // One bit per position. Empty if there is no tablebase.
     int m_egtbBoardSize = 0, m_egtbLineSize = 0; // The sizes m_egtb was loaded for.
     void loadEgtb();
-    const bool isNumberEven(const int number) const;
-    const bool isBoardWon(const NTTTBoard board) const;
-    const NTTTMove playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const;
+    bool isNumberEven(const int number) const;
+    bool isBoardWon(const NTTTBoard board) const;
+    NTTTMove playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const;
 
 public:
     /**
