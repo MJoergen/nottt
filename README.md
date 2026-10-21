@@ -1,5 +1,7 @@
 # nottt — No Tic Tac Toe
 
+[![CI](https://github.com/MJoergen/nottt/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/MJoergen/nottt/actions/workflows/ci.yml)
+
 A C++ implementation of *No Tic Tac Toe* (also known as Notakto): a
 misère variant of tic-tac-toe played on one or more boards, where both
 players place the same mark (X). A board "dies" as soon as it contains a
