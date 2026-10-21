@@ -7,7 +7,7 @@ complete line, and the player who kills the **last** live board loses.
 
 The project contains:
 
-* An SDL2 GUI for playing against the computer or another human.
+* An SDL2 GUI for watching two bots play against each other.
 * Several computer players ("bots"), including an alpha-beta searcher backed
   by endgame tablebases.
 * A command-line tournament mode for pitting the bots against each other.
@@ -74,6 +74,25 @@ current directory.
 ```sh
 nottt
 ```
+
+The GUI shows a game between the Ice bot and MikeBot v6; a human cannot
+play. Choose **New Game** in the main menu and set:
+
+* **Board Count**, **Board Size** and **Line Size**: the game setup.
+* **Game Seed**: the random seed, so a game can be replayed exactly.
+* **Manual Mode**: step through the game yourself instead of watching it
+  play automatically (one move per second). Press → to play the next move
+  and ← to take back the last one.
+* **Write log** and **Log Name**: save the moves to `logs/<name>`. The `logs/`
+  directory must exist; it is not created automatically.
+
+Which bot moves first follows the bots' own choice, or is decided by the seed
+when both want the same. After the last move, the winner is shown for a few
+seconds (in manual mode, until → is pressed) before the program returns to
+the main menu.
+
+The **Bots** screen lists the available bots. **Load Game** and
+**Statistics** are not implemented yet and show an empty screen.
 
 ### Bot tournament
 
