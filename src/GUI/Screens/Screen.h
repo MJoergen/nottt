@@ -16,7 +16,7 @@ public:
         GAME
     };
 
-    virtual ~Screen(){};
+    virtual ~Screen() {}
     virtual void init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *guiFont, const unsigned int width, const unsigned int height) = 0;
     virtual void render(SDL_Renderer *renderer) const                                                                                         = 0;
     virtual void input(const SDL_Event& e)                                                                                                    = 0;
