@@ -158,6 +158,10 @@ egtb-stats.cpp        Tablebase statistics
 trace.h               Logging helper
 ```
 
+## Known issues
+
+See [TODO.md](TODO.md) for known bugs and planned improvements.
+
 ## License
 
 The bundled Junicode font is distributed under the SIL Open Font License
