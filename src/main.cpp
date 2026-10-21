@@ -35,6 +35,15 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
         move = players[player]->performMove(game);
         LOG("Player (" << player+1 << ") " << players[player]->getName() << " played: " << move << std::endl);
 
+        if (!game.isLegalMove(move))
+        {
+            // An illegal move loses the game.
+            std::cout << players[player]->getName() << " played the illegal move " << move << std::endl;
+            player = first+second-player;
+            LOG("Player " << players[player]->getName() << " won!" << std::endl);
+            break;
+        }
+
         if (player == first)
             game.makeMove(move, NTTTBoard::RED);
         else

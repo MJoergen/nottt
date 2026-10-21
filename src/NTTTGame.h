@@ -76,7 +76,25 @@ class NTTTGame {
         }
 
         /**
-         * Make a move
+         * @return Whether the move marks an unmarked square on a board that is alive.
+         */
+        bool isLegalMove(const NTTTMove& move) const
+        {
+            int boardNumber = move.getBoardNumber();
+            int squareX = move.getSquareX();
+            int squareY = move.getSquareY();
+            int boardSize = getBoardSize();
+            if (boardNumber < 0 || boardNumber >= getBoardCount() ||
+                squareX < 0 || squareX >= boardSize || squareY < 0 || squareY >= boardSize)
+                return false;
+
+            const NTTTBoard& board = m_boards[boardNumber];
+            return board.getCurrentState() == NTTTBoard::ALIVE &&
+                board.getSquareStates()[squareX][squareY] == NTTTBoard::UNMARKED;
+        }
+
+        /**
+         * Make a move. The move must be legal, see isLegalMove().
          */
         void makeMove(const NTTTMove& move, const NTTTBoard::SquareState& state)
         {

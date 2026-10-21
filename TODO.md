@@ -84,8 +84,6 @@ ordered by importance within each group.
 
 ## Game core and tournament mode
 
-- [ ] Move legality is only checked with `assert`, so a `-DNDEBUG` build
-  accepts illegal bot moves.
 - [ ] Uninitialised members before `init()`/`chooseOrder()`/`reset()`/
   `NewGame()` in `Board`, `NTTTPlayerIce`, `NTTTBoard` and `NTTTGame`.
   `NTTTGame::getBoardSize()` indexes `m_boards[0]` without checking.

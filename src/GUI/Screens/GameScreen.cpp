@@ -65,17 +65,16 @@ int GameScreen::manageGame(){
         if (gameActive)
         {
             srand(*m_gameSeed); //Sets the seed before every move
-            switch (player)
+            NTTTPlayer *current = player == 1 ? m_player1 : m_player2;
+            move = current->performMove(*m_game);
+            if (!m_game->isLegalMove(move))
             {
-            case 1:
-                move = m_player1->performMove(*m_game);
-                m_game->makeMove(move, NTTTBoard::RED);
-                break;
-            case 2:
-                move = m_player2->performMove(*m_game);
-                m_game->makeMove(move, NTTTBoard::BLUE);
+                // An illegal move loses the game.
+                std::cout << current->getName() << " played the illegal move " << move << std::endl;
+                m_winner = 3 - player;
                 break;
             }
+            m_game->makeMove(move, player == 1 ? NTTTBoard::RED : NTTTBoard::BLUE);
 
             m_moves.push_back(move);
 
