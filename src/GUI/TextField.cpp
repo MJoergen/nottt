@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include "TextField.h"
 #include "../NTTTManager.h"
@@ -19,7 +20,7 @@ void TextField::click(const int& x){
     select();
 
     // Move the cursor to the character boundary nearest to the click.
-    const int clickPos = x - m_x - m_paddingX;
+    const int clickPos = x - m_x - m_paddingX + m_scroll;
     m_cursor = 0;
     m_cursor_ppos = 0;
     for (unsigned int i = 1; i <= m_content.length(); i++){
@@ -30,6 +31,7 @@ void TextField::click(const int& x){
         m_cursor = i;
         m_cursor_ppos = w;
     }
+    updateScroll();
 }
 
 TextField::~TextField(){
@@ -72,10 +74,13 @@ void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
         }
     }
     else{
-        m_texture->renderTexture(renderer, m_x + m_paddingX, m_y + m_paddingY);
+        // Only draw the part of the text that fits inside the field.
+        const int visibleWidth = std::min((int) m_texture->getWidth() - (int) m_scroll, m_width - m_paddingX * 2);
+        const int height = m_texture->getHeight();
+        m_texture->renderTexture(renderer, m_scroll, 0, visibleWidth, height, m_x + m_paddingX, m_y + m_paddingY, visibleWidth, height);
         if (m_selected && time % 2000 >= 1000) {
-            SDL_RenderDrawLine(renderer, m_x + m_paddingX + m_cursor_ppos, m_y + m_texture->getHeight() + m_paddingY,
-                m_x + m_paddingX + m_cursor_ppos, m_y + m_paddingY);
+            const int cursorX = m_x + m_paddingX + m_cursor_ppos - m_scroll;
+            SDL_RenderDrawLine(renderer, cursorX, m_y + m_texture->getHeight() + m_paddingY, cursorX, m_y + m_paddingY);
         }
     }
 
@@ -110,6 +115,7 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
     if (keysym.sym == SDLK_DELETE)
         if (m_cursor < m_content.length()){
             m_content.erase(m_cursor, 1);
+            updateScroll();
             m_changed = true;
         }
 
@@ -151,15 +157,28 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
 
 
 void TextField::calculateCursorPPos(unsigned int& cursorPPos){
-    if (m_cursor == 0){
+    if (m_cursor == 0)
         cursorPPos = 0;
-        return;
+    else{
+        int w, h;
+        std::string content = m_content;
+        content.resize(m_cursor);
+        TTF_SizeText(m_font, content.c_str(), &w, &h);
+        cursorPPos = w;
     }
-    int w, h;
-    std::string content = m_content;
-    content.resize(m_cursor);
-    TTF_SizeText(m_font, content.c_str(), &w, &h);
-    cursorPPos = w;
+    updateScroll();
+}
+
+void TextField::updateScroll(){
+    // Scroll as little as possible to keep the cursor visible, and don't leave
+    // empty space on the right when the text is wider than the field.
+    const int visibleWidth = m_width - m_paddingX * 2;
+    int textWidth, h;
+    TTF_SizeText(m_font, m_content.c_str(), &textWidth, &h);
+    int scroll = std::min((int) m_scroll, std::max(0, textWidth - visibleWidth));
+    scroll = std::min(scroll, (int) m_cursor_ppos);
+    scroll = std::max(scroll, (int) m_cursor_ppos - visibleWidth);
+    m_scroll = scroll;
 }
 
 const unsigned int TextField::getWidth() const{

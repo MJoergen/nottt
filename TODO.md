@@ -64,8 +64,6 @@ section.
   their right and bottom edges, and right and middle clicks also count.
 - [ ] 13. `srand()` is called before every move, so the bots get the same random
   sequence on every move.
-- [ ] 15. A long number in the board count field is drawn past the edge of the
-  field.
 
 ## Build, scripts and repository
 

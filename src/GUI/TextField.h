@@ -22,6 +22,8 @@ private:
     unsigned int m_cursor = 0;
     unsigned int m_cursor_ppos = 0;
     void calculateCursorPPos(unsigned int& cursorPPos);
+    unsigned int m_scroll = 0; //Pixels of text scrolled out on the left
+    void updateScroll();
 
     bool m_selected = false;
     
