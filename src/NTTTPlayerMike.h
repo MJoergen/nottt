@@ -49,12 +49,12 @@ private: // These methods are used internally only.
     /**
      * Make a move.
      */
-    void makeMove(int board, uint64_t mask);
+    void makeMove(int boardNumber, uint64_t mask);
 
     /**
      * Undo a move.
      */
-    void undoMove(int board, uint64_t mask);
+    void undoMove(int boardNumber, uint64_t mask);
 
     /**
      * Return an estimate of the current position

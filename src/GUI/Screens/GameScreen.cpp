@@ -342,22 +342,22 @@ void GameScreen::render(SDL_Renderer *renderer) const {
         return;
 
     SDL_LockMutex(m_gameMutex);
-    for (int index = 0; index < *m_boardCount; index++) {
+    for (int boardNumber = 0; boardNumber < *m_boardCount; boardNumber++) {
 
-        int boardX     = BOARD_PADDING * (index % m_gridSize + 1) + m_boardRenderSize * (index % m_gridSize);
-        int boardY     = BOARD_PADDING * (int)(index / m_gridSize + 1) + m_boardRenderSize * (int)(index / m_gridSize);
+        int boardX     = BOARD_PADDING * (boardNumber % m_gridSize + 1) + m_boardRenderSize * (boardNumber % m_gridSize);
+        int boardY     = BOARD_PADDING * (int)(boardNumber / m_gridSize + 1) + m_boardRenderSize * (int)(boardNumber / m_gridSize);
         int squareSize = m_boardRenderSize / *m_boardSize;
 
         if (m_moves.size() > 0) {
             const NTTTMove& move = m_moves[m_moves.size() - 1];
-            if (move.getBoardNumber() == index) {
+            if (move.getBoardNumber() == boardNumber) {
                 SDL_SetRenderDrawColor(renderer, 190, 190, 190, 255); // Color of the "last move" square
                 SDL_Rect rect = {boardX + squareSize * move.getSquareX(), boardY + squareSize * move.getSquareY(), squareSize, squareSize};
                 SDL_RenderFillRect(renderer, &rect);
             }
         }
 
-        m_game->getBoards()[index].render(renderer, m_redCross, m_blueCross, boardX, boardY, m_boardRenderSize);
+        m_game->getBoards()[boardNumber].render(renderer, m_redCross, m_blueCross, boardX, boardY, m_boardRenderSize);
     }
     SDL_UnlockMutex(m_gameMutex);
 

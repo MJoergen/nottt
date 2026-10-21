@@ -174,8 +174,8 @@ int Board::makeBits(const NTTTGame& game) {
 
     const std::vector<NTTTBoard>& boards = game.getBoards();
 
-    for (int boardNum = 0; boardNum < m_boardCount; ++boardNum) {
-        const NTTTBoard& board = boards[boardNum];
+    for (int boardNumber = 0; boardNumber < m_boardCount; ++boardNumber) {
+        const NTTTBoard& board = boards[boardNumber];
         NTTTBoard::State state = board.getCurrentState();
         if (state != NTTTBoard::ALIVE) {
             m_bits.push_back(0UL);
@@ -210,9 +210,9 @@ int Board::makeBits(const NTTTGame& game) {
 /**
  * Make a move.
  */
-void Board::makeMove(int board, uint64_t mask) {
-    assert(m_bits[board] & mask);
-    m_bits[board] &= ~mask;
+void Board::makeMove(int boardNumber, uint64_t mask) {
+    assert(m_bits[boardNumber] & mask);
+    m_bits[boardNumber] &= ~mask;
 
 } // end of makeMove
 
@@ -220,9 +220,9 @@ void Board::makeMove(int board, uint64_t mask) {
 /**
  * Undo a move.
  */
-void Board::undoMove(int board, uint64_t mask) {
-    assert((~m_bits[board]) & mask);
-    m_bits[board] |= mask;
+void Board::undoMove(int boardNumber, uint64_t mask) {
+    assert((~m_bits[boardNumber]) & mask);
+    m_bits[boardNumber] |= mask;
 } // end of undoMove
 
 // These numbers are printed by egtb.cpp when it generates egtb-5-3.bit.
@@ -447,9 +447,9 @@ int Board::evaluate() const {
     if (m_version == 1)
         sum = (rand() % 201) - 100;
 
-    for (int board = 0; board < m_boardCount; ++board) {
-        if (!isBoardDead(m_bits[board])) {
-            lastActive = board;
+    for (int boardNumber = 0; boardNumber < m_boardCount; ++boardNumber) {
+        if (!isBoardDead(m_bits[boardNumber])) {
+            lastActive = boardNumber;
             numActive++;
 
             if (m_version == 2) {
@@ -459,12 +459,12 @@ int Board::evaluate() const {
                     for (int y = 0; y < m_boardSize; ++y) {
                         int bit       = x * m_boardSize + y;
                         uint64_t mask = 1ULL << bit;
-                        if (m_bits[board] & mask) {
-                            ((Board *)this)->makeMove(board, mask);
-                            if (!isBoardDead(m_bits[board])) {
+                        if (m_bits[boardNumber] & mask) {
+                            ((Board *)this)->makeMove(boardNumber, mask);
+                            if (!isBoardDead(m_bits[boardNumber])) {
                                 count++;
                             }
-                            ((Board *)this)->undoMove(board, mask);
+                            ((Board *)this)->undoMove(boardNumber, mask);
                         }
                     }
                 }
@@ -478,10 +478,10 @@ int Board::evaluate() const {
                     for (int y = 0; y < m_boardSize && !kills; ++y) {
                         int bit       = x * m_boardSize + y;
                         uint64_t mask = 1ULL << bit;
-                        if (m_bits[board] & mask) {
-                            ((Board *)this)->makeMove(board, mask);
-                            kills = isBoardDead(m_bits[board]);
-                            ((Board *)this)->undoMove(board, mask);
+                        if (m_bits[boardNumber] & mask) {
+                            ((Board *)this)->makeMove(boardNumber, mask);
+                            kills = isBoardDead(m_bits[boardNumber]);
+                            ((Board *)this)->undoMove(boardNumber, mask);
                             if (kills) {
                                 almostDead++;
                             }
@@ -502,10 +502,10 @@ int Board::evaluate() const {
                 for (int i = 0; i < m_boardSize * m_boardSize; ++i) {
                     uint64_t mask = 1ULL << i;
 
-                    if (!(m_bits[board] & mask)) // Is square already occupied?
+                    if (!(m_bits[boardNumber] & mask)) // Is square already occupied?
                         continue;
                     int cnt[4] = {0, 0, 0, 0};
-                    getLineCounts(m_bits[board], mask, cnt);
+                    getLineCounts(m_bits[boardNumber], mask, cnt);
 
                     assert(cnt[3] == 0);
                     if (cnt[2])
@@ -534,11 +534,11 @@ int Board::evaluate() const {
             }
 
             if (m_version == 6) {
-                sum += evaluateBoardV6(m_bits[board]);
+                sum += evaluateBoardV6(m_bits[boardNumber]);
             }
 
-        } // if (!isBoardDead(m_bits[board]))
-    } // for (int board=0; board<m_boardCount; ++board)
+        } // if (!isBoardDead(m_bits[boardNumber]))
+    } // for (int boardNumber=0; boardNumber<m_boardCount; ++boardNumber)
 
     if (m_version >= 4)
         sum += almostDead * 2000;
@@ -586,8 +586,8 @@ int Board::alphaBeta(int alpha, int beta, int level) {
     int bestVal = -INFINITE;
 
     int numActive = 0;
-    for (int board = 0; board < m_boardCount; ++board) {
-        if (isBoardDead(m_bits[board]))
+    for (int boardNumber = 0; boardNumber < m_boardCount; ++boardNumber) {
+        if (isBoardDead(m_bits[boardNumber]))
             continue;
 
         numActive++;
@@ -595,19 +595,19 @@ int Board::alphaBeta(int alpha, int beta, int level) {
             for (int y = 0; y < m_boardSize; ++y) {
                 int bit       = x * m_boardSize + y;
                 uint64_t mask = 1ULL << bit;
-                if (m_bits[board] & mask) {
+                if (m_bits[boardNumber] & mask) {
                     if (m_debug) {
-                        NTTTMove move(board, x, y);
+                        NTTTMove move(boardNumber, x, y);
                         for (int i = level; i < 4; ++i)
                             LOG("  ");
                         LOG(move << std::endl);
                     }
-                    makeMove(board, mask);
+                    makeMove(boardNumber, mask);
                     int val = -alphaBeta(-beta, -alpha, level - 1);
-                    undoMove(board, mask);
+                    undoMove(boardNumber, mask);
 
                     if (m_debug) {
-                        NTTTMove move(board, x, y);
+                        NTTTMove move(boardNumber, x, y);
                         for (int i = level; i < 4; ++i)
                             LOG("  ");
                         LOG(move << " -> " << std::dec << val << std::endl);
@@ -670,19 +670,19 @@ NTTTMove Board::findMove(const NTTTGame& game) {
     int bestVal = -INFINITE;
     std::vector<NTTTMove> bestMoves;
 
-    for (int board = 0; board < m_boardCount; ++board) {
+    for (int boardNumber = 0; boardNumber < m_boardCount; ++boardNumber) {
         for (int x = 0; x < m_boardSize; ++x) {
             for (int y = 0; y < m_boardSize; ++y) {
                 int bit       = x * m_boardSize + y;
                 uint64_t mask = 1ULL << bit;
-                if (m_bits[board] & mask) {
-                    NTTTMove move(board, x, y);
+                if (m_bits[boardNumber] & mask) {
+                    NTTTMove move(boardNumber, x, y);
                     if (m_debug)
                         LOG("Move " << move << std::endl);
 
-                    makeMove(board, mask);
+                    makeMove(boardNumber, mask);
                     int val = -alphaBeta(-INFINITE, INFINITE, level);
-                    undoMove(board, mask);
+                    undoMove(boardNumber, mask);
 
                     LOG("Move " << move << " => " << std::dec << val << std::endl);
 

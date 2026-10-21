@@ -45,21 +45,21 @@ void NTTTPlayerIce::loadEgtb() {
     oss << "tables/egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
     std::string filePath = dataPath(oss.str());
 
-    std::ifstream inputFileStream(filePath, std::ifstream::binary);
-    if (!inputFileStream)
+    std::ifstream file(filePath, std::ifstream::binary);
+    if (!file)
         return;
 
-    inputFileStream.seekg(0, inputFileStream.end);
-    std::streamoff length = inputFileStream.tellg();
-    inputFileStream.seekg(0, inputFileStream.beg);
+    file.seekg(0, file.end);
+    std::streamoff fileSize = file.tellg();
+    file.seekg(0, file.beg);
 
     // One bit per position. A file of any other size is not used.
-    const std::streamoff expectedLength = (1LL << (m_boardSize * m_boardSize)) / 8;
-    if (length != expectedLength)
+    const std::streamoff expectedSize = (1LL << (m_boardSize * m_boardSize)) / 8;
+    if (fileSize != expectedSize)
         return;
 
-    m_egtb.resize(expectedLength);
-    if (!inputFileStream.read((char *)m_egtb.data(), expectedLength))
+    m_egtb.resize(expectedSize);
+    if (!file.read((char *)m_egtb.data(), expectedSize))
         m_egtb.clear();
 } // end of loadEgtb
 
@@ -75,25 +75,25 @@ bool NTTTPlayerIce::isNumberEven(const int number) const {
 NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game) {
     unsigned int aliveBoards = 0;
 
-    for (unsigned int index = 0; index < (unsigned int)m_boardCount; index++) {
-        NTTTBoard board = game.getBoards()[index];
+    for (unsigned int boardNumber = 0; boardNumber < (unsigned int)m_boardCount; boardNumber++) {
+        NTTTBoard board = game.getBoards()[boardNumber];
         if (board.getCurrentState() == NTTTBoard::ALIVE)
             aliveBoards++;
     }
 
-    for (unsigned int index = 0; index < (unsigned int)m_boardCount; index++) {
-        NTTTBoard board = game.getBoards()[index];
+    for (unsigned int boardNumber = 0; boardNumber < (unsigned int)m_boardCount; boardNumber++) {
+        NTTTBoard board = game.getBoards()[boardNumber];
         if (board.getCurrentState() == NTTTBoard::DEAD)
             continue;
         if (isBoardWon(board))
-            return playBestMove(index, board, aliveBoards);
+            return playBestMove(boardNumber, board, aliveBoards);
     }
-    unsigned int index = rand() % m_boardCount;
-    while (game.getBoards()[index].getCurrentState() == NTTTBoard::DEAD) {
-        index = rand() % m_boardCount;
+    unsigned int boardNumber = rand() % m_boardCount;
+    while (game.getBoards()[boardNumber].getCurrentState() == NTTTBoard::DEAD) {
+        boardNumber = rand() % m_boardCount;
     }
 
-    return playBestMove(index, NTTTBoard(game.getBoards()[index]), aliveBoards);
+    return playBestMove(boardNumber, NTTTBoard(game.getBoards()[boardNumber]), aliveBoards);
 } // end of performMove
 
 bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const {
