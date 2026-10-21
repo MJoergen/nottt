@@ -28,17 +28,17 @@ public:
 
 private: // These methods are used internally only.
     /**
-     * Whether a board is dead. As in m_bits, the bits are the unmarked
-     * squares, so a line is complete when none of its bits are set.
+     * Whether a board is dead. As in m_bits, unmarked has a bit set for each
+     * unmarked square, so a line is complete when none of its bits are set.
      */
-    bool isBoardDead(uint64_t bits) const;
+    bool isBoardDead(uint64_t unmarked) const;
 
     /**
      * For each line through the unmarked square sq, adds one to cnt[] at an
-     * index given by how many marks the line still needs. pos has a bit set
-     * for each unmarked square.
+     * index given by how many marks the line still needs. unmarked has a bit
+     * set for each unmarked square.
      */
-    void getLineCounts(uint64_t pos, uint64_t sq, int cnt[4]) const;
+    void getLineCounts(uint64_t unmarked, uint64_t sq, int cnt[4]) const;
 
     /**
      * Converts to internal representation

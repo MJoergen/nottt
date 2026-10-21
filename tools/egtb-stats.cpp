@@ -52,11 +52,12 @@ public:
     }; // end of Lines
 
     /*
-     * Returns true if the board contains a complete line
+     * Returns true if marked, which has a bit set for each marked square,
+     * contains a complete line.
      */
-    bool isBoardDead(uint32_t pos) const {
+    bool isBoardDead(uint32_t marked) const {
         for (uint32_t lineMask : m_lines) {
-            if ((pos & lineMask) == lineMask) {
+            if ((marked & lineMask) == lineMask) {
                 return true;
             }
         }
@@ -64,14 +65,14 @@ public:
 
     }; // end of isBoardDead
 
-    void getLineCounts(uint32_t pos, uint32_t sq, int cnt[4]) const {
+    void getLineCounts(uint32_t marked, uint32_t sq, int cnt[4]) const {
         for (uint32_t lineMask : m_lines) {
             if (!(sq & lineMask))
                 continue;
             // Index by how many more X's the line needs, so that index 2 always means
             // "this square completes the line", as with line size 3.
             // Lines that need 3 or more map to index 0.
-            int missing = (int)g_lineSize - countBits(pos & lineMask);
+            int missing = (int)g_lineSize - countBits(marked & lineMask);
             int ix      = std::max(0, 3 - missing);
             cnt[ix]++;
         }

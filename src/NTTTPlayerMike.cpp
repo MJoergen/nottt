@@ -142,23 +142,23 @@ void Board::loadEgtb() {
 } // end of loadEgtb
 
 
-bool Board::isBoardDead(uint64_t bits) const {
+bool Board::isBoardDead(uint64_t unmarked) const {
     for (uint64_t lineMask : m_lines) {
-        if (!(bits & lineMask)) {
+        if (!(unmarked & lineMask)) {
             return true;
         }
     }
     return false;
 } // end of isBoardDead
 
-void Board::getLineCounts(uint64_t pos, uint64_t sq, int cnt[4]) const {
+void Board::getLineCounts(uint64_t unmarked, uint64_t sq, int cnt[4]) const {
     for (uint64_t lineMask : m_lines) {
         if (!(sq & lineMask))
             continue;
         // Index by how many more X's the line needs, so that index 2 always means
         // "this square completes the line", as with line size 3.
         // Lines that need 3 or more map to index 0.
-        int missing = m_lineSize - countBits((~pos) & lineMask);
+        int missing = m_lineSize - countBits((~unmarked) & lineMask);
         int ix      = std::max(0, 3 - missing);
         cnt[ix]++;
     }
