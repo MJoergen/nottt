@@ -7,3 +7,6 @@
 
 # Replace tabs with spaces in all C++ source files.
 113785a65f97f00c1b1f10612e8cb4bc71b37302
+
+# Reformat the C++ sources with clang-format.
+5d1b39ae1ecc7d0d98ef6d20a8b9eeb0e99f34cf
