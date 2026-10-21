@@ -1,0 +1,4 @@
+-std=c++11
+-I/usr/include/SDL2
+-D_REENTRANT
+-Isrc
