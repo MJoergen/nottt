@@ -1,5 +1,5 @@
-#ifndef _RADIOBUTTON_H_
-#define _RADIOBUTTON_H_
+#ifndef RADIOBUTTON_H
+#define RADIOBUTTON_H
 
 #include <SDL.h>
 #include "Texture.h"
@@ -11,7 +11,7 @@ private:
     bool m_isChecked = false;
     int m_size;
 
-    const int m_paddingX = 3, m_paddingY = 3;
+    const int PADDING_X = 3, PADDING_Y = 3;
 
 public:
     RadioButton(const bool isChecked, const int x, const int y, const int size);

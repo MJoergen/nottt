@@ -1,5 +1,5 @@
-#ifndef _MAINMENU_SCREEN_H_
-#define _MAINMENU_SCREEN_H_
+#ifndef MAINMENU_SCREEN_H
+#define MAINMENU_SCREEN_H
 
 #include "Screen.h"
 #include "../Text.h"

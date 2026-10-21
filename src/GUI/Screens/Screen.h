@@ -1,5 +1,5 @@
-#ifndef _SCREEN_H_
-#define _SCREEN_H_
+#ifndef SCREEN_H
+#define SCREEN_H
 
 #include <SDL.h>
 #include <SDL_ttf.h>

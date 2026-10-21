@@ -1,5 +1,5 @@
-#ifndef _TEXT_FIELD_H_
-#define _TEXT_FIELD_H_
+#ifndef TEXT_FIELD_H
+#define TEXT_FIELD_H
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -16,11 +16,11 @@ private:
     /* unsigned */ int m_x, m_y;
     /* unsigned */ int m_width;
     
-    const int m_paddingX = 3, m_paddingY = 5;
+    const int PADDING_X = 3, PADDING_Y = 5;
 
     int m_limit = -1;
     unsigned int m_cursor = 0;
-    unsigned int m_cursor_ppos = 0;
+    unsigned int m_cursorPPos = 0;
     void calculateCursorPPos(unsigned int& cursorPPos);
     unsigned int m_scroll = 0; //Pixels of text scrolled out on the left
     void updateScroll();

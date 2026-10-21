@@ -1,5 +1,5 @@
-#ifndef _NTTTPLAYER_H_
-#define _NTTTPLAYER_H_
+#ifndef NTTTPLAYER_H
+#define NTTTPLAYER_H
 
 #include "NTTTGame.h"
 #include "NTTTMove.h"
@@ -48,5 +48,5 @@ class NTTTPlayer {
         virtual ~NTTTPlayer() {}
 }; // end of class NTTTPlayer 
 
-#endif // _NTTTPLAYER_H_
+#endif // NTTTPLAYER_H
 

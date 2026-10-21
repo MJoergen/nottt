@@ -1,5 +1,5 @@
-#ifndef _NTTTPLAYERICE_H_
-#define _NTTTPLAYERICE_H_
+#ifndef NTTTPLAYERICE_H
+#define NTTTPLAYERICE_H
 
 #include "NTTTPlayer.h"
 #include <cstdint>
@@ -57,5 +57,5 @@ public:
     virtual ~NTTTPlayerIce() {}
 }; // end of class NTTTPlayerIce
 
-#endif // _NTTTPLAYERICE_H_
+#endif // NTTTPLAYERICE_H
 

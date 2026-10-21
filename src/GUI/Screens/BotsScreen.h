@@ -1,5 +1,5 @@
-#ifndef _BOTS_SCREEN_H_
-#define _BOTS_SCREEN_H_
+#ifndef BOTS_SCREEN_H
+#define BOTS_SCREEN_H
 
 #include "Screen.h"
 #include "../Text.h"

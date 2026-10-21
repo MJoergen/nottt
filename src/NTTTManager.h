@@ -1,5 +1,5 @@
-#ifndef _NTTTMANAGER_H_
-#define _NTTTMANAGER_H_
+#ifndef NTTTMANAGER_H
+#define NTTTMANAGER_H
 
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -37,7 +37,7 @@ class NTTTManager
 
         NTTTGame *m_game;
 
-        const char* TITLE = "No Tic Tac Toe";           //The title of the window
+        const char* const TITLE = "No Tic Tac Toe";           //The title of the window
         const int WINDOW_WIDTH = 900;                   //The width of the window
         const int WINDOW_HEIGHT = 600;                  //The height of the window
 
@@ -58,9 +58,9 @@ class NTTTManager
 
         SDL_Window* m_window = NULL;            //Pointer pointing to a struct representing the window
 
-        std::atomic<bool> quit{false};          //Also read by the game thread
+        std::atomic<bool> m_quit{false};          //Also read by the game thread
 
 }; // end of NTTTManager
 
-#endif // _NTTTGLOBAL_H_
+#endif // NTTTMANAGER_H
 

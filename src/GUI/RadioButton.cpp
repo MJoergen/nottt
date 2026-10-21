@@ -22,8 +22,8 @@ const int RadioButton::getHeight() const {
 
 void RadioButton::renderRadioButton(SDL_Renderer *renderer, Texture *checkMark) const {
     if (m_isChecked)
-        checkMark->renderTexture(renderer, m_x + m_paddingX, m_y + m_paddingY,
-        getWidth() - m_paddingX * 2, getHeight() - m_paddingY * 2);
+        checkMark->renderTexture(renderer, m_x + PADDING_X, m_y + PADDING_Y,
+        getWidth() - PADDING_X * 2, getHeight() - PADDING_Y * 2);
     SDL_Rect rect = { m_x, m_y, getWidth(), getHeight() };
     SDL_RenderDrawRect(renderer, &rect);
 }

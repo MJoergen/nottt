@@ -13,7 +13,7 @@ section.
 - [ ] 1. **Tune the v5/v6 evaluation tables for line size 2.** Since the line
   counts were fixed for line sizes other than 3 (`5b76364`), v5 and v6 see
   "this move kills the board" correctly at line size 2, but they still use
-  `values`/`values_v6`, which were generated from 5×5 boards with line size 3.
+  `VALUES`/`VALUES_V6`, which were generated from 5×5 boards with line size 3.
   In 1-round tournaments after the fix, v5 dropped from 83% to 67% on 2 boards
   of 5×5, and v6 from 75% to 25% on 2 boards of 6×6. Generate tables for line
   size 2 (e.g. with `egtb-stats`) and select them by line size.

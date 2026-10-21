@@ -110,14 +110,14 @@ void NTTTBoard::renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *
                 x + size, y + squareSize * (index + 1),
                 x, y + squareSize * (index + 1));
     }
-    for (/* unsigned */ int x_i = 0; x_i < boardSize; x_i++){
-        for (/* unsigned */ int y_i = 0; y_i < boardSize; y_i++){
-            if (m_squareStates[x_i][y_i] == RED)
+    for (/* unsigned */ int squareX = 0; squareX < boardSize; squareX++){
+        for (/* unsigned */ int squareY = 0; squareY < boardSize; squareY++){
+            if (m_squareStates[squareX][squareY] == RED)
                 redCross->renderTexture(renderer,
-                        x + x_i * squareSize, y + y_i * squareSize, squareSize, squareSize);
-            else if (m_squareStates[x_i][y_i] == BLUE)
+                        x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
+            else if (m_squareStates[squareX][squareY] == BLUE)
                 blueCross->renderTexture(renderer,
-                        x + x_i * squareSize, y + y_i * squareSize, squareSize, squareSize);
+                        x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
         }
     }
     if (m_state == DEAD){

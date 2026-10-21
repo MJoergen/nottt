@@ -1,5 +1,5 @@
-#ifndef _NTTTGAME_H_
-#define _NTTTGAME_H_
+#ifndef NTTTGAME_H
+#define NTTTGAME_H
 
 #include <string>
 #include "NTTTBoard.h"
@@ -65,7 +65,7 @@ class NTTTGame {
         /**
          * Start a new game
          */
-        void NewGame(int boardCount, int boardSize, int lineSize)
+        void newGame(int boardCount, int boardSize, int lineSize)
         {
             m_boards.resize(boardCount);
             for (auto it=m_boards.begin(); it != m_boards.end(); ++it)
@@ -133,5 +133,5 @@ class NTTTGame {
 
 }; // end of class NTTTGame 
 
-#endif // _NTTTGAME_H_
+#endif // NTTTGAME_H
 

@@ -356,14 +356,14 @@ int main(int argc, char *argv[])
                         continue; // Then go to next square.
                     // Now we have a legal move
 
-                    uint32_t new_pos = pos | mask;
-                    if (!readPos(new_pos, known))
+                    uint32_t newPos = pos | mask;
+                    if (!readPos(newPos, known))
                     {
                         // If one child is unknown, then we can stop immediately.
                         isKnown = false;
                         break;
                     }
-                    if (!readPos(new_pos, egtb))
+                    if (!readPos(newPos, egtb))
                     {
                         // If one child is lost, then we are winning, and can stop immediately.
                         win = true;

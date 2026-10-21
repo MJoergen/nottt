@@ -1,5 +1,5 @@
-#ifndef _NTTPMOVE_H_
-#define _NTTPMOVE_H_
+#ifndef NTTTMOVE_H
+#define NTTTMOVE_H
 
 class NTTTMove {
     private:
@@ -76,5 +76,5 @@ class NTTTMove {
 
 }; // end of class NTTTMove 
 
-#endif // _NTTPMOVE_H_
+#endif // NTTTMOVE_H
 

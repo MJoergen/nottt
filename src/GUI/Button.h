@@ -1,5 +1,5 @@
-#ifndef _BUTTON_H_
-#define _BUTTON_H_
+#ifndef BUTTON_H
+#define BUTTON_H
 
 #include <SDL.h>
 #include "Texture.h"
@@ -13,7 +13,7 @@ private:
     void(*m_action)(void *) = nullptr;
     void *m_data;
 
-    const int m_paddingX = 3, m_paddingY = 5;
+    const int PADDING_X = 3, PADDING_Y = 5;
 
 public:
     Button(SDL_Renderer *renderer, const std::string text, TTF_Font *font, const unsigned int x, const unsigned int y);

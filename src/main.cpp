@@ -106,16 +106,16 @@ static void dispResults(const std::vector<NTTTPlayer *>& players,
                 std::cout << std::setw(3) << table[player][opponent] << " ";
         }
         int points = total[i].first;
-        float win_percent = floor(points*100.0/maxPoints + 0.5);
-        std::cout << " : " << std::setw(3) << points << " (" << win_percent << "%)" << std::endl;
+        float winPercent = floor(points*100.0/maxPoints + 0.5);
+        std::cout << " : " << std::setw(3) << points << " (" << winPercent << "%)" << std::endl;
     }
 
     // Round the first percentage, and derive the second, so they add up to 100%.
-    int first_percent = floor(order[0]*100.0/totalGames + 0.5);
+    int firstPercent = floor(order[0]*100.0/totalGames + 0.5);
     std::cout << "First player wins: " << order[0];
-    std::cout << " (" << first_percent << "%)" << std::endl;
+    std::cout << " (" << firstPercent << "%)" << std::endl;
     std::cout << "Second player wins: " << order[1];
-    std::cout << " (" << 100 - first_percent << "%)" << std::endl;
+    std::cout << " (" << 100 - firstPercent << "%)" << std::endl;
 } // end of dispResults
 
 /*
@@ -149,7 +149,7 @@ static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, 
                 LOG("Game " << i+1 << ":" << std::endl);
 
                 NTTTGame game;
-                game.NewGame(boardCount, boardSize, lineSize);
+                game.newGame(boardCount, boardSize, lineSize);
 
                 srand(seed);
                 NTTTPlayer::OrderChoice firstChoice = players[first]->chooseOrder(game);

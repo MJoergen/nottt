@@ -115,7 +115,7 @@ bool NTTTManager::init()
     m_newGameScreen = new NewGameScreen(newGameData);
     m_newGameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    GameScreen::GameData gameData = { &m_currentState, m_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &quit, m_redCross, m_blueCross };
+    GameScreen::GameData gameData = { &m_currentState, m_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &m_quit, m_redCross, m_blueCross };
 
     m_gameScreen = new GameScreen(gameData);
     m_gameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -231,7 +231,7 @@ void NTTTManager::onReadLogClick(){
         return;
     }
 
-    g_game->NewGame(boardCount, boardSize, lineSize);
+    g_game->newGame(boardCount, boardSize, lineSize);
 
     m_moves = performedMoves;
 
@@ -256,13 +256,13 @@ void NTTTManager::onReadLogClick(){
 */
 void NTTTManager::loop(){
     
-    while (!quit){ //Runs until the program quits
+    while (!m_quit){ //Runs until the program quits
 
         //Input
         SDL_Event event;
         while (SDL_PollEvent(&event) != 0){ //Get the pending events, if any
             if (event.type == SDL_QUIT){ //Quits the program, if a SDL_QUIT event has been triggered (e.g. when the window is closed)
-                quit = true;
+                m_quit = true;
             }
             else {
                 input(event);
@@ -303,7 +303,7 @@ void NTTTManager::update(){
         //TODO
         break;
     case Screen::EXIT:
-        quit = true;
+        m_quit = true;
         break;
     }
 

@@ -1,5 +1,5 @@
-#ifndef _TEXT_H_
-#define _TEXT_H_
+#ifndef TEXT_H
+#define TEXT_H
 
 #include <string>
 #include "Texture.h"

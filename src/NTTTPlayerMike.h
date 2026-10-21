@@ -1,5 +1,5 @@
-#ifndef _NTTTPLAYERMIKE_H_
-#define _NTTTPLAYERMIKE_H_
+#ifndef NTTTPLAYERMIKE_H
+#define NTTTPLAYERMIKE_H
 
 #include "NTTTPlayer.h"
 #include <SDL.h>
@@ -137,5 +137,5 @@ class NTTTPlayerMike : public NTTTPlayer {
         bool  m_debug = DEBUG_MIKE;
 }; // end of class NTTTPlayerMike
 
-#endif // _NTTTPLAYERMIKE_H_
+#endif // NTTTPLAYERMIKE_H
 

@@ -238,7 +238,7 @@ void GameScreen::initialize(SDL_Renderer *renderer){
 
 
     //Maybe temporary ----->
-    m_game->NewGame(*m_boardCount, *m_boardSize, *m_lineSize);
+    m_game->newGame(*m_boardCount, *m_boardSize, *m_lineSize);
 
     srand(*m_gameSeed);
 

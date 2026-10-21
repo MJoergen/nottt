@@ -1,4 +1,4 @@
-#ifndef _STATISTICS_SCREEN_H_
-#define _STATISTICS_SCREEN_H_
+#ifndef STATISTICS_SCREEN_H
+#define STATISTICS_SCREEN_H
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef _NEWGAME_SCREEN_H_
-#define _NEWGAME_SCREEN_H_
+#ifndef NEWGAME_SCREEN_H
+#define NEWGAME_SCREEN_H
 
 #include "Screen.h"
 #include "../Text.h"

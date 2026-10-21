@@ -1,5 +1,5 @@
-#ifndef _NTTTBOARD_H_
-#define _NTTTBOARD_H_
+#ifndef NTTTBOARD_H
+#define NTTTBOARD_H
 
 #include <SDL.h>
 #include "GUI/Texture.h"
@@ -101,5 +101,5 @@ class NTTTBoard {
         void renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
 }; // end of class NTTTBoard
 
-#endif // _NTTTBOARD_H_
+#endif // NTTTBOARD_H
 

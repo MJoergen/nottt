@@ -252,7 +252,7 @@ void Board::undoMove(int board, uint64_t mask)
 } // end of makeMove
 
 // These numbers are generated in egtb.cpp from the file egtb-5-3.bit
-static const int values[64] = {
+static const int VALUES[64] = {
     625, 560, 725, 770, 742, 790, 747, 708,
     741, 783, 726, 702, 672, 637, 741, 760,
     704, 780, 773, 713, 750, 691, 714, 775,
@@ -263,7 +263,7 @@ static const int values[64] = {
     719, 787, 806, 723, 779, 710, 744, 789 };
 
 
-static const int values_v6[1024] = {
+static const int VALUES_V6[1024] = {
 545, 487, 701, 811, 654, 792, 857, 929,
 732, 766, 857, 653, 822, 654, 400, 923,
 754, 766, 811, 811, 821, 743, 778, 1000,
@@ -449,7 +449,7 @@ int Board::evaluateBoardV6(uint64_t board) const
             index ^= 0x200;
     }
 
-    int val = values_v6[index];
+    int val = VALUES_V6[index];
 
     if (m_hashBoard[hash])
     {
@@ -578,7 +578,7 @@ int Board::evaluate() const
                 int par5 = sum5 & 1;
 
                 int index = (par0 << 5) + (par1 << 4) + (par2 << 3) + (par3 << 2) + (par4 << 1) + par5;
-                sum += values[index];
+                sum += VALUES[index];
 
             }
 
