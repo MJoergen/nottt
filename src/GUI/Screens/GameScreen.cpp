@@ -217,7 +217,7 @@ void GameScreen::addMove(SDL_Renderer *renderer, NTTTMove move){
 void GameScreen::initializeWinnerDisplayText(SDL_Renderer *renderer){
     const int x = m_playingFieldSize;
     const int width = m_width - x;
-    switch (m_winner){
+    switch (m_winner.load()){
     case 1:
         m_winnerDisplayText = new Text(renderer, m_player1->getName(), m_guiFont, { 255, 0, 0 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
         m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
