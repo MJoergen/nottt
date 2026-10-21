@@ -43,8 +43,8 @@ There are no automated tests. Instead:
     `xdotool mousemove X Y click 1`, and capture it with
     `import -window root -crop 900x600+0+0 shot.png`.
   - Turn on Manual Mode to step through a game with the → key.
-  - Text fields keep the cursor where it was, so clear one with →×15 and
-    then Backspace×15 before typing.
+  - Clicking a text field puts the cursor at the click, so click right of the
+    text and press Backspace×15 to clear it before typing.
   - Stop the app with `pkill -x nottt`, never `pkill -f nottt`: the repository
     path contains "nottt", so `-f` also kills your own shell. Make sure no old
     instance is still running before starting a new one.

@@ -258,15 +258,15 @@ void NewGameScreen::input(const SDL_Event & event){
             m_logNameTextField->deselect();
 
         if (m_boardCountTextField->isInside(x, y))
-            m_boardCountTextField->select();
+            m_boardCountTextField->click(x);
         else if (m_boardSizeTextField->isInside(x, y))
-            m_boardSizeTextField->select();
+            m_boardSizeTextField->click(x);
         else if (m_lineSizeTextField->isInside(x, y))
-            m_lineSizeTextField->select();
+            m_lineSizeTextField->click(x);
         else if (m_gameSeedTextField->isInside(x, y))
-            m_gameSeedTextField->select();
+            m_gameSeedTextField->click(x);
         else if (m_logNameTextField->isInside(x, y))
-            m_logNameTextField->select();
+            m_logNameTextField->click(x);
         else if (m_startGameButton->isInside(x, y))
             m_startGameButton->click();
         else if (m_returnButton->isInside(x, y))

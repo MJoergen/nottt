@@ -49,6 +49,7 @@ public:
     const bool isSelected() { return m_selected; }
     void select() { SDL_StartTextInput(); m_selected = true; }
     void deselect() { SDL_StopTextInput(); m_selected = false; }
+    void click(const int& x);
 
     bool m_changed = false;
     

@@ -38,10 +38,6 @@ section.
 
 ## GUI
 
-- [ ] 1. **Text fields are hard to edit.** The cursor starts at position 0 even
-  when the field is prefilled, and clicking does not move it. Typing "5" into a
-  field showing "4" gives "54". Start the cursor at the end, and move it on
-  click.
 - [ ] 3. **"Write log" always fails.** It writes to `logs/<name>`, but nothing
   creates `logs/`. Log names are not sanitised either, so `../x` escapes the
   directory.

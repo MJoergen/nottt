@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "TextField.h"
 #include "../NTTTManager.h"
 
@@ -9,7 +10,26 @@ TextField::TextField(SDL_Renderer *renderer, const FieldType fieldType, const st
     m_limit = limit;
     m_content = content;
     m_font = font;
+    m_cursor = m_content.length();
+    calculateCursorPPos(m_cursor_ppos);
     genTexture(renderer);
+}
+
+void TextField::click(const int& x){
+    select();
+
+    // Move the cursor to the character boundary nearest to the click.
+    const int clickPos = x - m_x - m_paddingX;
+    m_cursor = 0;
+    m_cursor_ppos = 0;
+    for (unsigned int i = 1; i <= m_content.length(); i++){
+        int w, h;
+        TTF_SizeText(m_font, m_content.substr(0, i).c_str(), &w, &h);
+        if (std::abs(w - clickPos) >= std::abs((int) m_cursor_ppos - clickPos))
+            break;
+        m_cursor = i;
+        m_cursor_ppos = w;
+    }
 }
 
 TextField::~TextField(){
