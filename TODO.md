@@ -44,8 +44,6 @@ section.
 - [ ] 4. **"Load Game" and "Statistics" are not implemented.** They show a blank
   screen. `GUI/Screens/StatisticsScreen.h` is empty, and `onReadLogClick` is
   commented out.
-- [ ] 5. Pressing Exit only quits on the next event (e.g. a mouse movement),
-  because `quit` is set in `input()` for the `EXIT` state.
 - [ ] 6. **Data races between threads.** The game thread modifies `m_moves` and
   the game state while the render thread reads them, without locking. The
   shared flags are plain `bool`s.

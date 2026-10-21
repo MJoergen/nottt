@@ -285,7 +285,7 @@ void NTTTManager::update(){
         //TODO
         break;
     case Screen::EXIT:
-        //TODO
+        quit = true;
         break;
     }
 
@@ -312,7 +312,6 @@ void NTTTManager::input(SDL_Event & event) {
         //TODO
         break;
     case Screen::EXIT:
-        quit = true;
         break;
     }
 }
