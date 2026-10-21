@@ -260,18 +260,27 @@ void GameScreen::initialize(SDL_Renderer *renderer){
     //<-----
 
     const int x = m_playingFieldSize;
-    const int y = 0;
     const int width = m_width - x;
     const SDL_Color black = { 0, 0, 0, 255 };
 
-    m_vsText = new Text(renderer, " vs ", m_headlineFont, { 0, 0, 0 }, x, y);
-    m_vsText->set(x - m_vsText->getWidth() / 2 + width / 2, PADDING_Y);
+    m_player1Text = new Text(renderer, m_player1->getName(), m_headlineFont, { 255, 0, 0 }, x, PADDING_Y);
+    m_vsText = new Text(renderer, " vs ", m_headlineFont, { 0, 0, 0 }, x, PADDING_Y);
+    m_player2Text = new Text(renderer, m_player2->getName(), m_headlineFont, { 0, 0, 255 }, x, PADDING_Y);
 
-    m_player1Text = new Text(renderer, m_player1->getName(), m_headlineFont, { 255, 0, 0 }, x, m_vsText->getY());
-    m_player2Text = new Text(renderer, m_player2->getName(), m_headlineFont, { 0, 0, 255 }, m_vsText->getX() + m_vsText->getWidth(), m_vsText->getY());
-    m_player1Text->setX(m_vsText->getX() - m_player1Text->getWidth());
+    //Centers the title "<player1> vs <player2>", moving <player2> to a second line if the title is too wide
+    const int titleWidth = m_player1Text->getWidth() + m_vsText->getWidth() + m_player2Text->getWidth();
+    if (titleWidth <= width - (int) PADDING_X * 2){
+        m_player1Text->setX(x + (width - titleWidth) / 2);
+        m_vsText->setX(m_player1Text->getX() + m_player1Text->getWidth());
+        m_player2Text->setX(m_vsText->getX() + m_vsText->getWidth());
+    }
+    else{
+        m_player1Text->setX(x + (width - (int)(m_player1Text->getWidth() + m_vsText->getWidth())) / 2);
+        m_vsText->setX(m_player1Text->getX() + m_player1Text->getWidth());
+        m_player2Text->set(x + (width - (int) m_player2Text->getWidth()) / 2, m_player1Text->getY() + m_player1Text->getHeight());
+    }
 
-    m_boardCountText = new Text(renderer, "BoardCount: " + std::to_string(*m_boardCount), m_guiFont, black, x, m_vsText->getY() + m_vsText->getHeight() + PADDING_Y * 2);
+    m_boardCountText = new Text(renderer, "BoardCount: " + std::to_string(*m_boardCount), m_guiFont, black, x, m_player2Text->getY() + m_player2Text->getHeight() + PADDING_Y * 2);
     m_boardCountText->setX(x + width / 2 - m_boardCountText->getWidth() / 2);
 
     m_boardSizeText = new Text(renderer, "BoardSize: " + std::to_string(*m_boardSize), m_guiFont, black, x, m_boardCountText->getY() + m_boardCountText->getHeight() + PADDING_Y);

@@ -64,8 +64,6 @@ section.
   their right and bottom edges, and right and middle clicks also count.
 - [ ] 13. `srand()` is called before every move, so the bots get the same random
   sequence on every move.
-- [ ] 14. The title "IceBot v2 vs MikeBot v6" is cut off at the right edge of the
-  game screen.
 - [ ] 15. A long number in the board count field is drawn past the edge of the
   field.
 
