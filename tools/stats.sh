@@ -1,14 +1,13 @@
 #!/bin/bash
-rm log-*.txt
-time nottt 1 3 3 100 log-1-3-3.txt | tail -n 11
-time nottt 2 3 3 100 log-2-3-3.txt | tail -n 11
-time nottt 3 3 3 100 log-3-3-3.txt | tail -n 11
-time nottt 1 4 3 100 log-1-4-3.txt | tail -n 11
-time nottt 2 4 3 100 log-2-4-3.txt | tail -n 11
-time nottt 3 4 3 100 log-3-4-3.txt | tail -n 11
-time nottt 1 5 3 100 log-1-5-3.txt | tail -n 11
-time nottt 2 5 3 100 log-2-5-3.txt | tail -n 11
-time nottt 3 5 3 100 log-3-5-3.txt | tail -n 11
-time nottt 1 6 3 100 log-1-6-3.txt | tail -n 11
-time nottt 2 6 3 100 log-2-6-3.txt | tail -n 11
-time nottt 3 6 3 100 log-3-6-3.txt | tail -n 11
+# Runs a series of tournaments and prints the final results table of each.
+cd "$(dirname "$0")/.." || exit 1
+
+# Keep only the last results table, whatever the number of players.
+results() { tac | sed '/^Results from round/q' | tac; }
+
+rm -f log-*.txt
+for size in 3 4 5 6; do
+    for count in 1 2 3; do
+        time ./nottt $count $size 3 100 log-$count-$size-3.txt | results
+    done
+done

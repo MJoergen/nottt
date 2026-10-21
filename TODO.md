@@ -43,8 +43,5 @@ section.
 ## Build, scripts and repository
 
 - [ ] 1. `make install` only installs `nottt`, not the tools.
-- [ ] 2. `stats.sh` runs `nottt` from `PATH` instead of `./nottt`, prints an
-  error from `rm log-*.txt` when there are no logs, and assumes exactly 7
-  players (`tail -n 11`).
 - [ ] 3. The program must be run from the repository root, because assets and
   tablebases are loaded from the current directory.
