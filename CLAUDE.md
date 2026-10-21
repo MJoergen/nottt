@@ -11,6 +11,8 @@ and TODO.md for known issues. When an item in TODO.md is fixed, remove it.
 - Use LF line endings. Edit with the Edit tool rather than Python text-mode
   rewrites, which silently change line endings.
 - Indent C++ with 4 spaces, never tabs. The `Makefile` must keep its tabs.
+- C++ layout is set by `.clang-format` and naming by `.clang-tidy`. Run
+  `make format` and then `make check-style` before showing a change.
 
 ## Building and running
 

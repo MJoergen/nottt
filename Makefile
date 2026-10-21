@@ -70,6 +70,8 @@ ifeq ($(TARGET),linux)
 endif
 	$(help_line) install "Copy $(program) to $(BINDIR) (override with BINDIR=...)"
 	$(help_line) clean "Remove all build output"
+	$(help_line) format "Reformat the C++ sources with clang-format"
+	$(help_line) check-style "Check layout (clang-format) and naming (clang-tidy)"
 
 all: $(program) $(tools)
 
@@ -93,7 +95,7 @@ build/%.d: src/%.cpp Makefile
 		[ -s $@ ] || rm -f $@
 
 # The dependency files are only needed when building, not for help or clean.
-ifneq ($(filter-out help clean,$(MAKECMDGOALS)),)
+ifneq ($(filter-out help clean format check-style,$(MAKECMDGOALS)),)
 include $(depends)
 endif
 
@@ -104,5 +106,15 @@ clean:
 	-rm -rf build
 	-rm -f $(program) $(tools) gmon.out
 
-.PHONY: help all install clean
+# The style rules are in .clang-format (layout) and .clang-tidy (naming).
+style_sources = $(wildcard src/*.cpp src/*.h src/GUI/*.cpp src/GUI/*.h src/GUI/Screens/*.cpp src/GUI/Screens/*.h tools/*.cpp)
+
+format:
+	clang-format -i $(style_sources)
+
+check-style:
+	clang-format --dry-run -Werror $(style_sources)
+	clang-tidy --quiet $(filter %.cpp,$(style_sources)) -- $(filter -std=%,$(DEFINES)) -Isrc $(INCLUDE_DIRS)
+
+.PHONY: help all install clean format check-style
 

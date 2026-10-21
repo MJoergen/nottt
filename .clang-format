@@ -1,0 +1,16 @@
+# Code layout for the C++ sources. Run clang-format on a file before committing.
+BasedOnStyle: LLVM
+IndentWidth: 4
+UseTab: Never
+ColumnLimit: 0
+BreakBeforeBraces: Attach
+AccessModifierOffset: -4
+IndentCaseLabels: true
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AlignConsecutiveAssignments: Consecutive
+PointerAlignment: Right
+ReferenceAlignment: Left
+MaxEmptyLinesToKeep: 2
+SortIncludes: Never
