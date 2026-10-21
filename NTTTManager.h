@@ -32,7 +32,7 @@ class NTTTManager
 
         TTF_Font* m_font = NULL;                        //Pointer pointing to the representation of the font
         const int FONT_SIZE = 30;                               //The size of the font
-        const std::string FONT_PATH = "Junicode-Regular.ttf";   //The path to the font
+        const std::string FONT_PATH = "assets/Junicode-Regular.ttf";   //The path to the font
 
         NTTTGame *m_game;
 

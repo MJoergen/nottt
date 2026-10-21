@@ -79,9 +79,9 @@ bool NTTTManager::init()
         return false;
     }
 
-    m_redCross = new Texture(m_renderer, "RedCross.png");
-    m_blueCross = new Texture(m_renderer, "BlueCross.png");
-    m_checkMark = new Texture(m_renderer, "CheckMark.png");
+    m_redCross = new Texture(m_renderer, "assets/RedCross.png");
+    m_blueCross = new Texture(m_renderer, "assets/BlueCross.png");
+    m_checkMark = new Texture(m_renderer, "assets/CheckMark.png");
     m_game = new NTTTGame();
 
     //New GUI system

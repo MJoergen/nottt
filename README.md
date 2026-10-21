@@ -74,8 +74,7 @@ copy the contents of each archive's `i686-w64-mingw32` directory into
 ## Running
 
 Run the program from the repository root, since it loads its assets
-(`*.png`, `Junicode-Regular.ttf`) and tablebases (`egtb-*.bit`) from the
-current directory.
+(`assets/`) and tablebases (`egtb-*.bit`) relative to the current directory.
 
 ### GUI
 
@@ -156,6 +155,7 @@ GUI/                  Widgets and screens
 egtb.cpp, egtb.sh     Tablebase generator
 egtb-stats.cpp        Tablebase statistics
 trace.h               Logging helper
+assets/               Images and font used by the GUI
 ```
 
 ## Known issues
@@ -165,4 +165,4 @@ See [TODO.md](TODO.md) for known bugs and planned improvements.
 ## License
 
 The bundled Junicode font is distributed under the SIL Open Font License
-(see `SIL Open Font License.txt`).
+(see `assets/SIL Open Font License.txt`).
