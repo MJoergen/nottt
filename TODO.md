@@ -85,8 +85,6 @@ ordered by importance within each group.
 ## Game core and tournament mode
 
 - [ ] The tournament ignores the bots' `chooseOrder()` result.
-- [ ] `main.cpp` never deletes the players. `dispResults()` takes the players
-  vector by value.
 - [ ] First/second-player percentages are truncated rather than rounded, so
   they do not add up to 100%.
 

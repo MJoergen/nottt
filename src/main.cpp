@@ -16,7 +16,7 @@ std::ostream *gpLog = nullptr;
 /*
  * Play a single game between two players.
  */
-static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, unsigned int first, unsigned int second, int seed)
+static unsigned int playGame(NTTTGame& game, const std::vector<NTTTPlayer *>& players, unsigned int first, unsigned int second, int seed)
 {
     srand(seed);
 
@@ -62,7 +62,7 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
     return player;
 } // end of playGame
 
-static void dispResults(std::vector<NTTTPlayer *> players,
+static void dispResults(const std::vector<NTTTPlayer *>& players,
         const std::vector< std::vector<int> > & table, int order[2], int count)
 {
     // Calculate total number of games. 
@@ -112,7 +112,7 @@ static void dispResults(std::vector<NTTTPlayer *> players,
 /*
  * Play an entire tournament (round robin) between an array of players.
  */
-static void playMatch(std::vector<NTTTPlayer *> players, int boardCount, int boardSize, int lineSize, int count)
+static void playMatch(const std::vector<NTTTPlayer *>& players, int boardCount, int boardSize, int lineSize, int count)
 {
     // Contains the number of wins for each player against each other player.
     std::vector< std::vector<int> > table;
@@ -238,6 +238,9 @@ int main(int argc, char *argv[]) {
         std::vector<NTTTPlayer *> players = {playerMike1, playerMike2, playerMike3, playerMike4, playerMike5, playerMike6, playerIce};
 
         playMatch(players, boardCount, boardSize, lineSize, numGames);
+
+        for (NTTTPlayer *player : players)
+            delete player;
 
         if (gpLog)
         {
