@@ -111,8 +111,6 @@ ordered by importance within each group.
 
 ## Build, scripts and repository
 
-- [ ] Object files do not depend on the `Makefile`, so changing `DEFINES` does
-  not rebuild them.
 - [ ] `make install` only installs `nottt`, not the tools.
 - [ ] `stats.sh` runs `nottt` from `PATH` instead of `./nottt`, prints an
   error from `rm log-*.txt` when there are no logs, and assumes exactly 7

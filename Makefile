@@ -86,7 +86,7 @@ install: $(program)
 	mkdir -p $(BINDIR)
 	cp $(program) $(BINDIR)
 
-build/%.d: src/%.cpp
+build/%.d: src/%.cpp Makefile
 	@mkdir -p $(@D)
 	set -e; $(CC) -M -MT build/$*.o $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
 		| sed 's#\(build/$*\)\.o[ :]*#\1.o $@ : #g' > $@; \
@@ -97,7 +97,7 @@ ifneq ($(filter-out help clean,$(MAKECMDGOALS)),)
 include $(depends)
 endif
 
-build/%.o: src/%.cpp
+build/%.o: src/%.cpp Makefile
 	$(CC) $(DEFINES) $(INCLUDE_DIRS) -c $< -o $@
 
 clean:
