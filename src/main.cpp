@@ -103,10 +103,12 @@ static void dispResults(const std::vector<NTTTPlayer *>& players,
         std::cout << " : " << std::setw(3) << points << " (" << win_percent << "%)" << std::endl;
     }
 
+    // Round the first percentage, and derive the second, so they add up to 100%.
+    int first_percent = floor(order[0]*100.0/totalGames + 0.5);
     std::cout << "First player wins: " << order[0];
-    std::cout << " (" << (order[0]*100)/totalGames << "%)" << std::endl;
+    std::cout << " (" << first_percent << "%)" << std::endl;
     std::cout << "Second player wins: " << order[1];
-    std::cout << " (" << (order[1]*100)/totalGames << "%)" << std::endl;
+    std::cout << " (" << 100 - first_percent << "%)" << std::endl;
 } // end of dispResults
 
 /*

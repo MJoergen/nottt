@@ -85,8 +85,6 @@ ordered by importance within each group.
 ## Game core and tournament mode
 
 - [ ] The tournament ignores the bots' `chooseOrder()` result.
-- [ ] First/second-player percentages are truncated rather than rounded, so
-  they do not add up to 100%.
 
 ## Build, scripts and repository
 
