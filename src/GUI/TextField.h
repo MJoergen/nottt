@@ -20,10 +20,12 @@ private:
 
     const int PADDING_X = 3, PADDING_Y = 5;
 
-    int m_limit               = -1;
-    unsigned int m_cursor     = 0;
-    unsigned int m_cursorPPos = 0;
-    void calculateCursorPPos(unsigned int& cursorPPos);
+    // The largest value of a NUMBER field, or the longest content of a TEXT
+    // field. Negative means no limit.
+    int m_limit                 = -1;
+    unsigned int m_cursor       = 0;
+    unsigned int m_cursorPixelX = 0;
+    void updateCursorPixelX();
     unsigned int m_scroll = 0; // Pixels of text scrolled out on the left
     void updateScroll();
 

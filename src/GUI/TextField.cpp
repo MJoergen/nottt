@@ -12,7 +12,7 @@ TextField::TextField(SDL_Renderer *renderer, const FieldType fieldType, const st
     m_content   = content;
     m_font      = font;
     m_cursor    = m_content.length();
-    calculateCursorPPos(m_cursorPPos);
+    updateCursorPixelX();
     genTexture(renderer);
 }
 
@@ -22,14 +22,14 @@ void TextField::click(const int& x) {
     // Move the cursor to the character boundary nearest to the click.
     const int clickPos = x - m_x - PADDING_X + m_scroll;
     m_cursor           = 0;
-    m_cursorPPos       = 0;
+    m_cursorPixelX     = 0;
     for (unsigned int i = 1; i <= m_content.length(); i++) {
         int w, h;
         TTF_SizeText(m_font, m_content.substr(0, i).c_str(), &w, &h);
-        if (std::abs(w - clickPos) >= std::abs((int)m_cursorPPos - clickPos))
+        if (std::abs(w - clickPos) >= std::abs((int)m_cursorPixelX - clickPos))
             break;
-        m_cursor     = i;
-        m_cursorPPos = w;
+        m_cursor       = i;
+        m_cursorPixelX = w;
     }
     updateScroll();
 }
@@ -78,7 +78,7 @@ void TextField::render(SDL_Renderer *renderer, const int& time) const {
         const int height       = m_texture->getHeight();
         m_texture->render(renderer, m_scroll, 0, visibleWidth, height, m_x + PADDING_X, m_y + PADDING_Y, visibleWidth, height);
         if (m_selected && time % 2000 >= 1000) {
-            const int cursorX = m_x + PADDING_X + m_cursorPPos - m_scroll;
+            const int cursorX = m_x + PADDING_X + m_cursorPixelX - m_scroll;
             SDL_RenderDrawLine(renderer, cursorX, m_y + m_texture->getHeight() + PADDING_Y, cursorX, m_y + PADDING_Y);
         }
     }
@@ -88,8 +88,7 @@ bool TextField::isInside(const int& x, const int& y) const {
     return m_x <= x && x < m_x + (int)getWidth() && m_y <= y && y < m_y + (int)getHeight();
 }
 
-bool isNumber(const std::string& s) // Checks if a string is a number
-{
+static bool isAllDigits(const std::string& s) {
     return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
 }
 
@@ -105,7 +104,7 @@ void TextField::onKeyPress(const SDL_Keysym& keysym) {
     if (keysym.sym == SDLK_BACKSPACE) {
         if (m_cursor > 0) {
             m_content.erase(--m_cursor, 1);
-            calculateCursorPPos(m_cursorPPos);
+            updateCursorPixelX();
             m_changed = true;
         }
     }
@@ -120,13 +119,13 @@ void TextField::onKeyPress(const SDL_Keysym& keysym) {
     if (keysym.sym == SDLK_LEFT)
         if (m_cursor > 0) {
             m_cursor--;
-            calculateCursorPPos(m_cursorPPos);
+            updateCursorPixelX();
         }
 
     if (keysym.sym == SDLK_RIGHT)
         if (m_cursor < m_content.length()) {
             m_cursor++;
-            calculateCursorPPos(m_cursorPPos);
+            updateCursorPixelX();
         }
 }
 
@@ -135,36 +134,36 @@ void TextField::onTextInput(const std::string& text) {
         return;
 
     if (m_fieldType == NUMBER) {
-        if (!isNumber(text))
+        if (!isAllDigits(text))
             return;
         m_content.insert(m_cursor, text);
         if (m_limit >= 0 && std::stoll(m_content) > m_limit) {
             m_content.erase(m_cursor, 1);
         } else {
             m_cursor += text.length();
-            calculateCursorPPos(m_cursorPPos);
+            updateCursorPixelX();
             m_changed = true;
         }
     } else {
         if (m_limit < 0 || m_content.length() + text.length() <= (unsigned)m_limit) {
             m_content.insert(m_cursor, text);
             m_cursor += text.length();
-            calculateCursorPPos(m_cursorPPos);
+            updateCursorPixelX();
             m_changed = true;
         }
     }
 }
 
 
-void TextField::calculateCursorPPos(unsigned int& cursorPPos) {
+void TextField::updateCursorPixelX() {
     if (m_cursor == 0)
-        cursorPPos = 0;
+        m_cursorPixelX = 0;
     else {
         int w, h;
         std::string content = m_content;
         content.resize(m_cursor);
         TTF_SizeText(m_font, content.c_str(), &w, &h);
-        cursorPPos = w;
+        m_cursorPixelX = w;
     }
     updateScroll();
 }
@@ -176,8 +175,8 @@ void TextField::updateScroll() {
     int textWidth, h;
     TTF_SizeText(m_font, m_content.c_str(), &textWidth, &h);
     int scroll = std::min((int)m_scroll, std::max(0, textWidth - visibleWidth));
-    scroll     = std::min(scroll, (int)m_cursorPPos);
-    scroll     = std::max(scroll, (int)m_cursorPPos - visibleWidth);
+    scroll     = std::min(scroll, (int)m_cursorPixelX);
+    scroll     = std::max(scroll, (int)m_cursorPixelX - visibleWidth);
     m_scroll   = scroll;
 }
 
