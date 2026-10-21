@@ -36,7 +36,7 @@ public:
     virtual void update(SDL_Renderer *renderer);
     virtual void prepareForQuit();
     virtual void cleanUp();
-    int manageGame();
+    int runGame();
 
     // The number of moves in the move list, including those that did not fit.
     unsigned int getMovesCount() {
@@ -47,7 +47,7 @@ public:
     }
 
 private:
-    bool m_isThreadProperlyClosed = true;
+    bool m_isThreadJoined = true;
 
     void startGame(SDL_Renderer *renderer);
     bool m_isInitialized;
@@ -66,7 +66,7 @@ private:
 
     // These are only set before the game thread starts, so need no locking.
     int *m_boardCount = nullptr, *m_boardSize = nullptr, *m_lineSize = nullptr, *m_gameSeed = nullptr;
-    bool *m_manualMode = nullptr, *m_writeLog = nullptr;
+    bool *m_manualMode = nullptr, *m_shouldWriteLog = nullptr;
     std::string *m_logName = nullptr;
 
     std::atomic<bool> m_forward{false}, m_backward{false};
@@ -84,7 +84,7 @@ private:
     // winner and the list of moves.
     Text *m_player1Text = nullptr, *m_player2Text = nullptr, *m_vsText = nullptr, *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr;
     Text *m_winnerText = nullptr, *m_winnerDisplayText = nullptr;
-    unsigned int m_amountInColumn, m_amountInRow;
+    unsigned int m_movesPerColumn, m_movesPerRow;
 
     std::vector<Text *> m_movesTexts;
 

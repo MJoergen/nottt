@@ -6,13 +6,13 @@
 #include <algorithm>
 #include <fstream>
 
-static int manageGameStatic(void *data) {
+static int runGameStatic(void *data) {
     GameScreen *pGameScreen = static_cast<GameScreen *>(data);
-    return pGameScreen->manageGame();
+    return pGameScreen->runGame();
 }
 
 void GameScreen::prepareForQuit() {
-    if (!m_isThreadProperlyClosed) {
+    if (!m_isThreadJoined) {
         int status;
         SDL_WaitThread(m_gameThread, &status);
         std::cout << "Game ended: " << status << std::endl;
@@ -60,7 +60,7 @@ void GameScreen::writeLog(const int winner) const {
     outputFile.close();
 }
 
-int GameScreen::manageGame() {
+int GameScreen::runGame() {
     int player = 1;
     NTTTMove move(0, 0, 0);
     bool gameActive = true;
@@ -118,7 +118,7 @@ int GameScreen::manageGame() {
     }
 
 
-    if (*m_writeLog)
+    if (*m_shouldWriteLog)
         writeLog(m_winner);
 
 
@@ -134,13 +134,13 @@ GameScreen::GameScreen(GameData data) {
     m_game      = data.game;
     m_movesFont = data.movesFont;
 
-    m_boardCount = data.boardCount;
-    m_boardSize  = data.boardSize;
-    m_lineSize   = data.lineSize;
-    m_gameSeed   = data.gameSeed;
-    m_manualMode = data.manualMode;
-    m_writeLog   = data.writeLog;
-    m_logName    = data.logName;
+    m_boardCount     = data.boardCount;
+    m_boardSize      = data.boardSize;
+    m_lineSize       = data.lineSize;
+    m_gameSeed       = data.gameSeed;
+    m_manualMode     = data.manualMode;
+    m_shouldWriteLog = data.writeLog;
+    m_logName        = data.logName;
 
     m_quit = data.quit;
 
@@ -162,12 +162,12 @@ void GameScreen::update(SDL_Renderer *renderer) {
     if (!m_isInitialized) {
         startGame(renderer);
         m_isInitialized = true;
-    } else if (!m_isGameThreadRunning && !m_isThreadProperlyClosed) {
+    } else if (!m_isGameThreadRunning && !m_isThreadJoined) {
         int status;
         SDL_WaitThread(m_gameThread, &status);
         std::cout << "Game ended: " << status << std::endl;
-        m_isInitialized          = false;
-        m_isThreadProperlyClosed = true;
+        m_isInitialized  = false;
+        m_isThreadJoined = true;
 
         (*m_currentState) = MAIN_MENU;
     }
@@ -209,8 +209,8 @@ void GameScreen::addMove(SDL_Renderer *renderer, NTTTMove move) {
     Text *text = new Text(renderer, std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX()) + ", " + std::to_string(move.getSquareY()) + ")", m_movesFont, {255, 255, 255}, 0,
                           0);
 
-    text->set(x + 2 * PADDING_X + (int)(m_movesTexts.size() / m_amountInColumn) * m_movesWidth + m_movesWidth / 2 - text->getWidth() / 2,
-              m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (m_movesTexts.size() % m_amountInColumn) * m_movesHeight + m_movesHeight / 2 - text->getHeight() / 2);
+    text->set(x + 2 * PADDING_X + (int)(m_movesTexts.size() / m_movesPerColumn) * m_movesWidth + m_movesWidth / 2 - text->getWidth() / 2,
+              m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (m_movesTexts.size() % m_movesPerColumn) * m_movesHeight + m_movesHeight / 2 - text->getHeight() / 2);
 
     m_movesTexts.push_back(text);
 }
@@ -310,15 +310,15 @@ void GameScreen::startGame(SDL_Renderer *renderer) {
 
     m_movesWidth = w + PADDING_X * 2; // Estimate
 
-    m_amountInColumn = (int)((m_height - (m_winnerText->getY() + m_winnerText->getHeight() + 3 * PADDING_Y)) / m_movesHeight);
-    m_amountInRow    = (int)((width - PADDING_X * 2) / m_movesWidth);
-    m_maxMoves       = m_amountInColumn * m_amountInRow;
+    m_movesPerColumn = (int)((m_height - (m_winnerText->getY() + m_winnerText->getHeight() + 3 * PADDING_Y)) / m_movesHeight);
+    m_movesPerRow    = (int)((width - PADDING_X * 2) / m_movesWidth);
+    m_maxMoves       = m_movesPerColumn * m_movesPerRow;
 
     m_moves.clear();
-    m_shownMoves             = 0;
-    m_isThreadProperlyClosed = false;
-    m_isGameThreadRunning    = true;
-    m_gameThread             = SDL_CreateThread(manageGameStatic, "Game Thread", this);
+    m_shownMoves          = 0;
+    m_isThreadJoined      = false;
+    m_isGameThreadRunning = true;
+    m_gameThread          = SDL_CreateThread(runGameStatic, "Game Thread", this);
     if (m_gameThread == NULL) {
         std::cout << "Failed to create thread: " << SDL_GetError() << std::endl;
         m_isGameThreadRunning = false;
@@ -383,8 +383,8 @@ void GameScreen::render(SDL_Renderer *renderer) const {
                 break;
         }
         const int x   = m_playingFieldSize;
-        SDL_Rect rect = {(int)(x + 2 * PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth),
-                         (int)(m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_amountInColumn) * m_movesHeight), m_movesWidth, m_movesHeight};
+        SDL_Rect rect = {(int)(x + 2 * PADDING_X + (int)(index / m_movesPerColumn) * m_movesWidth),
+                         (int)(m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_movesPerColumn) * m_movesHeight), m_movesWidth, m_movesHeight};
         SDL_RenderFillRect(renderer, &rect);
         m_movesTexts[index]->render(renderer);
     }
