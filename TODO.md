@@ -37,7 +37,3 @@ section.
   commented out.
 - [ ] 13. `srand()` is called before every move, so the bots get the same random
   sequence on every move.
-
-## Build, scripts and repository
-
-- [ ] 1. `make install` only installs `nottt`, not the tools.

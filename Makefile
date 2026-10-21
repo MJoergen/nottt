@@ -56,7 +56,11 @@ ifeq ($(TARGET),linux)
 tools = egtb egtb-stats
 endif
 
-BINDIR ?= $(HOME)/bin
+# The programs go to $(PREFIX)/bin and the data files to $(PREFIX)/share/nottt,
+# which is where the game looks for them relative to its executable.
+PREFIX ?= $(HOME)
+BINDIR  = $(PREFIX)/bin
+DATADIR = $(PREFIX)/share/nottt
 
 help_line = @printf "  make %-11s %s\n"
 
@@ -69,7 +73,7 @@ ifeq ($(TARGET),linux)
 	$(help_line) egtb "Build the tablebase generator"
 	$(help_line) egtb-stats "Build the tablebase statistics tool"
 endif
-	$(help_line) install "Copy $(program) to $(BINDIR) (override with BINDIR=...)"
+	$(help_line) install "Install $(strip $(program) $(tools)) and the data files in $(PREFIX) (override with PREFIX=...)"
 	$(help_line) clean "Remove all build output"
 	$(help_line) format "Reformat the C++ sources with clang-format"
 	$(help_line) check-style "Check layout (clang-format) and naming (clang-tidy)"
@@ -85,9 +89,11 @@ egtb: tools/egtb.cpp Makefile
 egtb-stats: tools/egtb-stats.cpp Makefile
 	$(CC) -o $@ $(filter-out -DNDEBUG,$(DEFINES)) $< -lstdc++
 
-install: $(program)
-	mkdir -p $(BINDIR)
-	cp $(program) $(BINDIR)
+install: $(program) $(tools)
+	mkdir -p $(BINDIR) $(DATADIR)/assets $(DATADIR)/tables
+	cp $(program) $(tools) $(BINDIR)
+	cp assets/* $(DATADIR)/assets
+	cp tables/*.bit $(DATADIR)/tables
 
 build/%.d: src/%.cpp Makefile
 	@mkdir -p $(@D)

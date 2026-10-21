@@ -30,8 +30,11 @@ Then:
 ```sh
 make                # lists all targets
 make all            # builds nottt, egtb and egtb-stats
-make install        # copies nottt to ~/bin (override with BINDIR=...)
+make install        # installs in ~ (override with PREFIX=...)
 ```
+
+`make install` copies the programs to `$(PREFIX)/bin`, and the assets and
+tablebases to `$(PREFIX)/share/nottt`.
 
 Setting `TARGET = windows` in the `Makefile` cross-compiles `nottt.exe` with
 MinGW (`i686-w64-mingw32-g++`). The tablebase tools use `mmap` and are only
