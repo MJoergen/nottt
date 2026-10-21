@@ -15,9 +15,7 @@ class Board
         Board() : 
             m_filePath(""),
             m_fileSize(0),
-            m_egtb(nullptr) {
-                initHash();
-            }
+            m_egtb(nullptr) {}
         ~Board() {
             if (m_egtb)
             {
@@ -89,13 +87,13 @@ class Board
     private:
 
 #define HASH_SIZE (65536*16)
-        uint64_t m_hashBoard[HASH_SIZE];
-        int      m_hashVal[HASH_SIZE];
+        std::vector<uint64_t> m_hashBoard;
+        std::vector<int>      m_hashVal;
 
-        int      m_statLookup;
-        int      m_statFound;
-        int      m_statWrote;
-        int      m_statCollision;
+        int      m_statLookup    = 0;
+        int      m_statFound     = 0;
+        int      m_statWrote     = 0;
+        int      m_statCollision = 0;
 
         int m_boardCount;
         int m_boardSize;

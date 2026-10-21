@@ -55,6 +55,11 @@ void Board::init(const NTTTGame& game)
         m_egtb = nullptr;
     }
 
+    // The cached board evaluations depend on the board size and line size,
+    // so they are kept across games unless one of these changes.
+    if (m_hashBoard.empty() || game.getBoardSize() != m_boardSize || game.getLineSize() != m_lineSize)
+        initHash();
+
     m_boardCount = game.getBoardCount();
     m_boardSize  = game.getBoardSize();
     m_lineSize   = game.getLineSize();
@@ -340,16 +345,8 @@ static const int values_v6[1024] = {
 
 void Board::initHash()
 {
-    for (int i=0; i<HASH_SIZE; ++i)
-    {
-        m_hashBoard[i] = 0;
-        m_hashVal[i]   = 0;
-    }
-
-    m_statLookup    = 0;
-    m_statFound     = 0;
-    m_statWrote     = 0;
-    m_statCollision = 0;
+    m_hashBoard.assign(HASH_SIZE, 0);
+    m_hashVal.assign(HASH_SIZE, 0);
 } // end of initHash
 
 /**
