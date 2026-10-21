@@ -16,14 +16,14 @@ and TODO.md for known issues. When an item in TODO.md is fixed, remove it.
 
 - `make` only lists the targets; `make all` builds `nottt`, `egtb` and
   `egtb-stats`.
-- Run everything from the repository root: assets and `egtb-*.bit` tables are
-  loaded from the current directory.
+- Run everything from the repository root: `assets/` and `tables/` are found
+  relative to the current directory.
 - Never run `./nottt` without arguments outside Xvfb: it opens the GUI on the
   user's desktop. Use the tournament mode
   (`./nottt <boardCount> <boardSize> <lineSize> <numGames>`) for bot tests.
 - Run `egtb` in a scratch directory. It writes `egtb-<size>-<line>.bit` to the
-  current directory, and the tracked tables must not change. `egtb.sh` deletes
-  and regenerates the tracked tables.
+  current directory, and the tracked tables in `tables/` must not change.
+  `egtb.sh` deletes and regenerates the tracked tables.
 
 ## Testing
 

@@ -74,7 +74,7 @@ copy the contents of each archive's `i686-w64-mingw32` directory into
 ## Running
 
 Run the program from the repository root, since it loads its assets
-(`assets/`) and tablebases (`egtb-*.bit`) relative to the current directory.
+(`assets/`) and tablebases (`tables/`) relative to the current directory.
 
 ### GUI
 
@@ -127,11 +127,12 @@ implement `chooseOrder`, `performMove` and `getName`.
 ## Endgame tablebases
 
 `egtb <boardSize> <lineSize>` solves every position on a single board by
-retrograde analysis and writes `egtb-<boardSize>-<lineSize>.bit`, one bit per
-position (bit set = the side to move wins). Board sizes 2–5 are supported.
-`egtb.sh` regenerates all tablebases from 2×2 to 5×5, and `egtb.log` holds
-the resulting per-move-count statistics. `egtb-stats` reads a generated
-tablebase and prints further statistics.
+retrograde analysis and writes `egtb-<boardSize>-<lineSize>.bit` to the
+current directory, one bit per position (bit set = the side to move wins).
+Board sizes 2–5 are supported. `egtb.sh` regenerates all tablebases from 2×2
+to 5×5 in `tables/`, and `tables/egtb.log` holds the resulting
+per-move-count statistics. `egtb-stats` reads a generated tablebase from the
+current directory and prints further statistics.
 
 Some results (see the comment at the top of `egtb.cpp`):
 
@@ -156,6 +157,7 @@ egtb.cpp, egtb.sh     Tablebase generator
 egtb-stats.cpp        Tablebase statistics
 trace.h               Logging helper
 assets/               Images and font used by the GUI
+tables/               Generated tablebases and their statistics
 ```
 
 ## Known issues

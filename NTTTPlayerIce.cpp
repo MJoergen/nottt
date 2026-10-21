@@ -207,7 +207,7 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
         }
 
         std::ostringstream oss;
-        oss << "egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
+        oss << "tables/egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
         std::string filePath = oss.str();
 
         std::ifstream inputFileStream(filePath, std::ifstream::binary);

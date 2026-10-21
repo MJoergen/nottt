@@ -106,7 +106,7 @@ void Board::loadEgtb()
         return;
 
     std::ostringstream oss;
-    oss << "egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
+    oss << "tables/egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
     std::string filePath = oss.str();
 
     std::ifstream file(filePath, std::ios::binary | std::ios::in);
