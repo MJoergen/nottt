@@ -196,16 +196,17 @@ int main(int argc, char *argv[]) {
 	NTTTManager ntttManager;
 
 	if (!ntttManager.init()){ //Initializes SDL2, SDL2_image, SDL2_ttf and global variables. If something went wrong. The program is terminated.
+#ifdef _WIN32
+		// Keep the console window open, so the error message can be read.
 		std::cout << "Press ENTER to continue..." << std::endl;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+#endif
 		return 1;
 	}
 
 	ntttManager.loop();
 	ntttManager.close();
 
-	std::cout << "Press ENTER to continue..." << std::endl;
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	return 0;
 }
 
