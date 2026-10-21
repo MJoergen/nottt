@@ -47,6 +47,10 @@ bool NTTTManager::init()
     }
 
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED); //Creates the renderer used to render to the window
+    if (m_renderer == NULL){ //Falls back to software rendering when there is no GPU acceleration
+        std::cout << "Failed creating accelerated renderer: " << SDL_GetError() << ". Using software rendering." << std::endl;
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
+    }
     if (m_renderer == NULL){
         std::cout << "Failed creating renderer: " << SDL_GetError() << std::endl;
         SDL_DestroyWindow(m_window);

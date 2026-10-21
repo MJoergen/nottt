@@ -40,8 +40,6 @@ section.
   shared flags are plain `bool`s.
 - [ ] 7. In manual mode, undoing a move after the game is over leaves the old
   winner and game-over state in place.
-- [ ] 9. The renderer is created with `SDL_RENDERER_ACCELERATED` only, with no
-  software fallback, so the GUI fails without GPU acceleration.
 - [ ] 10. When `IMG_Load` or text rendering fails, `Texture` leaves its width and
   height uninitialised, and the failure goes unnoticed.
 - [ ] 11. `NewGameScreen::input()` passes `event.key.keysym` for `SDL_TEXTINPUT`
