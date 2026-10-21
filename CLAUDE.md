@@ -34,6 +34,10 @@ There are no automated tests. Instead:
   not change behaviour must give byte-identical results. Cover several board
   sizes (2–6), line sizes and board counts. Results for line size 3 are the
   reference; the v5/v6 evaluation tables were tuned for 5×5 with line size 3.
+  MikeBot v1 calls `rand()` in its evaluation, so its games change whenever
+  the number of nodes searched changes, even if every score stays the same.
+  Compare the other bots' games in the log (`./nottt ... <logFile>`), leaving
+  out the `nodes=` and `m_stat` lines.
 - **Tablebase changes:** regenerated `.bit` files must be identical to the
   tracked ones.
 - **GUI changes:** drive the app on a virtual display and take screenshots:
