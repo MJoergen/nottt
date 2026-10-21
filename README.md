@@ -127,7 +127,7 @@ tournaments.
 
 | Bot | Source | Description |
 |-----|--------|-------------|
-| Mike v1–v6 | `src/NTTTPlayerMike.cpp` | Bitboard-based alpha-beta search with a transposition table. The version number selects the evaluation function; v6 is the newest. When only one board is alive it plays perfectly from the tablebase. |
+| Mike v1–v6 | `src/NTTTPlayerMike.cpp` | Bitboard-based alpha-beta search. The version number selects the evaluation function; v6 is the newest, and caches its evaluation of each board. When only one board is alive it plays perfectly from the tablebase. |
 | Ice | `src/NTTTPlayerIce.cpp` | Heuristic player. |
 
 New bots derive from the abstract `NTTTPlayer` class (`src/NTTTPlayer.h`) and
