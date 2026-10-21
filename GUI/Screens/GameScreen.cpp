@@ -357,8 +357,8 @@ void GameScreen::render(SDL_Renderer* renderer) const{
 			break;
 		}
 		const int x = m_playingFieldSize;
-		SDL_Rect rect = { x + 2 * PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth,
-			m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_amountInColumn) * m_movesHeight, m_movesWidth, m_movesHeight };
+		SDL_Rect rect = { (int)(x + 2 * PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth),
+			(int)(m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_amountInColumn) * m_movesHeight), m_movesWidth, m_movesHeight };
 		SDL_RenderFillRect(renderer, &rect);
 		m_movesTexts[index]->renderText(renderer);
 	}

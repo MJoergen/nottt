@@ -33,7 +33,7 @@ void TextField::updateTextField(SDL_Renderer *renderer){
 
 void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
 
-	SDL_Rect rect = { m_x, m_y, m_width, m_texture->getHeight() + m_paddingY * 2 };
+	SDL_Rect rect = { m_x, m_y, m_width, (int)(m_texture->getHeight() + m_paddingY * 2) };
 
 	if (m_selected)
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
