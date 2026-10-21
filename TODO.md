@@ -20,10 +20,6 @@ section.
 - [ ] 2. **Evaluation tables for other sizes.** More generally, the same tables
   are used for every board size and line size, and are only valid for 5×5 with
   line size 3.
-- [ ] 3. **Alpha-beta cutoff only leaves the innermost loop.** In `findMove()`,
-  the `break` on `alpha >= beta` only exits the `y` loop, so the search
-  continues over the remaining rows and boards. Results stay correct, but most
-  of the pruning is lost with several boards.
 - [ ] 7. Keep the loaded tablebase across games, like the hash table, and only
   reload it when the board size or line size changes. It is currently re-read
   for every game, which is 4 MB for 5×5.

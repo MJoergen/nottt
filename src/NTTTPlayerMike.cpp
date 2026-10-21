@@ -684,7 +684,7 @@ int Board::alphaBeta(int alpha, int beta, int level)
                     {
                         // This is fail-soft, since we are returning the value best_val,
                         // which might be outside the window.
-                        break;
+                        return bestVal;
                     }
                 }
             }
