@@ -3,27 +3,6 @@
 Open items from a code review in October 2026, grouped by area and roughly
 ordered by importance within each group.
 
-## Tablebase tools (`egtb`, `egtb-stats`)
-
-- [ ] **Stale table files give wrong results.** `egtb` opens its output file
-  without `O_TRUNC`, and `setPos()` only ever sets bits. So any 1-bits in an
-  existing `egtb-<size>-<line>.bit` survive, and an oversized file is never
-  shrunk. Only the `rm *.bit` in `egtb.sh` hides this. Truncate the file, or
-  clear bits explicitly.
-- [ ] **Division by zero in the statistics pass.** In `egtb.cpp`, the
-  per-parity `score = (...)/total` crashes with SIGFPE when a bucket is empty,
-  e.g. `egtb 2 2`, `4 4` and `5 5`. The table is written before the crash, so it
-  is correct, but the exit status is 136. `egtb-stats.cpp` already guards
-  against this with `if (total)`.
-- [ ] **`egtb.sh` is fragile.** It deletes the tracked `.bit` files and then
-  regenerates them without `set -e`, so a failed run leaves a table missing or
-  empty with no error.
-- [ ] Free the `known[]` array in `egtb.cpp`. This is harmless, since the
-  program exits right after.
-- [ ] Build the tools with `-DNDEBUG`, or keep the asserts deliberately.
-- [ ] Update the header comment in `egtb.cpp`: it still says one byte per
-  position and 32 MB, but the table is now one bit per position (4 MB for 5×5).
-
 ## MikeBot (`NTTTPlayerMike`)
 
 - [ ] **Tune the v5/v6 evaluation tables for line size 2.** Since the line

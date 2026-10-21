@@ -23,7 +23,7 @@ and TODO.md for known issues. When an item in TODO.md is fixed, remove it.
   (`./nottt <boardCount> <boardSize> <lineSize> <numGames>`) for bot tests.
 - Run `egtb` in a scratch directory. It writes `egtb-<size>-<line>.bit` to the
   current directory, and the tracked tables in `tables/` must not change.
-  `tools/egtb.sh` deletes and regenerates the tracked tables.
+  `tools/egtb.sh` overwrites the tracked tables.
 
 ## Testing
 

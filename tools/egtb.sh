@@ -1,7 +1,8 @@
 #!/bin/bash
 # Regenerates the tablebases in tables/. Run from the repository root.
-cd tables || exit 1
-rm *.bit
+# egtb overwrites each table, and the script stops at the first failure.
+set -e
+cd tables
 ../egtb 2 2
 ../egtb 3 2
 ../egtb 3 3

@@ -49,6 +49,8 @@ endif
 
 
 # The tablebase tools use mmap, and are therefore only built on Linux.
+# They keep their asserts even with -DNDEBUG above: the checks cost no
+# measurable time, and the tools are only run offline.
 ifeq ($(TARGET),linux)
 tools = egtb egtb-stats
 endif
@@ -75,10 +77,10 @@ $(program): $(objects) Makefile
 	$(CC) -o $@ $(DEFINES) $(objects) $(LIB_DIRS) $(LIBS)
 
 egtb: tools/egtb.cpp Makefile
-	$(CC) -o $@ $(DEFINES) $< -lstdc++
+	$(CC) -o $@ $(filter-out -DNDEBUG,$(DEFINES)) $< -lstdc++
 
 egtb-stats: tools/egtb-stats.cpp Makefile
-	$(CC) -o $@ $(DEFINES) $< -lstdc++
+	$(CC) -o $@ $(filter-out -DNDEBUG,$(DEFINES)) $< -lstdc++
 
 install: $(program)
 	mkdir -p $(BINDIR)

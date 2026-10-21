@@ -1,10 +1,10 @@
 /*
  * This is a feeble attempt to perform retrograde analysis on a single board.
- * So far it has been tested on:
- * *** 4x4 board, generating 64 kB of data.
- * *** 5x5 board, generating 32 MB of data. This takes about 3 seconds.
+ * The table has one bit per position, so it takes 2^(boardSize^2)/8 bytes:
+ * *** 4x4 board, generating 8 kB of data.
+ * *** 5x5 board, generating 4 MB of data. This takes about 3 seconds.
  *
- * Statistics:
+ * Statistics for line size 3:
  * 4x4 board:
  *  0: Wins =    1, Lost =    0, Dead =     0
  *  1: Wins =   12, Lost =    4, Dead =     0
@@ -58,7 +58,7 @@
 
 /*
  * Uncomment the following line to generate a binary file with the data.
- * Currently, one byte is used for each position.
+ * One bit is used for each position: set if the side to move wins.
  *
  * Caveat: This currently only works on Linux
  */
@@ -297,14 +297,15 @@ int main(int argc, char *argv[])
 
     std::cout << fileName << std::endl;
 
-    int fd = open(fileName.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR); // Read from existing file or create new.
+    // Truncate an existing file: setPos() only sets bits, so the table must start out zero.
+    int fd = open(fileName.c_str(), O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
     if (fd < 0)
     {
         perror("open");
         return (-1);
     }
 
-    int err = posix_fallocate(fd, 0, g_numPositions/8); // Make sure new file has the right size
+    int err = posix_fallocate(fd, 0, g_numPositions/8); // Make sure the file has the right size
     if (err)
     {
         // posix_fallocate returns the error instead of setting errno.
@@ -467,14 +468,22 @@ int main(int argc, char *argv[])
     {
         std::cout << std::setw(2) << i << " " << statWins[i] << " " << std::setw(5) << statLost[i];
         int total = statWins[i] + statLost[i];
-        int score = (statWins[i]*1000 + total/2)/total;
-        std::cout << " " << score << std::endl;
+        if (total)
+        {
+            int score = (statWins[i]*1000 + total/2)/total;
+            std::cout << " " << score;
+        }
+        std::cout << std::endl;
     }
 #endif
+
+    delete [] known;
 
 #ifdef USE_MMAP
     munmap(egtb, g_numPositions/8);
     close(fd);
+#else
+    delete [] egtb;
 #endif
 
     std::cout << std::endl;
