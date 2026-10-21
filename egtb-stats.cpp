@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdint.h>
 #include <sstream>
+#include <algorithm>
 #include <assert.h>
 
 // Global variables
@@ -91,7 +92,11 @@ class Lines
             {
                 if (!(sq & lineMask))
                     continue;
-                int ix = countBits(pos & lineMask); // Will be between 0 and 3.
+                // Index by how many more X's the line needs, so that index 2 always means
+                // "this square completes the line", as with line size 3.
+                // Lines that need 3 or more map to index 0.
+                int missing = (int) g_lineSize - countBits(pos & lineMask);
+                int ix = std::max(0, 3 - missing);
                 cnt[ix]++;
             }
         }
