@@ -15,12 +15,8 @@ The project contains:
 
 ## Building
 
-Dependencies: a C++11 compiler, SDL2, SDL2_image and SDL2_ttf.
-On Debian/Ubuntu:
-
-```sh
-sudo apt install build-essential libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
-```
+Dependencies: a C++11 compiler, SDL2, SDL2_image and SDL2_ttf (see
+[Installing SDL2_image](#installing-sdl2_image) below).
 
 Then:
 
@@ -32,6 +28,40 @@ make install        # copies nottt to ~/bin (override with BINDIR=...)
 Setting `TARGET = windows` in the `Makefile` cross-compiles `nottt.exe` with
 MinGW (`i686-w64-mingw32-g++`). The tablebase tools use `mmap` and are only
 built on Linux.
+
+### Installing SDL2_image
+
+The GUI loads its PNG images with SDL2_image, so the development package
+(headers and library) must be installed. If it is missing, the build fails
+with `fatal error: SDL_image.h: No such file or directory`.
+
+It is normally installed together with SDL2 and SDL2_ttf:
+
+| Platform | Command |
+|----------|---------|
+| Debian / Ubuntu | `sudo apt install build-essential libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev` |
+| Fedora | `sudo dnf install gcc-c++ make SDL2-devel SDL2_image-devel SDL2_ttf-devel` |
+| Arch Linux | `sudo pacman -S base-devel sdl2 sdl2_image sdl2_ttf` |
+| macOS (Homebrew) | `brew install sdl2 sdl2_image sdl2_ttf` |
+
+To check that it is installed:
+
+```sh
+pkg-config --modversion SDL2_image
+```
+
+The `Makefile` looks for the headers in `/usr/include/SDL2`. Elsewhere (e.g.
+Homebrew installs them under `$(brew --prefix)/include/SDL2`), change
+`INCLUDE_DIRS` and `LIB_DIRS` to point at your SDL2 install;
+`pkg-config --cflags --libs SDL2_image` prints the right flags.
+
+For the Windows cross-compile, download the MinGW development archives
+(`SDL2-devel-*-mingw`, `SDL2_image-devel-*-mingw` and `SDL2_ttf-devel-*-mingw`)
+from the [SDL2](https://github.com/libsdl-org/SDL/releases),
+[SDL2_image](https://github.com/libsdl-org/SDL_image/releases) and
+[SDL2_ttf](https://github.com/libsdl-org/SDL_ttf/releases) release pages, and
+copy the contents of each archive's `i686-w64-mingw32` directory into
+`/opt/i686-w64-mingw32`, which is where the `Makefile` expects them.
 
 ## Running
 
