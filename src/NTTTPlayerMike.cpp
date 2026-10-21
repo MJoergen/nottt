@@ -8,6 +8,7 @@
 #include "trace.h"
 
 #include "NTTTPlayerMike.h"
+#include "DataPath.h"
 
 // Scores, relative to the player to move. A win found by the search scores
 // WIN + level, so quicker wins and slower losses are preferred, since level
@@ -112,7 +113,7 @@ void Board::loadEgtb() {
 
     std::ostringstream oss;
     oss << "tables/egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
-    std::string filePath = oss.str();
+    std::string filePath = dataPath(oss.str());
 
     std::ifstream file(filePath, std::ios::binary | std::ios::in);
     if (!file) {

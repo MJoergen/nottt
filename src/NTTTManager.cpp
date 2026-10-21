@@ -2,6 +2,7 @@
 #include "NTTTPlayerIce.h"
 #include "NTTTPlayerMike.h"
 #include "NTTTManager.h"
+#include "DataPath.h"
 #include <fstream>
 #include <climits>
 #include "GUI/Screens/BotsScreen.h"
@@ -59,7 +60,7 @@ bool NTTTManager::init() {
         return false;
     }
 
-    m_font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE); // Creates the font used in the application
+    m_font = TTF_OpenFont(dataPath(FONT_PATH).c_str(), FONT_SIZE); // Creates the font used in the application
     if (m_font == NULL) {
         std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
         SDL_DestroyRenderer(m_renderer);
@@ -70,7 +71,7 @@ bool NTTTManager::init() {
         return false;
     }
 
-    m_movesFont = TTF_OpenFont(FONT_PATH.c_str(), (int)(FONT_SIZE * 0.5));
+    m_movesFont = TTF_OpenFont(dataPath(FONT_PATH).c_str(), (int)(FONT_SIZE * 0.5));
     if (m_movesFont == NULL) {
         std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
         TTF_CloseFont(m_font);
@@ -82,9 +83,9 @@ bool NTTTManager::init() {
         return false;
     }
 
-    m_redCross  = new Texture(m_renderer, "assets/RedCross.png");
-    m_blueCross = new Texture(m_renderer, "assets/BlueCross.png");
-    m_checkMark = new Texture(m_renderer, "assets/CheckMark.png");
+    m_redCross  = new Texture(m_renderer, dataPath("assets/RedCross.png"));
+    m_blueCross = new Texture(m_renderer, dataPath("assets/BlueCross.png"));
+    m_checkMark = new Texture(m_renderer, dataPath("assets/CheckMark.png"));
     if (!m_redCross->isLoaded() || !m_blueCross->isLoaded() || !m_checkMark->isLoaded()) {
         delete m_redCross;
         delete m_blueCross;

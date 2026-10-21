@@ -1,4 +1,5 @@
 #include "NTTTPlayerIce.h"
+#include "DataPath.h"
 #include <fstream>
 #include <sstream>
 
@@ -51,7 +52,7 @@ void NTTTPlayerIce::loadEgtb() {
 
     std::ostringstream oss;
     oss << "tables/egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
-    std::string filePath = oss.str();
+    std::string filePath = dataPath(oss.str());
 
     std::ifstream inputFileStream(filePath, std::ifstream::binary);
     if (!inputFileStream)

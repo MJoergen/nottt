@@ -18,8 +18,9 @@ and TODO.md for known issues. When an item in TODO.md is fixed, remove it.
 
 - `make` only lists the targets; `make all` builds `nottt`, `egtb` and
   `egtb-stats`.
-- Run everything from the repository root: `assets/` and `tables/` are found
-  relative to the current directory.
+- Run everything from the repository root. `nottt` finds `assets/` and
+  `tables/` relative to its executable (see `src/DataPath.cpp`), but the
+  tools and scripts use the current directory.
 - Never run `./nottt` without arguments outside Xvfb: it opens the GUI on the
   user's desktop. Use the tournament mode
   (`./nottt <boardCount> <boardSize> <lineSize> <numGames>`) for bot tests.

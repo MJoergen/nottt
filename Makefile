@@ -1,5 +1,6 @@
 # Game sources, relative to src/. Object and dependency files go to build/.
 sources  = main.cpp
+sources += DataPath.cpp
 sources += NTTTBoard.cpp
 sources += NTTTPlayerMike.cpp
 sources += NTTTPlayerIce.cpp

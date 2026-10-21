@@ -73,8 +73,10 @@ copy the contents of each archive's `i686-w64-mingw32` directory into
 
 ## Running
 
-Run the program from the repository root, since it loads its assets
-(`assets/`) and tablebases (`tables/`) relative to the current directory.
+The program can be run from any directory. It looks for its assets
+(`assets/`) and tablebases (`tables/`) next to the executable, as in the
+repository, and then in `../share/nottt/` relative to it, as installed by
+`make install`.
 
 ### GUI
 
@@ -147,6 +149,7 @@ Some results (see the comment at the top of `tools/egtb.cpp`):
 src/                        Game sources
   main.cpp                  Entry point: GUI or tournament mode
   NTTTGame.h                Game state: a set of boards
+  DataPath.*                Finds the data files relative to the executable
   NTTTBoard.{h,cpp}         A single board and its alive/dead state
   NTTTMove.h                A move (board, x, y)
   NTTTPlayer.h              Abstract bot interface
