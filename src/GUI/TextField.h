@@ -58,7 +58,8 @@ public:
     void renderTextField(SDL_Renderer *renderer, const int& time) const;
     void updateTextField(SDL_Renderer *renderer);
     
-    void onKeyPress(const SDL_Keysym& keysym, const std::string& text);
+    void onKeyPress(const SDL_Keysym& keysym);
+    void onTextInput(const std::string& text);
     const bool isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const;
 
     const unsigned int getWidth() const;

@@ -220,27 +220,27 @@ void NewGameScreen::render(SDL_Renderer* renderer) const{ // The renderer will b
 void NewGameScreen::input(const SDL_Event & event){
     if (event.type == SDL_TEXTINPUT){ //Responds to textinput
         if (m_boardCountTextField->isSelected())
-            m_boardCountTextField->onKeyPress(event.key.keysym, event.text.text);
+            m_boardCountTextField->onTextInput(event.text.text);
         else if (m_boardSizeTextField->isSelected())
-            m_boardSizeTextField->onKeyPress(event.key.keysym, event.text.text);
+            m_boardSizeTextField->onTextInput(event.text.text);
         else if (m_lineSizeTextField->isSelected())
-            m_lineSizeTextField->onKeyPress(event.key.keysym, event.text.text);
+            m_lineSizeTextField->onTextInput(event.text.text);
         else if (m_gameSeedTextField->isSelected())
-            m_gameSeedTextField->onKeyPress(event.key.keysym, event.text.text);
+            m_gameSeedTextField->onTextInput(event.text.text);
         else if (m_logNameTextField->isSelected())
-            m_logNameTextField->onKeyPress(event.key.keysym, event.text.text);
+            m_logNameTextField->onTextInput(event.text.text);
     }
     else if (event.type == SDL_KEYDOWN){ //Responds to keyboardinput
         if (m_boardCountTextField->isSelected())
-            m_boardCountTextField->onKeyPress(event.key.keysym, "");
+            m_boardCountTextField->onKeyPress(event.key.keysym);
         else if (m_boardSizeTextField->isSelected())
-            m_boardSizeTextField->onKeyPress(event.key.keysym, "");
+            m_boardSizeTextField->onKeyPress(event.key.keysym);
         else if (m_lineSizeTextField->isSelected())
-            m_lineSizeTextField->onKeyPress(event.key.keysym, "");
+            m_lineSizeTextField->onKeyPress(event.key.keysym);
         else if (m_gameSeedTextField->isSelected())
-            m_gameSeedTextField->onKeyPress(event.key.keysym, "");
+            m_gameSeedTextField->onKeyPress(event.key.keysym);
         else if (m_logNameTextField->isSelected())
-            m_logNameTextField->onKeyPress(event.key.keysym, "");
+            m_logNameTextField->onKeyPress(event.key.keysym);
     }
     else if (event.type == SDL_MOUSEBUTTONDOWN){ //Responds to mouseinput
         int x, y;

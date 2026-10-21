@@ -95,7 +95,7 @@ bool is_number(const std::string& s) //Checks if a string is a number
     return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
 }
 
-void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
+void TextField::onKeyPress(const SDL_Keysym& keysym){
     if (!m_selected)
         return;
 
@@ -130,6 +130,11 @@ void TextField::onKeyPress(const SDL_Keysym& keysym, const std::string& text){
             m_cursor++;
             calculateCursorPPos(m_cursor_ppos);
         }
+}
+
+void TextField::onTextInput(const std::string& text){
+    if (!m_selected)
+        return;
 
     if (m_fieldType == NUMBER){
         if (!is_number(text))
