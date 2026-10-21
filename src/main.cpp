@@ -3,6 +3,8 @@
 #include <cerrno>
 #include <climits>
 #include <cstdlib>
+#include <cstring>
+#include <fstream>
 
 #include "NTTTPlayerMike.h"
 #include "NTTTPlayerIce.h"
@@ -203,7 +205,12 @@ int main(int argc, char *argv[]) {
 
         if (argc == 6)
         {
-            gpLog = new CTrace(argv[5]);
+            gpLog = new std::ofstream(argv[5]);
+            if (!*gpLog)
+            {
+                std::cout << "Cannot open log file " << argv[5] << ": " << strerror(errno) << std::endl;
+                return 1;
+            }
         }
 
         NTTTPlayerIce  *playerIce = new NTTTPlayerIce;
@@ -224,7 +231,11 @@ int main(int argc, char *argv[]) {
         playMatch(players, boardCount, boardSize, lineSize, numGames);
 
         if (gpLog)
+        {
+            if (!gpLog->flush())
+                std::cout << "Error writing log file " << argv[5] << std::endl;
             delete gpLog;
+        }
         exit(0);
     }
 

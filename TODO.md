@@ -98,17 +98,6 @@ ordered by importance within each group.
 - [ ] First/second-player percentages are truncated rather than rounded, so
   they do not add up to 100%.
 
-## Logging (`trace.h`)
-
-- [ ] It appends to an existing log instead of truncating it, so a second run
-  doubles the log.
-- [ ] It opens and closes the file every 199 bytes, which is slow for large
-  logs.
-- [ ] If `open` fails, output is silently dropped.
-- [ ] `LOG`/`TRACE` are bare `if` statements, so a following `else` can bind
-  to them. With `ENABLE_TRACE` the build fails to link, because `gpTrace` is
-  never defined.
-
 ## Build, scripts and repository
 
 - [ ] `make install` only installs `nottt`, not the tools.
