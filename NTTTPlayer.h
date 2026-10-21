@@ -40,7 +40,7 @@ class NTTTPlayer {
          */
         virtual NTTTMove performMove(const NTTTGame& game) = 0;
 
-		virtual std::string getName() = 0;
+        virtual std::string getName() = 0;
 
         /**
          * The destructor must always be made virtual

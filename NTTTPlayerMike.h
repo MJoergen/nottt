@@ -120,7 +120,7 @@ class NTTTPlayerMike : public NTTTPlayer {
          */
         virtual NTTTMove performMove(const NTTTGame& game);
 
-		virtual std::string getName();
+        virtual std::string getName();
 
         void setVersion(int version) {m_board.setVersion(version);}
 

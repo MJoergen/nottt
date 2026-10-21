@@ -10,8 +10,7 @@ and TODO.md for known issues. When an item in TODO.md is fixed, remove it.
   cause.
 - Use LF line endings. Edit with the Edit tool rather than Python text-mode
   rewrites, which silently change line endings.
-- Match the indentation of the file: tabs in `GUI/`, `NTTTManager.cpp` and
-  `NTTTPlayerIce.cpp`; 4 spaces in `NTTTPlayerMike.*`, `main.cpp`, `egtb*.cpp`.
+- Indent C++ with 4 spaces, never tabs. The `Makefile` must keep its tabs.
 
 ## Building and running
 

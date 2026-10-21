@@ -22,8 +22,8 @@ static unsigned int playGame(NTTTGame& game, std::vector<NTTTPlayer *> players, 
     LOG(" and " << players[second]->getName());
     LOG(" with seed " << seed << std::endl);
 
-	players[first]->chooseOrder(game);
-	players[second]->chooseOrder(game);
+    players[first]->chooseOrder(game);
+    players[second]->chooseOrder(game);
 
     unsigned int player = first;
     while (true)
@@ -228,22 +228,22 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-	std::cout << "Program starts" << std::endl;
+    std::cout << "Program starts" << std::endl;
 
-	NTTTManager ntttManager;
+    NTTTManager ntttManager;
 
-	if (!ntttManager.init()){ //Initializes SDL2, SDL2_image, SDL2_ttf and global variables. If something went wrong. The program is terminated.
+    if (!ntttManager.init()){ //Initializes SDL2, SDL2_image, SDL2_ttf and global variables. If something went wrong. The program is terminated.
 #ifdef _WIN32
-		// Keep the console window open, so the error message can be read.
-		std::cout << "Press ENTER to continue..." << std::endl;
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        // Keep the console window open, so the error message can be read.
+        std::cout << "Press ENTER to continue..." << std::endl;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 #endif
-		return 1;
-	}
+        return 1;
+    }
 
-	ntttManager.loop();
-	ntttManager.close();
+    ntttManager.loop();
+    ntttManager.close();
 
-	return 0;
+    return 0;
 }
 

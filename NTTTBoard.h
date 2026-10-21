@@ -7,7 +7,7 @@
 #include <iostream>
 
 struct Line{
-	int x, y, dx, dy;
+    int x, y, dx, dy;
 };
 
 
@@ -90,15 +90,15 @@ class NTTTBoard {
             return os;
         }
 
-		void renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
+        void renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const;
 
     private:
         int m_lineSize;
         State m_state;
         std::vector< std::vector<SquareState> > m_squareStates;
-		Line m_line;
-		void renderDiagonalLineRight(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
-		void renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
+        Line m_line;
+        void renderDiagonalLineRight(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
+        void renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
 }; // end of class NTTTBoard
 
 #endif // _NTTTBOARD_H_
