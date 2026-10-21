@@ -46,7 +46,7 @@ void NTTTPlayerIce::loadEgtb()
     m_egtb.clear();
 
     // Tablebases can only be generated for these board sizes, see egtb.cpp.
-    if (m_boardSize < 3 || m_boardSize > 5)
+    if (m_boardSize < 2 || m_boardSize > 5)
         return;
 
     std::ostringstream oss;

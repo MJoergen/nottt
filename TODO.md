@@ -42,8 +42,6 @@ section.
 
 - [ ] 2. Without a usable tablebase it silently guesses at random. Warn, like
   MikeBot does.
-- [ ] 3. It only uses tablebases for board sizes 3–5, although `egtb-2-*.bit`
-  exists.
 - [ ] 4. `chooseOrder()` decides from board 0 only and ignores the board count.
 
 ## GUI
