@@ -97,7 +97,9 @@ int GameScreen::manageGame() {
                         SDL_LockMutex(m_gameMutex);
                         m_game->undoMove(m_moves[m_moves.size() - 1]);
                         m_moves.pop_back();
+                        m_winner = 0;
                         SDL_UnlockMutex(m_gameMutex);
+                        gameActive = true;
                         player     = 3 - player;
                         m_backward = false;
                     }
@@ -165,6 +167,9 @@ void GameScreen::update(SDL_Renderer *renderer) {
     }
     if (m_winner != 0 && m_winnerDisplayText == nullptr) {
         initializeWinnerDisplayText(renderer);
+    } else if (m_winner == 0 && m_winnerDisplayText != nullptr) {
+        delete m_winnerDisplayText;
+        m_winnerDisplayText = nullptr;
     }
     SDL_LockMutex(m_gameMutex);
     for (unsigned int index = getMovesCount(); index < m_moves.size(); index++) {

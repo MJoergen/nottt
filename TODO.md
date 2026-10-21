@@ -35,8 +35,6 @@ section.
 - [ ] 4. **"Load Game" and "Statistics" are not implemented.** They show a blank
   screen. `GUI/Screens/StatisticsScreen.h` is empty, and `onReadLogClick` is
   commented out.
-- [ ] 7. In manual mode, undoing a move after the game is over leaves the old
-  winner and game-over state in place.
 - [ ] 13. `srand()` is called before every move, so the bots get the same random
   sequence on every move.
 
