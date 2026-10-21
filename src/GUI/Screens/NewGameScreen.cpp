@@ -125,7 +125,6 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
     m_lineSizeText->setX(m_boardSizeTextField->getX() + m_boardSizeTextField->getWidth() + PADDING_X);
     m_lineSizeTextField->setX(m_lineSizeText->getX() + m_lineSizeText->getWidth() + PADDING_X);
 
-    //
     m_gameSeedText = new Text(renderer, "Game Seed: ", guiFont, black, 0, m_boardCountTextField->getY() + m_boardCountTextField->getHeight() + PADDING_Y);
 
     m_gameSeedTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_gameSeed), guiFont, 0, m_gameSeedText->getY(), 200, INT_MAX);
@@ -137,7 +136,6 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
     m_gameSeedTextField->setX(m_gameSeedText->getX() + m_gameSeedText->getWidth() + PADDING_X);
 
 
-    //
     m_manualModeText = new Text(renderer, "Manual Mode:", guiFont, black, 0, m_gameSeedTextField->getY() + m_gameSeedTextField->getHeight() + PADDING_Y);
 
     m_manualModeRadioButton = new RadioButton(*m_manualMode, 0, m_manualModeText->getY(), m_manualModeText->getHeight());
@@ -148,7 +146,6 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
     m_manualModeText->setX(halfWidth - halfThirdLineWidth);
     m_manualModeRadioButton->setX(m_manualModeText->getX() + m_manualModeText->getWidth() + PADDING_X);
 
-    //
     m_writeLogText = new Text(renderer, "Write log: ", guiFont, black, 0, m_manualModeText->getY() + m_manualModeText->getHeight() + PADDING_Y);
 
     m_writeLogRadioButton = new RadioButton(*m_writeLog, 0, m_writeLogText->getY(), m_writeLogText->getHeight());
@@ -159,7 +156,6 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
     m_writeLogText->setX(halfWidth - halfFourthLineWidth);
     m_writeLogRadioButton->setX(m_writeLogText->getX() + m_writeLogText->getWidth() + PADDING_X);
 
-    //
     m_logNameText = new Text(renderer, "Log Name: ", guiFont, black, 0, m_writeLogText->getY() + m_writeLogText->getHeight() + PADDING_Y);
 
     m_logNameTextField = new TextField(renderer, TextField::TEXT, "log.txt", guiFont, 0, m_logNameText->getY(), 200, -1);
@@ -170,12 +166,10 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fon
     m_logNameText->setX(halfWidth - halfFifthLineWidth);
     m_logNameTextField->setX(m_logNameText->getX() + m_logNameText->getWidth() + PADDING_X);
 
-    //
     m_startGameButton = new Button(renderer, "Start Game", guiFont, 0, m_logNameTextField->getY() + m_logNameTextField->getHeight() + PADDING_Y);
     m_startGameButton->setX(halfWidth - m_startGameButton->getWidth() / 2);
     m_startGameButton->registerClickFunc(onClickNewGameStart, this);
 
-    //
     m_returnButton = new Button(renderer, "Back to Main Menu", guiFont, 0, 0);
     m_returnButton->set(halfWidth - m_returnButton->getWidth() / 2, height - PADDING_Y - m_returnButton->getHeight());
     m_returnButton->registerClickFunc(onClickNewGameReturn, this);

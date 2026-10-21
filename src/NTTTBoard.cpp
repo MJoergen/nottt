@@ -6,8 +6,6 @@
 #include "NTTTBoard.h"
 #include "NTTTManager.h"
 
-/**
- */
 bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state) {
 
     if (state == UNMARKED) {
@@ -53,8 +51,6 @@ bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state) {
     return true;
 } // end of makeMove
 
-/**
- */
 void NTTTBoard::reset(int boardSize, int lineSize) {
     m_squareStates.resize(boardSize);
     for (std::vector<SquareState>& row : m_squareStates) {

@@ -139,7 +139,7 @@ void NTTTManager::loop() {
         update();
         render();
 
-        SDL_Delay(50); // Sleeps
+        SDL_Delay(50); // At most 20 frames per second
     }
 
     m_mainMenuScreen->prepareForQuit();

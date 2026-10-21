@@ -57,14 +57,20 @@ public:
     } // end of checkLine
 
     /**
+     * Marks a square, or clears it again when state is UNMARKED, and then
+     * finds out whether the board is alive.
+     * @return Whether the board is still alive, i.e. has no complete line.
      */
     bool makeMove(int squareX, int squareY, SquareState state);
 
     /**
+     * Clears every square, making the board alive.
      */
     void reset(int boardSize, int lineSize);
 
     /**
+     * Prints the board one row per line: '.' for an unmarked square, 'x' for
+     * blue and 'X' for red. A dead board is printed as all '$'.
      */
     friend std::ostream& operator<<(std::ostream& os, const NTTTBoard& rhs) {
         int boardSize = rhs.m_squareStates.size();

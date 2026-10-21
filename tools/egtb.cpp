@@ -163,6 +163,9 @@ public:
     }
 
     /*
+     * Classifies the empty squares as MikeBot v5's evaluate() does, and counts
+     * the squares in each class. The parities of these counts index VALUES in
+     * NTTTPlayerMike.cpp. Here pos has a bit set for each marked square.
      */
     void getStats(uint32_t pos, int sum[6]) const {
         sum[0] = 0;

@@ -28,10 +28,15 @@ public:
 
 private: // These methods are used internally only.
     /**
+     * Whether a board is dead. As in m_bits, the bits are the unmarked
+     * squares, so a line is complete when none of its bits are set.
      */
     bool isBoardDead(uint64_t bits) const;
 
     /**
+     * For each line through the unmarked square sq, adds one to cnt[] at an
+     * index given by how many marks the line still needs. pos has a bit set
+     * for each unmarked square.
      */
     void getLineCounts(uint64_t pos, uint64_t sq, int cnt[4]) const;
 
@@ -57,16 +62,20 @@ private: // These methods are used internally only.
     int evaluate() const;
 
     /**
-     * Perform an alpha beta search
-     * Returns a value
+     * Perform an alpha beta search, level moves deep.
+     * Returns the score of the position for the player to move.
      */
     int alphaBeta(int alpha, int beta, int level);
 
     /**
+     * Return an estimate of a single alive board, for version 6. It classifies
+     * the unmarked squares by the lines through them, and looks up the parity
+     * of the number of squares in each class in VALUES_V6.
      */
     int evaluateBoardV6(uint64_t board) const;
 
     /**
+     * Clears the cache of evaluateBoardV6() results.
      */
     void initHash();
 

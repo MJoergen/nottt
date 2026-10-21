@@ -101,6 +101,10 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const {
     bool isWon = false;
 
     if (!m_egtb.empty()) {
+        // This numbers the squares row by row (bit y * size + x), while
+        // egtb.cpp and MikeBot number them column by column (x * size + y).
+        // That mirrors the board in its diagonal, which maps lines to lines,
+        // so the position has the same value.
         unsigned int boardPosition = 0;
         for (unsigned int index = 0; index < (unsigned int)(m_boardSize * m_boardSize); index++) {
             int squareX = index % m_boardSize;

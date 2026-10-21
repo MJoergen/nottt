@@ -142,8 +142,6 @@ void Board::loadEgtb() {
 } // end of loadEgtb
 
 
-/**
- */
 bool Board::isBoardDead(uint64_t bits) const {
     for (uint64_t lineMask : m_lines) {
         if (!(bits & lineMask)) {
@@ -153,8 +151,6 @@ bool Board::isBoardDead(uint64_t bits) const {
     return false;
 } // end of isBoardDead
 
-/**
- */
 void Board::getLineCounts(uint64_t pos, uint64_t sq, int cnt[4]) const {
     for (uint64_t lineMask : m_lines) {
         if (!(sq & lineMask))
@@ -377,8 +373,8 @@ void Board::initHash() {
     m_hashVal.assign(HASH_SIZE, 0);
 } // end of initHash
 
-/**
- */
+// The cache uses 0 to mark an empty slot. That is never a valid key, since a
+// board with no unmarked squares is dead, and dead boards are not evaluated.
 int Board::evaluateBoardV6(uint64_t board) const {
     uint64_t hash = board + (board >> 1) + (board >> 3) + (board >> 6) + (board >> 10) + (board >> 15);
     hash %= HASH_SIZE;
@@ -575,8 +571,8 @@ int Board::evaluate() const {
 
 
 /**
- * Perform an alpha beta search
- * Returns a value
+ * Perform an alpha beta search, level moves deep.
+ * Returns the score of the position for the player to move.
  */
 int Board::alphaBeta(int alpha, int beta, int level) {
     m_nodes++;
@@ -656,7 +652,12 @@ NTTTMove Board::findMove(const NTTTGame& game) {
 
     int numAlive = makeBits(game);
 
-    // Determine search depth
+    // Determine search depth. The number of moves grows with the board size
+    // and the number of boards alive, so search less deeply when they are
+    // larger, to keep the time per move short. When only one board is left
+    // and there is a tablebase, evaluate() looks it up, so no search is
+    // needed. (Versions 1 and 2 don't use the tablebase, but skip the search
+    // too.)
     int level = 4;
     if (m_boardSize * numAlive > 4)
         level = 2;

@@ -91,6 +91,9 @@ public:
     }
 
     /*
+     * Computes the index into VALUES_V6 in NTTTPlayerMike.cpp, as
+     * evaluateBoardV6() does: the parities of the number of empty squares in
+     * each class. Here pos has a bit set for each marked square.
      */
     void getStats(uint32_t pos, int& index) const {
         index = 0;

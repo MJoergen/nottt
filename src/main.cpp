@@ -180,7 +180,8 @@ static bool parseInt(const char *str, int& value) {
 } // end of parseInt
 
 /*
- * Main entry point
+ * Plays a tournament between the bots when the settings are given on the
+ * command line, and starts the GUI otherwise.
  */
 int main(int argc, char *argv[]) {
 
