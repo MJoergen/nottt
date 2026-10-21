@@ -44,7 +44,7 @@ public:
         return m_squareStates;
     }
 
-    bool checkLine(int x, int y, int dx, int dy) const {
+    bool isLineComplete(int x, int y, int dx, int dy) const {
         for (int i = 0; i < m_lineSize; ++i) {
             if (m_squareStates[x][y] == UNMARKED)
                 return false;
@@ -52,7 +52,7 @@ public:
             y += dy;
         }
         return true;
-    } // end of checkLine
+    } // end of isLineComplete
 
     /**
      * Marks a square, or clears it again when state is UNMARKED, and then
@@ -72,12 +72,12 @@ public:
      */
     friend std::ostream& operator<<(std::ostream& os, const NTTTBoard& rhs) {
         int boardSize = rhs.m_squareStates.size();
-        for (int x = 0; x < boardSize; ++x) {
-            for (int y = 0; y < boardSize; ++y) {
+        for (int y = 0; y < boardSize; ++y) {
+            for (int x = 0; x < boardSize; ++x) {
                 if (rhs.m_state == DEAD)
                     os << "$";
                 else
-                    switch (rhs.m_squareStates[y][x]) {
+                    switch (rhs.m_squareStates[x][y]) {
                         case UNMARKED:
                             os << ".";
                             break;
@@ -100,9 +100,9 @@ private:
     int m_lineSize = 0;
     State m_state  = DEAD;
     std::vector<std::vector<SquareState>> m_squareStates;
-    Line m_line = {};
-    void renderDiagonalLineRight(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
-    void renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
+    Line m_deadLine = {};
+    void renderAntiDiagonalLine(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
+    void renderDiagonalLine(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const;
 }; // end of class NTTTBoard
 
 #endif // NTTTBOARD_H
