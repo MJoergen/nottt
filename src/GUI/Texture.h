@@ -9,13 +9,14 @@
 
 class Texture {
 private:
-    SDL_Texture* m_texture = NULL;
+    SDL_Texture *m_texture = NULL;
     unsigned int m_width = 0, m_height = 0;
+
 public:
     Texture(SDL_Renderer *renderer, const std::string path);
-    Texture(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color textColor);
+    Texture(SDL_Renderer *renderer, const std::string text, TTF_Font *font, const SDL_Color textColor);
     virtual ~Texture();
-    Texture(const Texture&) = delete;
+    Texture(const Texture&)            = delete;
     Texture& operator=(const Texture&) = delete;
     void freeTexture();
     const bool isLoaded() const { return m_texture != NULL; }
@@ -25,7 +26,7 @@ public:
     void renderTexture(SDL_Renderer *renderer, const int x, const int y) const { renderTexture(renderer, x, y, m_width, m_height); }
     void renderTexture(SDL_Renderer *renderer, const int x, const int y, const int width, const int height) const;
     void renderTexture(SDL_Renderer *renderer, const int sx, const int sy, const int swidth, const int sheight, const int dx, const int dy, const int dwidth, const int dheight) const;
-    friend std::ostream& operator <<(std::ostream &os, const Texture &rhs){
+    friend std::ostream& operator<<(std::ostream& os, const Texture& rhs) {
         os << "Texture: { Width: " << rhs.m_width << ", Height: " << rhs.m_height << " }" << std::endl;
         return os;
     }

@@ -10,8 +10,8 @@
 
 class NewGameScreen : public Screen {
 public:
-    struct NewGameData{
-        ScreenState* currentState;
+    struct NewGameData {
+        ScreenState *currentState;
         int *boardCount;
         int *boardSize;
         int *lineSize;
@@ -24,16 +24,17 @@ public:
     };
     NewGameScreen(NewGameData data);
     virtual ~NewGameScreen();
-    virtual void init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height);
-    virtual void render(SDL_Renderer* renderer) const;
-    virtual void input(const SDL_Event & e);
+    virtual void init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *guiFont, const unsigned int width, const unsigned int height);
+    virtual void render(SDL_Renderer *renderer) const;
+    virtual void input(const SDL_Event& e);
     virtual void update(SDL_Renderer *renderer);
     virtual void prepareForQuit();
     virtual void cleanUp();
     void onClickReturn();
     void onClickStart();
+
 private:
-    const int MAX_BOARD_COUNT = 25;                 //More boards do not fit on the game screen
+    const int MAX_BOARD_COUNT = 25; // More boards do not fit on the game screen
 
 
     int *m_boardCount = nullptr, *m_boardSize = nullptr, *m_lineSize = nullptr, *m_gameSeed = nullptr;
@@ -42,22 +43,22 @@ private:
 
     Texture *m_checkMark;
 
-    Text* m_headlineText = nullptr;
+    Text *m_headlineText   = nullptr;
     Text *m_boardCountText = nullptr, *m_boardSizeText = nullptr, *m_lineSizeText = nullptr, *m_gameSeedText = nullptr;
     TextField *m_boardCountTextField = nullptr, *m_boardSizeTextField = nullptr, *m_lineSizeTextField = nullptr, *m_gameSeedTextField = nullptr;
-    Text *m_manualModeText = nullptr;
-    RadioButton* m_manualModeRadioButton = nullptr;
-    Button* m_startGameButton = nullptr;
+    Text *m_manualModeText               = nullptr;
+    RadioButton *m_manualModeRadioButton = nullptr;
+    Button *m_startGameButton            = nullptr;
     Text *m_writeLogText = nullptr, *m_logNameText = nullptr;
-    RadioButton* m_writeLogRadioButton = nullptr;
-    TextField* m_logNameTextField = nullptr;
-    Button* m_returnButton = nullptr;
+    RadioButton *m_writeLogRadioButton = nullptr;
+    TextField *m_logNameTextField      = nullptr;
+    Button *m_returnButton             = nullptr;
 
-    TTF_Font* m_guiFont = nullptr;
+    TTF_Font *m_guiFont  = nullptr;
     unsigned int m_width = 0;
-    std::string m_errorMessage;                     //Shown when the game settings are invalid
+    std::string m_errorMessage; // Shown when the game settings are invalid
     bool m_errorChanged = false;
-    Text* m_errorText = nullptr;
+    Text *m_errorText   = nullptr;
 };
 
 #endif

@@ -1,15 +1,14 @@
 #include "RadioButton.h"
 #include "../NTTTManager.h"
 
-RadioButton::RadioButton(const bool isChecked, const int x, const int y, const int size){
+RadioButton::RadioButton(const bool isChecked, const int x, const int y, const int size) {
     m_isChecked = isChecked;
-    m_x = x;
-    m_y = y;
-    m_size = size;
+    m_x         = x;
+    m_y         = y;
+    m_size      = size;
 }
 
-RadioButton::~RadioButton(){
-
+RadioButton::~RadioButton() {
 }
 
 const int RadioButton::getWidth() const {
@@ -23,11 +22,11 @@ const int RadioButton::getHeight() const {
 void RadioButton::renderRadioButton(SDL_Renderer *renderer, Texture *checkMark) const {
     if (m_isChecked)
         checkMark->renderTexture(renderer, m_x + PADDING_X, m_y + PADDING_Y,
-        getWidth() - PADDING_X * 2, getHeight() - PADDING_Y * 2);
-    SDL_Rect rect = { m_x, m_y, getWidth(), getHeight() };
+                                 getWidth() - PADDING_X * 2, getHeight() - PADDING_Y * 2);
+    SDL_Rect rect = {m_x, m_y, getWidth(), getHeight()};
     SDL_RenderDrawRect(renderer, &rect);
 }
 
-const bool RadioButton::isInside(const int& x, const int& y) const{
+const bool RadioButton::isInside(const int& x, const int& y) const {
     return m_x <= x && x < m_x + getWidth() && m_y <= y && y < m_y + getHeight();
 }

@@ -9,44 +9,44 @@
  * To implement a player, you should write something like:
  *
  * #include "NTTTPlayer.h"
- * class HTTPPlayerMike : HTTPPlayer 
+ * class HTTPPlayerMike : HTTPPlayer
  * {
  * }
  *
  */
 
 class NTTTPlayer {
-    public:
+public:
+    /**
+     * An enum capable of describing the player's/bot's choice of order.
+     * @author Ice
+     */
+    enum OrderChoice {
+        FIRST,
+        LAST,
+        UNDECIDED
+    };
 
-        /**
-         * An enum capable of describing the player's/bot's choice of order.
-         * @author Ice
-         */
-        enum OrderChoice {
-            FIRST, LAST, UNDECIDED
-        };
+    /**
+     * Run in the initialization phase of the game.
+     * @param game An instance of the NTTTGame.
+     * @return The player's/bot's choice of order.
+     */
+    virtual OrderChoice chooseOrder(const NTTTGame& game) = 0;
 
-        /**
-         * Run in the initialization phase of the game.
-         * @param game An instance of the NTTTGame.
-         * @return The player's/bot's choice of order.
-         */
-        virtual OrderChoice chooseOrder(const NTTTGame& game) = 0;
+    /**
+     * Run continually as the game progresses.
+     * @param game An instance of the NTTTGame.
+     * @return The player's/bot's move.
+     */
+    virtual NTTTMove performMove(const NTTTGame& game) = 0;
 
-        /**
-         * Run continually as the game progresses.
-         * @param game An instance of the NTTTGame.
-         * @return The player's/bot's move.
-         */
-        virtual NTTTMove performMove(const NTTTGame& game) = 0;
+    virtual std::string getName() = 0;
 
-        virtual std::string getName() = 0;
-
-        /**
-         * The destructor must always be made virtual
-         */
-        virtual ~NTTTPlayer() {}
-}; // end of class NTTTPlayer 
+    /**
+     * The destructor must always be made virtual
+     */
+    virtual ~NTTTPlayer() {}
+}; // end of class NTTTPlayer
 
 #endif // NTTTPLAYER_H
-

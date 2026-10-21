@@ -7,53 +7,43 @@
 #include "NTTTManager.h"
 
 /**
-*/
-bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
-{
-    
-    if (state == UNMARKED)
-    {
+ */
+bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state) {
+
+    if (state == UNMARKED) {
         assert(m_squareStates[squareX][squareY] != UNMARKED);
-    }
-    else
-    {
+    } else {
         assert(m_state == ALIVE);
         assert(m_squareStates[squareX][squareY] == UNMARKED);
     }
-    
+
 
     m_squareStates[squareX][squareY] = state;
 
     int boardSize = m_squareStates.size();
-    for (int x=0; x<boardSize; ++x)
-    {
-        for (int y=0; y<boardSize; ++y)
-        {
-            if (x+m_lineSize <= boardSize) // Horizontal
-                if (checkLine(x, y, 1, 0))
-                {
-                    m_line = { x, y, 1, 0 };
+    for (int x = 0; x < boardSize; ++x) {
+        for (int y = 0; y < boardSize; ++y) {
+            if (x + m_lineSize <= boardSize) // Horizontal
+                if (checkLine(x, y, 1, 0)) {
+                    m_line  = {x, y, 1, 0};
                     m_state = DEAD;
                     return false;
                 }
-            if (y+m_lineSize <= boardSize) // Vertical
-                if (checkLine(x, y, 0, 1))
-                {
-                    m_line = { x, y, 0, 1 };
+            if (y + m_lineSize <= boardSize) // Vertical
+                if (checkLine(x, y, 0, 1)) {
+                    m_line  = {x, y, 0, 1};
                     m_state = DEAD;
                     return false;
                 }
-            if (x+m_lineSize <= boardSize && y+m_lineSize <= boardSize) // Diagonal
-                if (checkLine(x, y, 1, 1))
-                {
-                    m_line = { x, y, 1, 1 };
+            if (x + m_lineSize <= boardSize && y + m_lineSize <= boardSize) // Diagonal
+                if (checkLine(x, y, 1, 1)) {
+                    m_line  = {x, y, 1, 1};
                     m_state = DEAD;
                     return false;
                 }
-            if (x >= m_lineSize-1 && y+m_lineSize <= boardSize) // Diagonal
-                if (checkLine(x, y, -1, 1))
-                {
-                    m_line = { x, y, -1, 1 };
+            if (x >= m_lineSize - 1 && y + m_lineSize <= boardSize) // Diagonal
+                if (checkLine(x, y, -1, 1)) {
+                    m_line  = {x, y, -1, 1};
                     m_state = DEAD;
                     return false;
                 }
@@ -64,85 +54,77 @@ bool NTTTBoard::makeMove(int squareX, int squareY, SquareState state)
 } // end of makeMove
 
 /**
-*/
-void NTTTBoard::reset(int boardSize, int lineSize)
-{
+ */
+void NTTTBoard::reset(int boardSize, int lineSize) {
     m_squareStates.resize(boardSize);
-    for (std::vector<SquareState>& row : m_squareStates)
-    {
+    for (std::vector<SquareState>& row : m_squareStates) {
         row.resize(boardSize);
-        for (SquareState& square : row)
-        {
+        for (SquareState& square : row) {
             square = UNMARKED;
         }
     }
-    m_state = ALIVE;
+    m_state    = ALIVE;
     m_lineSize = lineSize;
-    m_line = {};
+    m_line     = {};
 }
 
-void NTTTBoard::renderDiagonalLineRight(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const{
-    for (int index = 0; index < thickness / 2; index++){
+void NTTTBoard::renderDiagonalLineRight(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const {
+    for (int index = 0; index < thickness / 2; index++) {
         SDL_RenderDrawLine(renderer, x, y + index, x - width + index, y + width);
         SDL_RenderDrawLine(renderer, x - index, y, x - width, y + width - index);
     }
     SDL_RenderDrawLine(renderer, x, y, x - width, y + width);
 }
 
-void NTTTBoard::renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const{
-    for (int index = 0; index < thickness / 2; index++){
+void NTTTBoard::renderDiagonalLineLeft(SDL_Renderer *renderer, const int thickness, const int x, const int y, const int width) const {
+    for (int index = 0; index < thickness / 2; index++) {
         SDL_RenderDrawLine(renderer, x, y + index, x + width - index, y + width);
         SDL_RenderDrawLine(renderer, x + index, y, x + width, y + width - index);
     }
     SDL_RenderDrawLine(renderer, x, y, x + width, y + width);
 }
 
-void NTTTBoard::renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const 
-{
-    /* unsigned */ int boardSize = m_squareStates.size();
+void NTTTBoard::renderBoard(SDL_Renderer *renderer, Texture *redCross, Texture *blueCross, const /* unsigned */ int x, const /* unsigned */ int y, const unsigned int size) const {
+    /* unsigned */ int boardSize  = m_squareStates.size();
     /* unsigned */ int squareSize = size / boardSize;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    for (/* unsigned */ int index = 0; index < boardSize - 1; index++){
+    for (/* unsigned */ int index = 0; index < boardSize - 1; index++) {
         SDL_RenderDrawLine(renderer,
-                x + squareSize * (index + 1), y,
-                x + squareSize * (index + 1), y + size);
+                           x + squareSize * (index + 1), y,
+                           x + squareSize * (index + 1), y + size);
         SDL_RenderDrawLine(renderer,
-                x + size, y + squareSize * (index + 1),
-                x, y + squareSize * (index + 1));
+                           x + size, y + squareSize * (index + 1),
+                           x, y + squareSize * (index + 1));
     }
-    for (/* unsigned */ int squareX = 0; squareX < boardSize; squareX++){
-        for (/* unsigned */ int squareY = 0; squareY < boardSize; squareY++){
+    for (/* unsigned */ int squareX = 0; squareX < boardSize; squareX++) {
+        for (/* unsigned */ int squareY = 0; squareY < boardSize; squareY++) {
             if (m_squareStates[squareX][squareY] == RED)
                 redCross->renderTexture(renderer,
-                        x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
+                                        x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
             else if (m_squareStates[squareX][squareY] == BLUE)
                 blueCross->renderTexture(renderer,
-                        x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
+                                         x + squareX * squareSize, y + squareY * squareSize, squareSize, squareSize);
         }
     }
-    if (m_state == DEAD){
-        if (m_line.dx == m_line.dy){
-            renderDiagonalLineLeft(renderer, 
-                    squareSize / 4, x + m_line.x * squareSize,
-                    y + m_line.y * squareSize, m_lineSize * squareSize);
-        }
-        else if (m_line.dx == -1){
+    if (m_state == DEAD) {
+        if (m_line.dx == m_line.dy) {
+            renderDiagonalLineLeft(renderer,
+                                   squareSize / 4, x + m_line.x * squareSize,
+                                   y + m_line.y * squareSize, m_lineSize * squareSize);
+        } else if (m_line.dx == -1) {
             renderDiagonalLineRight(renderer,
-                    squareSize / 4, x + (m_line.x + 1) * squareSize,
-                    y + m_line.y * squareSize, m_lineSize * squareSize);
-        }
-        else if (m_line.dx == 0){
-            SDL_Rect rect = { 
-                (int) (x + (m_line.x + 0.375) * squareSize), y + m_line.y * squareSize,
-                squareSize / 4, m_lineSize * squareSize };
+                                    squareSize / 4, x + (m_line.x + 1) * squareSize,
+                                    y + m_line.y * squareSize, m_lineSize * squareSize);
+        } else if (m_line.dx == 0) {
+            SDL_Rect rect = {
+                (int)(x + (m_line.x + 0.375) * squareSize), y + m_line.y * squareSize,
+                squareSize / 4, m_lineSize * squareSize};
             SDL_RenderFillRect(renderer, &rect);
-        }
-        else if (m_line.dx == 1){
+        } else if (m_line.dx == 1) {
             SDL_Rect rect = {
                 x + m_line.x * squareSize, (int)(y + (m_line.y + 0.375) * squareSize),
-                m_lineSize * squareSize, squareSize / 4 };
+                m_lineSize * squareSize, squareSize / 4};
             SDL_RenderFillRect(renderer, &rect);
         }
     }
 }
-

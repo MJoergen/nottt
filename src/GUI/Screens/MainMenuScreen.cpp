@@ -2,90 +2,88 @@
 
 #include <string>
 
-//New Game Button handling
-static void onClickNewGameStatic(void *data){
-    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *> (data);
+// New Game Button handling
+static void onClickNewGameStatic(void *data) {
+    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *>(data);
     pMainMenuScreen->onClickNewGame();
 }
 
-void MainMenuScreen::onClickNewGame(){
+void MainMenuScreen::onClickNewGame() {
     (*m_currentState) = NEW_GAME;
 }
 
-//Load Game Button handling
-static void onClickLoadGameStatic(void *data){
-    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *> (data);
+// Load Game Button handling
+static void onClickLoadGameStatic(void *data) {
+    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *>(data);
     pMainMenuScreen->onClickLoadGame();
 }
 
-void MainMenuScreen::onClickLoadGame(){
+void MainMenuScreen::onClickLoadGame() {
     (*m_currentState) = LOAD_GAME;
 }
 
-//Bots Button handling
-static void onClickBotsStatic(void *data){
-    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *> (data);
+// Bots Button handling
+static void onClickBotsStatic(void *data) {
+    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *>(data);
     pMainMenuScreen->onClickBots();
 }
 
-void MainMenuScreen::onClickBots(){
+void MainMenuScreen::onClickBots() {
     (*m_currentState) = BOTS;
 }
 
-//Statistics Button handling
-static void onClickStatisticsStatic(void *data){
-    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *> (data);
+// Statistics Button handling
+static void onClickStatisticsStatic(void *data) {
+    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *>(data);
     pMainMenuScreen->onClickStatistics();
 }
 
-void MainMenuScreen::onClickStatistics(){
+void MainMenuScreen::onClickStatistics() {
     (*m_currentState) = STATISTICS;
 }
 
-//Exit Button handling
-static void onClickExitStatic(void *data){
-    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *> (data);
+// Exit Button handling
+static void onClickExitStatic(void *data) {
+    MainMenuScreen *pMainMenuScreen = static_cast<MainMenuScreen *>(data);
     pMainMenuScreen->onClickExit();
 }
 
-void MainMenuScreen::onClickExit(){
+void MainMenuScreen::onClickExit() {
     (*m_currentState) = EXIT;
 }
 
-MainMenuScreen::MainMenuScreen(ScreenState* currentState){
+MainMenuScreen::MainMenuScreen(ScreenState *currentState) {
     m_currentState = currentState;
 }
 
-MainMenuScreen::~MainMenuScreen(){
+MainMenuScreen::~MainMenuScreen() {
     cleanUp();
 }
 
 void MainMenuScreen::update(SDL_Renderer *renderer) {
-    
 }
 
-void MainMenuScreen::prepareForQuit(){
-
+void MainMenuScreen::prepareForQuit() {
 }
 
 
-void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
+void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *guiFont, const unsigned int width, const unsigned int height) {
 
-    const unsigned int halfWidth = width / 2;
+    const unsigned int halfWidth  = width / 2;
     const unsigned int halfHeight = height / 2;
-    const SDL_Color black = { 0, 0, 0, 255 };
+    const SDL_Color black         = {0, 0, 0, 255};
 
     m_headlineText = new Text(renderer, "Main Menu", headlineFont, black, 0, HEADLINE_PADDING);
     m_headlineText->setX(halfWidth - m_headlineText->getWidth() / 2);
 
     m_exitButton = new Button(renderer, "Exit", guiFont, 0, 0);
 
-    const unsigned int buttonsHeight = m_exitButton->getHeight() * 5 + PADDING_Y * 4;
+    const unsigned int buttonsHeight     = m_exitButton->getHeight() * 5 + PADDING_Y * 4;
     const unsigned int halfBuffonsHeight = buttonsHeight / 2;
 
     m_exitButton->set(halfWidth - m_exitButton->getWidth() / 2, halfHeight + halfBuffonsHeight - m_exitButton->getHeight());
     m_exitButton->registerClickFunc(onClickExitStatic, this);
-    
+
     m_statisticsButton = new Button(renderer, "Statistics", guiFont, 0, 0);
     m_statisticsButton->set(halfWidth - m_statisticsButton->getWidth() / 2, m_exitButton->getY() - PADDING_Y - m_statisticsButton->getHeight());
     m_statisticsButton->registerClickFunc(onClickStatisticsStatic, this);
@@ -101,10 +99,9 @@ void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fo
     m_newGameButton = new Button(renderer, "New Game", guiFont, 0, 0);
     m_newGameButton->set(halfWidth - m_newGameButton->getWidth() / 2, m_loadGameButton->getY() - PADDING_Y - m_newGameButton->getHeight());
     m_newGameButton->registerClickFunc(onClickNewGameStatic, this);
-
 }
 
-void MainMenuScreen::render(SDL_Renderer* renderer) const{ // The renderer will be used later
+void MainMenuScreen::render(SDL_Renderer *renderer) const { // The renderer will be used later
     m_headlineText->renderText(renderer);
 
     m_newGameButton->renderButton(renderer);
@@ -114,7 +111,7 @@ void MainMenuScreen::render(SDL_Renderer* renderer) const{ // The renderer will 
     m_exitButton->renderButton(renderer);
 }
 
-void MainMenuScreen::input(const SDL_Event & event){
+void MainMenuScreen::input(const SDL_Event& event) {
     if (event.type != SDL_MOUSEBUTTONDOWN || event.button.button != SDL_BUTTON_LEFT)
         return;
 
@@ -133,7 +130,7 @@ void MainMenuScreen::input(const SDL_Event & event){
         m_exitButton->click();
 }
 
-void MainMenuScreen::cleanUp(){
+void MainMenuScreen::cleanUp() {
     delete m_headlineText;
     m_headlineText = nullptr;
 

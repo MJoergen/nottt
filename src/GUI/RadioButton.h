@@ -6,7 +6,6 @@
 
 class RadioButton {
 private:
-    
     int m_x, m_y;
     bool m_isChecked = false;
     int m_size;
@@ -26,7 +25,10 @@ public:
     const int getY() const { return m_y; }
     void setX(const unsigned int x) { m_x = x; }
     void setY(const unsigned int y) { m_y = y; }
-    void set(const unsigned int x, const unsigned int y) { m_x = x; m_y = y; }
+    void set(const unsigned int x, const unsigned int y) {
+        m_x = x;
+        m_y = y;
+    }
 
     const bool isChecked() { return m_isChecked; }
     void check() { m_isChecked = true; }
@@ -35,9 +37,9 @@ public:
 
     const bool isInside(const int& x, const int& y) const;
 
-    friend std::ostream& operator <<(std::ostream &os, const RadioButton &rhs){
+    friend std::ostream& operator<<(std::ostream& os, const RadioButton& rhs) {
         os << "RadioButton: { isChecked: " << rhs.m_isChecked << ", X: " << rhs.m_x << ", Y: " << rhs.m_y << ", Width: " << rhs.getWidth()
-            << ", Height: " << rhs.getHeight() << " }" << std::endl;
+           << ", Height: " << rhs.getHeight() << " }" << std::endl;
         return os;
     }
 };

@@ -10,35 +10,34 @@
 #include "GUI/Screens/GameScreen.h"
 
 /**git
-* Initializes SDL2, SDL2_image, SDL2_ttf and defines static variables.
-* @return A boolean representing the whether the everything initialized correctly or not.
-*  If true everything is correctly initialized.
-*  If false something went wrong in the initialization process.
-*/
-bool NTTTManager::init()
-{
-    
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0){ //Initializes every part of SDL2
+ * Initializes SDL2, SDL2_image, SDL2_ttf and defines static variables.
+ * @return A boolean representing the whether the everything initialized correctly or not.
+ *  If true everything is correctly initialized.
+ *  If false something went wrong in the initialization process.
+ */
+bool NTTTManager::init() {
+
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) { // Initializes every part of SDL2
         std::cout << "Failed initializing SDL: " << SDL_GetError() << std::endl;
         return false;
     }
 
     int initFlags = IMG_INIT_PNG;
-    if (!(IMG_Init(initFlags) & initFlags)){ //Initializes the PNG part of SDL2_image
+    if (!(IMG_Init(initFlags) & initFlags)) { // Initializes the PNG part of SDL2_image
         std::cout << "Failed initializing SDL_image: " << IMG_GetError() << std::endl;
         SDL_Quit();
         return false;
     }
 
-    if (TTF_Init() == -1){ //Initializes SDL2_ttf
+    if (TTF_Init() == -1) { // Initializes SDL2_ttf
         std::cout << "Failed initializing SDL_ttf: " << TTF_GetError() << std::endl;
         IMG_Quit();
         SDL_Quit();
         return false;
     }
 
-    m_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN); //Creates a window
-    if (m_window == NULL){
+    m_window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN); // Creates a window
+    if (m_window == NULL) {
         std::cout << "Failed creating window: " << SDL_GetError() << std::endl;
         TTF_Quit();
         IMG_Quit();
@@ -46,12 +45,12 @@ bool NTTTManager::init()
         return false;
     }
 
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED); //Creates the renderer used to render to the window
-    if (m_renderer == NULL){ //Falls back to software rendering when there is no GPU acceleration
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED); // Creates the renderer used to render to the window
+    if (m_renderer == NULL) {                                                // Falls back to software rendering when there is no GPU acceleration
         std::cout << "Failed creating accelerated renderer: " << SDL_GetError() << ". Using software rendering." << std::endl;
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
     }
-    if (m_renderer == NULL){
+    if (m_renderer == NULL) {
         std::cout << "Failed creating renderer: " << SDL_GetError() << std::endl;
         SDL_DestroyWindow(m_window);
         TTF_Quit();
@@ -60,8 +59,8 @@ bool NTTTManager::init()
         return false;
     }
 
-    m_font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE); //Creates the font used in the application
-    if (m_font == NULL){
+    m_font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE); // Creates the font used in the application
+    if (m_font == NULL) {
         std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
         SDL_DestroyRenderer(m_renderer);
         SDL_DestroyWindow(m_window);
@@ -72,7 +71,7 @@ bool NTTTManager::init()
     }
 
     m_movesFont = TTF_OpenFont(FONT_PATH.c_str(), (int)(FONT_SIZE * 0.5));
-    if (m_movesFont == NULL){
+    if (m_movesFont == NULL) {
         std::cout << "Failed loading font: " << TTF_GetError() << std::endl;
         TTF_CloseFont(m_font);
         SDL_DestroyRenderer(m_renderer);
@@ -83,10 +82,10 @@ bool NTTTManager::init()
         return false;
     }
 
-    m_redCross = new Texture(m_renderer, "assets/RedCross.png");
+    m_redCross  = new Texture(m_renderer, "assets/RedCross.png");
     m_blueCross = new Texture(m_renderer, "assets/BlueCross.png");
     m_checkMark = new Texture(m_renderer, "assets/CheckMark.png");
-    if (!m_redCross->isLoaded() || !m_blueCross->isLoaded() || !m_checkMark->isLoaded()){
+    if (!m_redCross->isLoaded() || !m_blueCross->isLoaded() || !m_checkMark->isLoaded()) {
         delete m_redCross;
         delete m_blueCross;
         delete m_checkMark;
@@ -102,7 +101,7 @@ bool NTTTManager::init()
     }
     m_game = new NTTTGame();
 
-    //New GUI system
+    // New GUI system
 
     m_botsScreen = new BotsScreen(&m_currentState);
     m_botsScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -110,12 +109,12 @@ bool NTTTManager::init()
     m_mainMenuScreen = new MainMenuScreen(&m_currentState);
     m_mainMenuScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    NewGameScreen::NewGameData newGameData = { &m_currentState, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, m_checkMark };
+    NewGameScreen::NewGameData newGameData = {&m_currentState, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, m_checkMark};
 
     m_newGameScreen = new NewGameScreen(newGameData);
     m_newGameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    GameScreen::GameData gameData = { &m_currentState, m_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &m_quit, m_redCross, m_blueCross };
+    GameScreen::GameData gameData = {&m_currentState, m_game, m_movesFont, &m_boardCount, &m_boardSize, &m_lineSize, &m_gameSeed, &m_manualMode, &m_writeLog, &m_logName, &m_quit, m_redCross, m_blueCross};
 
     m_gameScreen = new GameScreen(gameData);
     m_gameScreen->init(m_renderer, m_font, m_font, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -149,7 +148,7 @@ void NTTTManager::onReadLogClick(){
     std::vector<NTTTMove> performedMoves;
 
     unsigned int winneri = 0;
-    
+
     std::string currentLine;
     char c;
     while ((c = inputFile.get()) != EOF){
@@ -224,7 +223,7 @@ void NTTTManager::onReadLogClick(){
 
     NTTTPlayerIce ice;
     NTTTPlayerMike mike;
-    
+
     if (( player1.compare(ice.getName()) != 0 && player1.compare(mike.getName()) ) || ( player2.compare(ice.getName()) != 0 && player2.compare(mike.getName()) != 0 )){
         std::cout << "Unable to play game, the bots are non-existent" << std::endl;
         inputFile.close();
@@ -252,19 +251,18 @@ void NTTTManager::onReadLogClick(){
 */
 
 /**
-* Runs the main loop and responds to event calls.
-*/
-void NTTTManager::loop(){
-    
-    while (!m_quit){ //Runs until the program quits
+ * Runs the main loop and responds to event calls.
+ */
+void NTTTManager::loop() {
 
-        //Input
+    while (!m_quit) { // Runs until the program quits
+
+        // Input
         SDL_Event event;
-        while (SDL_PollEvent(&event) != 0){ //Get the pending events, if any
-            if (event.type == SDL_QUIT){ //Quits the program, if a SDL_QUIT event has been triggered (e.g. when the window is closed)
+        while (SDL_PollEvent(&event) != 0) { // Get the pending events, if any
+            if (event.type == SDL_QUIT) {    // Quits the program, if a SDL_QUIT event has been triggered (e.g. when the window is closed)
                 m_quit = true;
-            }
-            else {
+            } else {
                 input(event);
             }
         }
@@ -272,104 +270,102 @@ void NTTTManager::loop(){
         update();
         render();
 
-        SDL_Delay(50); //Sleeps
+        SDL_Delay(50); // Sleeps
     }
 
     m_mainMenuScreen->prepareForQuit();
     m_newGameScreen->prepareForQuit();
     m_botsScreen->prepareForQuit();
     m_gameScreen->prepareForQuit();
-
 }
 
-void NTTTManager::update(){
-    switch (m_currentState){
-    case Screen::MAIN_MENU:
-        m_mainMenuScreen->update(m_renderer);
-        break;
-    case Screen::NEW_GAME:
-        m_newGameScreen->update(m_renderer);
-        break;
-    case Screen::LOAD_GAME:
-        //TODO
-        break;
-    case Screen::GAME:
-        m_gameScreen->update(m_renderer);
-        break;
-    case Screen::BOTS:
-        m_botsScreen->update(m_renderer);
-        break;
-    case Screen::STATISTICS:
-        //TODO
-        break;
-    case Screen::EXIT:
-        m_quit = true;
-        break;
-    }
-
-}
-
-void NTTTManager::input(SDL_Event & event) {
-    switch (m_currentState){
-    case Screen::MAIN_MENU:
-        m_mainMenuScreen->input(event);
-        break;
-    case Screen::NEW_GAME:
-        m_newGameScreen->input(event);
-        break;
-    case Screen::LOAD_GAME:
-        //TODO
-        break;
-    case Screen::GAME:
-        m_gameScreen->input(event);
-        break;
-    case Screen::BOTS:
-        m_botsScreen->input(event);
-        break;
-    case Screen::STATISTICS:
-        //TODO
-        break;
-    case Screen::EXIT:
-        break;
+void NTTTManager::update() {
+    switch (m_currentState) {
+        case Screen::MAIN_MENU:
+            m_mainMenuScreen->update(m_renderer);
+            break;
+        case Screen::NEW_GAME:
+            m_newGameScreen->update(m_renderer);
+            break;
+        case Screen::LOAD_GAME:
+            // TODO
+            break;
+        case Screen::GAME:
+            m_gameScreen->update(m_renderer);
+            break;
+        case Screen::BOTS:
+            m_botsScreen->update(m_renderer);
+            break;
+        case Screen::STATISTICS:
+            // TODO
+            break;
+        case Screen::EXIT:
+            m_quit = true;
+            break;
     }
 }
 
-void NTTTManager::render() const{
+void NTTTManager::input(SDL_Event& event) {
+    switch (m_currentState) {
+        case Screen::MAIN_MENU:
+            m_mainMenuScreen->input(event);
+            break;
+        case Screen::NEW_GAME:
+            m_newGameScreen->input(event);
+            break;
+        case Screen::LOAD_GAME:
+            // TODO
+            break;
+        case Screen::GAME:
+            m_gameScreen->input(event);
+            break;
+        case Screen::BOTS:
+            m_botsScreen->input(event);
+            break;
+        case Screen::STATISTICS:
+            // TODO
+            break;
+        case Screen::EXIT:
+            break;
+    }
+}
+
+void NTTTManager::render() const {
 
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    SDL_RenderClear(m_renderer); //Clears the screen
-    switch (m_currentState){
-    case Screen::MAIN_MENU:
-        m_mainMenuScreen->render(m_renderer);
-        break;
-    case Screen::NEW_GAME:
-        m_newGameScreen->render(m_renderer);
-        break;
-    case Screen::LOAD_GAME:
-        //TODO
-        break;
-    case Screen::GAME:
-        m_gameScreen->render(m_renderer);
-        break;
-    case Screen::BOTS:
-        m_botsScreen->render(m_renderer);
-        break;
-    case Screen::STATISTICS:
-        //TODO
-        break;
-    case Screen::EXIT:
-        //TODO
-        break;
+    SDL_RenderClear(m_renderer); // Clears the screen
+    switch (m_currentState) {
+        case Screen::MAIN_MENU:
+            m_mainMenuScreen->render(m_renderer);
+            break;
+        case Screen::NEW_GAME:
+            m_newGameScreen->render(m_renderer);
+            break;
+        case Screen::LOAD_GAME:
+            // TODO
+            break;
+        case Screen::GAME:
+            m_gameScreen->render(m_renderer);
+            break;
+        case Screen::BOTS:
+            m_botsScreen->render(m_renderer);
+            break;
+        case Screen::STATISTICS:
+            // TODO
+            break;
+        case Screen::EXIT:
+            // TODO
+            break;
     }
 
-    SDL_RenderPresent(m_renderer); //Updates the screen
+    SDL_RenderPresent(m_renderer); // Updates the screen
 }
 
 
 /**
-* Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
-*/
-void NTTTManager::close(){
+ * Deletes the used pointers. Quits SDL2, SDL2_image and SDL2_ttf.
+ */
+void NTTTManager::close() {
 
     TTF_CloseFont(m_movesFont);
 
@@ -400,10 +396,9 @@ void NTTTManager::close(){
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     m_renderer = nullptr;
-    m_window = nullptr;
+    m_window   = nullptr;
 
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }
-

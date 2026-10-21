@@ -3,34 +3,34 @@
 #include "NewGameScreen.h"
 #include "../../NTTTGame.h"
 
-static void onClickNewGameReturn(void *data){
-    NewGameScreen *pNewGameScreen = static_cast<NewGameScreen *> (data);
+static void onClickNewGameReturn(void *data) {
+    NewGameScreen *pNewGameScreen = static_cast<NewGameScreen *>(data);
     pNewGameScreen->onClickReturn();
 }
 
-void NewGameScreen::onClickReturn(){
-    m_errorMessage = "";
-    m_errorChanged = true;
+void NewGameScreen::onClickReturn() {
+    m_errorMessage    = "";
+    m_errorChanged    = true;
     (*m_currentState) = MAIN_MENU;
 }
 
-static void onClickNewGameStart(void *data){
-    NewGameScreen *pNewGameScreen = static_cast<NewGameScreen *> (data);
+static void onClickNewGameStart(void *data) {
+    NewGameScreen *pNewGameScreen = static_cast<NewGameScreen *>(data);
     pNewGameScreen->onClickStart();
 }
 
-//The number fields only accept digits, and return "0" when empty.
-//Numbers that are too large become INT_MAX.
-static int toNumber(const std::string& content){
-    long long number = std::strtoll(content.c_str(), nullptr, 10); //Saturates at LLONG_MAX
-    return number > INT_MAX ? INT_MAX : (int) number;
+// The number fields only accept digits, and return "0" when empty.
+// Numbers that are too large become INT_MAX.
+static int toNumber(const std::string& content) {
+    long long number = std::strtoll(content.c_str(), nullptr, 10); // Saturates at LLONG_MAX
+    return number > INT_MAX ? INT_MAX : (int)number;
 }
 
-void NewGameScreen::onClickStart(){
+void NewGameScreen::onClickStart() {
     const int boardCount = toNumber(m_boardCountTextField->getContent());
-    const int boardSize = toNumber(m_boardSizeTextField->getContent());
-    const int lineSize = toNumber(m_lineSizeTextField->getContent());
-    const int gameSeed = toNumber(m_gameSeedTextField->getContent());
+    const int boardSize  = toNumber(m_boardSizeTextField->getContent());
+    const int lineSize   = toNumber(m_lineSizeTextField->getContent());
+    const int gameSeed   = toNumber(m_gameSeedTextField->getContent());
 
     m_errorMessage = NTTTGame::checkSettings(boardCount, boardSize, lineSize);
     if (m_errorMessage.empty() && boardCount > MAX_BOARD_COUNT)
@@ -40,35 +40,34 @@ void NewGameScreen::onClickStart(){
         return;
 
     (*m_boardCount) = boardCount;
-    (*m_boardSize) = boardSize;
-    (*m_lineSize) = lineSize;
-    (*m_gameSeed) = gameSeed;
+    (*m_boardSize)  = boardSize;
+    (*m_lineSize)   = lineSize;
+    (*m_gameSeed)   = gameSeed;
 
     (*m_manualMode) = m_manualModeRadioButton->isChecked();
-    
+
     (*m_writeLog) = m_writeLogRadioButton->isChecked();
-    (*m_logName) = m_logNameTextField->getContent();
-    
+    (*m_logName)  = m_logNameTextField->getContent();
+
     (*m_currentState) = GAME;
 }
 
 
-
-NewGameScreen::NewGameScreen(NewGameData data){
+NewGameScreen::NewGameScreen(NewGameData data) {
     m_currentState = data.currentState;
 
     m_boardCount = data.boardCount;
-    m_boardSize = data.boardSize;
-    m_lineSize = data.lineSize;
-    m_gameSeed = data.gameSeed;
+    m_boardSize  = data.boardSize;
+    m_lineSize   = data.lineSize;
+    m_gameSeed   = data.gameSeed;
     m_manualMode = data.manualMode;
-    m_writeLog = data.writeLog;
-    m_logName = data.logName;
+    m_writeLog   = data.writeLog;
+    m_logName    = data.logName;
 
     m_checkMark = data.checkMark;
 }
 
-NewGameScreen::~NewGameScreen(){
+NewGameScreen::~NewGameScreen() {
     cleanUp();
 }
 
@@ -80,43 +79,41 @@ void NewGameScreen::update(SDL_Renderer *renderer) {
 
     m_logNameTextField->updateTextField(renderer);
 
-    if (m_errorChanged){
+    if (m_errorChanged) {
         delete m_errorText;
         m_errorText = nullptr;
-        if (!m_errorMessage.empty()){
-            const SDL_Color red = { 255, 0, 0, 255 };
-            m_errorText = new Text(renderer, m_errorMessage, m_guiFont, red, 0, m_startGameButton->getY() + m_startGameButton->getHeight() + PADDING_Y);
+        if (!m_errorMessage.empty()) {
+            const SDL_Color red = {255, 0, 0, 255};
+            m_errorText         = new Text(renderer, m_errorMessage, m_guiFont, red, 0, m_startGameButton->getY() + m_startGameButton->getHeight() + PADDING_Y);
             m_errorText->setX(m_width / 2 - m_errorText->getWidth() / 2);
         }
         m_errorChanged = false;
     }
 }
 
-void NewGameScreen::prepareForQuit(){
-
+void NewGameScreen::prepareForQuit() {
 }
 
-void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
+void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *guiFont, const unsigned int width, const unsigned int height) {
 
     const unsigned int halfWidth = width / 2;
-    const SDL_Color black = { 0, 0, 0, 255 };
+    const SDL_Color black        = {0, 0, 0, 255};
 
     m_guiFont = guiFont;
-    m_width = width;
+    m_width   = width;
 
     m_headlineText = new Text(renderer, "New Game", headlineFont, black, 0, HEADLINE_PADDING);
     m_headlineText->setX(halfWidth - m_headlineText->getWidth() / 2);
 
     m_boardCountText = new Text(renderer, "Board Count: ", guiFont, black, 0, m_headlineText->getY() + m_headlineText->getHeight() + HEADLINE_PADDING + PADDING_Y);
-    m_boardSizeText = new Text(renderer, "Board Size: ", guiFont, black, 0, m_boardCountText->getY());
-    m_lineSizeText = new Text(renderer, "Line Size: ", guiFont, black, 0, m_boardCountText->getY());
+    m_boardSizeText  = new Text(renderer, "Board Size: ", guiFont, black, 0, m_boardCountText->getY());
+    m_lineSizeText   = new Text(renderer, "Line Size: ", guiFont, black, 0, m_boardCountText->getY());
 
     m_boardCountTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_boardCount), guiFont, 0, m_boardCountText->getY(), 50, -1);
-    m_boardSizeTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_boardSize), guiFont, 0, m_boardCountText->getY(), 30, 8);
-    m_lineSizeTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_lineSize), guiFont, 0, m_boardCountText->getY(), 30, 8);
+    m_boardSizeTextField  = new TextField(renderer, TextField::NUMBER, std::to_string(*m_boardSize), guiFont, 0, m_boardCountText->getY(), 30, 8);
+    m_lineSizeTextField   = new TextField(renderer, TextField::NUMBER, std::to_string(*m_lineSize), guiFont, 0, m_boardCountText->getY(), 30, 8);
 
-    const unsigned int firstLineWidth = m_boardCountText->getWidth() + m_boardSizeText->getWidth() + m_lineSizeText->getWidth()
-        + m_boardCountTextField->getWidth() + m_boardSizeTextField->getWidth() + m_lineSizeTextField->getWidth() + 5 * PADDING_X;
+    const unsigned int firstLineWidth     = m_boardCountText->getWidth() + m_boardSizeText->getWidth() + m_lineSizeText->getWidth() + m_boardCountTextField->getWidth() + m_boardSizeTextField->getWidth() + m_lineSizeTextField->getWidth() + 5 * PADDING_X;
     const unsigned int halfFirstLineWidth = firstLineWidth / 2;
 
     m_boardCountText->setX(halfWidth - halfFirstLineWidth);
@@ -127,13 +124,13 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 
     m_lineSizeText->setX(m_boardSizeTextField->getX() + m_boardSizeTextField->getWidth() + PADDING_X);
     m_lineSizeTextField->setX(m_lineSizeText->getX() + m_lineSizeText->getWidth() + PADDING_X);
-    
+
     //
     m_gameSeedText = new Text(renderer, "Game Seed: ", guiFont, black, 0, m_boardCountTextField->getY() + m_boardCountTextField->getHeight() + PADDING_Y);
 
     m_gameSeedTextField = new TextField(renderer, TextField::NUMBER, std::to_string(*m_gameSeed), guiFont, 0, m_gameSeedText->getY(), 200, INT_MAX);
 
-    const unsigned int secondLineWidth = m_gameSeedText->getWidth() + m_gameSeedTextField->getWidth() + PADDING_X;
+    const unsigned int secondLineWidth     = m_gameSeedText->getWidth() + m_gameSeedTextField->getWidth() + PADDING_X;
     const unsigned int halfSecondLineWidth = secondLineWidth / 2;
 
     m_gameSeedText->setX(halfWidth - halfSecondLineWidth);
@@ -145,7 +142,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 
     m_manualModeRadioButton = new RadioButton(*m_manualMode, 0, m_manualModeText->getY(), m_manualModeText->getHeight());
 
-    const unsigned int thirdLineWidth = m_manualModeText->getWidth() + m_manualModeRadioButton->getWidth() + PADDING_X;
+    const unsigned int thirdLineWidth     = m_manualModeText->getWidth() + m_manualModeRadioButton->getWidth() + PADDING_X;
     const unsigned int halfThirdLineWidth = thirdLineWidth / 2;
 
     m_manualModeText->setX(halfWidth - halfThirdLineWidth);
@@ -156,7 +153,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 
     m_writeLogRadioButton = new RadioButton(*m_writeLog, 0, m_writeLogText->getY(), m_writeLogText->getHeight());
 
-    const unsigned int fourthLineWidth = m_writeLogText->getWidth() + m_writeLogRadioButton->getWidth() + PADDING_X;
+    const unsigned int fourthLineWidth     = m_writeLogText->getWidth() + m_writeLogRadioButton->getWidth() + PADDING_X;
     const unsigned int halfFourthLineWidth = fourthLineWidth / 2;
 
     m_writeLogText->setX(halfWidth - halfFourthLineWidth);
@@ -167,7 +164,7 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
 
     m_logNameTextField = new TextField(renderer, TextField::TEXT, "log.txt", guiFont, 0, m_logNameText->getY(), 200, -1);
 
-    const unsigned int fifthLineWidth = m_logNameText->getWidth() + m_logNameTextField->getWidth() + PADDING_X;
+    const unsigned int fifthLineWidth     = m_logNameText->getWidth() + m_logNameTextField->getWidth() + PADDING_X;
     const unsigned int halfFifthLineWidth = fifthLineWidth / 2;
 
     m_logNameText->setX(halfWidth - halfFifthLineWidth);
@@ -182,10 +179,9 @@ void NewGameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Fon
     m_returnButton = new Button(renderer, "Back to Main Menu", guiFont, 0, 0);
     m_returnButton->set(halfWidth - m_returnButton->getWidth() / 2, height - PADDING_Y - m_returnButton->getHeight());
     m_returnButton->registerClickFunc(onClickNewGameReturn, this);
-
 }
 
-void NewGameScreen::render(SDL_Renderer* renderer) const{ // The renderer will be used later
+void NewGameScreen::render(SDL_Renderer *renderer) const { // The renderer will be used later
     m_boardCountText->renderText(renderer);
     m_boardSizeText->renderText(renderer);
     m_lineSizeText->renderText(renderer);
@@ -207,7 +203,7 @@ void NewGameScreen::render(SDL_Renderer* renderer) const{ // The renderer will b
 
     m_writeLogRadioButton->renderRadioButton(renderer, m_checkMark);
 
-    if (m_writeLogRadioButton->isChecked()){
+    if (m_writeLogRadioButton->isChecked()) {
         m_logNameText->renderText(renderer);
         m_logNameTextField->renderTextField(renderer, SDL_GetTicks());
     }
@@ -217,8 +213,8 @@ void NewGameScreen::render(SDL_Renderer* renderer) const{ // The renderer will b
     m_returnButton->renderButton(renderer);
 }
 
-void NewGameScreen::input(const SDL_Event & event){
-    if (event.type == SDL_TEXTINPUT){ //Responds to textinput
+void NewGameScreen::input(const SDL_Event& event) {
+    if (event.type == SDL_TEXTINPUT) { // Responds to textinput
         if (m_boardCountTextField->isSelected())
             m_boardCountTextField->onTextInput(event.text.text);
         else if (m_boardSizeTextField->isSelected())
@@ -229,8 +225,7 @@ void NewGameScreen::input(const SDL_Event & event){
             m_gameSeedTextField->onTextInput(event.text.text);
         else if (m_logNameTextField->isSelected())
             m_logNameTextField->onTextInput(event.text.text);
-    }
-    else if (event.type == SDL_KEYDOWN){ //Responds to keyboardinput
+    } else if (event.type == SDL_KEYDOWN) { // Responds to keyboardinput
         if (m_boardCountTextField->isSelected())
             m_boardCountTextField->onKeyPress(event.key.keysym);
         else if (m_boardSizeTextField->isSelected())
@@ -241,8 +236,7 @@ void NewGameScreen::input(const SDL_Event & event){
             m_gameSeedTextField->onKeyPress(event.key.keysym);
         else if (m_logNameTextField->isSelected())
             m_logNameTextField->onKeyPress(event.key.keysym);
-    }
-    else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT){ //Responds to left mouse clicks
+    } else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) { // Responds to left mouse clicks
         int x, y;
         SDL_GetMouseState(&x, &y);
 
@@ -278,7 +272,7 @@ void NewGameScreen::input(const SDL_Event & event){
     }
 }
 
-void NewGameScreen::cleanUp(){
+void NewGameScreen::cleanUp() {
 
     delete m_boardCountText;
     m_boardCountText = nullptr;

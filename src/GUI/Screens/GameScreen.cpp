@@ -5,14 +5,13 @@
 #include <algorithm>
 #include <fstream>
 
-static int manageGameStatic(void* data)
-{
-    GameScreen *pGameScreen = static_cast<GameScreen *> (data);
+static int manageGameStatic(void *data) {
+    GameScreen *pGameScreen = static_cast<GameScreen *>(data);
     return pGameScreen->manageGame();
 }
 
-void GameScreen::prepareForQuit(){
-    if (!m_isThreadProperlyClosed){
+void GameScreen::prepareForQuit() {
+    if (!m_isThreadProperlyClosed) {
         int status;
         SDL_WaitThread(m_gameThread, &status);
         std::cout << "Game ended: " << status << std::endl;
@@ -20,18 +19,18 @@ void GameScreen::prepareForQuit(){
 }
 
 // Sleeps like SDL_Delay(), but returns early when the program quits.
-void GameScreen::delayUnlessQuit(unsigned int ms) const{
+void GameScreen::delayUnlessQuit(unsigned int ms) const {
     for (unsigned int slept = 0; slept < ms && !*m_quit; slept += 10)
         SDL_Delay(10);
 }
 
-void GameScreen::writeLog(const int winner) const{
-    //TODO
+void GameScreen::writeLog(const int winner) const {
+    // TODO
 
     std::ofstream outputFile;
     outputFile.open("logs/" + *m_logName);
 
-    if (!outputFile.good()){
+    if (!outputFile.good()) {
         std::cout << "Failed to open logs/" << *m_logName << std::endl;
         outputFile.close();
         return;
@@ -46,35 +45,31 @@ void GameScreen::writeLog(const int winner) const{
     outputFile << "LineSize: " << *m_lineSize << std::endl;
     outputFile << "Game Seed: " << *m_gameSeed << std::endl;
     outputFile << "# Moves:" << std::endl;
-    for (unsigned int index = 0; index < m_moves.size(); index++){
+    for (unsigned int index = 0; index < m_moves.size(); index++) {
         outputFile << m_moves[index].getBoardNumber() << " : (" << m_moves[index].getSquareX() << ", " << m_moves[index].getSquareY() << ")" << std::endl;
     }
     outputFile << "# Winner:" << std::endl;
     outputFile << "Winner: " << winner << std::endl;
 
     outputFile.close();
-
 }
 
-int GameScreen::manageGame(){
+int GameScreen::manageGame() {
     int player = 1;
     NTTTMove move(0, 0, 0);
     bool gameActive = true;
-    while (!*m_quit && gameActive)
-    {
+    while (!*m_quit && gameActive) {
 
         while (m_moves.size() != m_shownMoves && !*m_quit)
             SDL_Delay(5);
         if (*m_quit)
             break;
 
-        if (gameActive)
-        {
-            srand(*m_gameSeed); //Sets the seed before every move
+        if (gameActive) {
+            srand(*m_gameSeed); // Sets the seed before every move
             NTTTPlayer *current = player == 1 ? m_player1 : m_player2;
-            move = current->performMove(*m_game);
-            if (!m_game->isLegalMove(move))
-            {
+            move                = current->performMove(*m_game);
+            if (!m_game->isLegalMove(move)) {
                 // An illegal move loses the game.
                 std::cout << current->getName() << " played the illegal move " << move << std::endl;
                 m_winner = 3 - player;
@@ -87,64 +82,62 @@ int GameScreen::manageGame(){
 
             player = 3 - player;
 
-            if (!m_game->isActive())
-            {
+            if (!m_game->isActive()) {
                 std::cout << "Player " << player << " won!" << std::endl;
                 gameActive = false;
-                m_winner = player;
+                m_winner   = player;
                 delayUnlessQuit(3000);
             }
-            if (*m_manualMode){
-                do{
+            if (*m_manualMode) {
+                do {
                     SDL_Delay(100);
-                    if (m_backward){
+                    if (m_backward) {
                         if (m_moves.size() <= 1)
                             continue;
                         SDL_LockMutex(m_gameMutex);
                         m_game->undoMove(m_moves[m_moves.size() - 1]);
                         m_moves.pop_back();
                         SDL_UnlockMutex(m_gameMutex);
-                        player = 3 - player;
+                        player     = 3 - player;
                         m_backward = false;
                     }
                 } while (!m_forward && !*m_quit);
                 m_forward = false;
-            }
-            else{
+            } else {
                 delayUnlessQuit(1000);
             }
         }
     }
 
-    
+
     if (*m_writeLog)
         writeLog(m_winner);
-    
 
-    //m_isGameThreadRunning must be set to false just before the end.
+
+    // m_isGameThreadRunning must be set to false just before the end.
     m_isGameThreadRunning = false;
 
     return player;
 }
 
-GameScreen::GameScreen(GameData data){
+GameScreen::GameScreen(GameData data) {
     m_currentState = data.currentState;
 
-    m_game = data.game;
+    m_game      = data.game;
     m_movesFont = data.movesFont;
 
     m_boardCount = data.boardCount;
-    m_boardSize = data.boardSize;
-    m_lineSize = data.lineSize;
-    m_gameSeed = data.gameSeed;
+    m_boardSize  = data.boardSize;
+    m_lineSize   = data.lineSize;
+    m_gameSeed   = data.gameSeed;
     m_manualMode = data.manualMode;
-    m_writeLog = data.writeLog;
-    m_logName = data.logName;
+    m_writeLog   = data.writeLog;
+    m_logName    = data.logName;
 
     m_quit = data.quit;
 
-    m_redCross = data.redCross;
-    m_blueCross = data.blueCross;
+    m_redCross      = data.redCross;
+    m_blueCross     = data.blueCross;
     m_isInitialized = false;
 
     m_gameMutex = SDL_CreateMutex();
@@ -152,41 +145,40 @@ GameScreen::GameScreen(GameData data){
         std::cout << "Failed to create mutex: " << SDL_GetError() << std::endl;
 }
 
-GameScreen::~GameScreen(){
+GameScreen::~GameScreen() {
     cleanUp();
     SDL_DestroyMutex(m_gameMutex);
 }
 
 void GameScreen::update(SDL_Renderer *renderer) {
-    if (!m_isInitialized){
+    if (!m_isInitialized) {
         initialize(renderer);
         m_isInitialized = true;
-    }
-    else if (!m_isGameThreadRunning && !m_isThreadProperlyClosed){
+    } else if (!m_isGameThreadRunning && !m_isThreadProperlyClosed) {
         int status;
         SDL_WaitThread(m_gameThread, &status);
         std::cout << "Game ended: " << status << std::endl;
-        m_isInitialized = false;
+        m_isInitialized          = false;
         m_isThreadProperlyClosed = true;
 
         (*m_currentState) = MAIN_MENU;
     }
-    if (m_winner != 0 && m_winnerDisplayText == nullptr){
+    if (m_winner != 0 && m_winnerDisplayText == nullptr) {
         initializeWinnerDisplayText(renderer);
     }
     SDL_LockMutex(m_gameMutex);
-    for (unsigned int index = getMovesCount(); index < m_moves.size(); index++){
+    for (unsigned int index = getMovesCount(); index < m_moves.size(); index++) {
         addMove(renderer, m_moves[index]);
     }
-    for (unsigned int index = getMovesCount(); index > m_moves.size(); index--){
+    for (unsigned int index = getMovesCount(); index > m_moves.size(); index--) {
         removeMove();
     }
     SDL_UnlockMutex(m_gameMutex);
     m_shownMoves = getMovesCount();
 }
 
-void GameScreen::removeMove(){
-    if (m_excessMoves > 0){
+void GameScreen::removeMove() {
+    if (m_excessMoves > 0) {
         m_excessMoves--;
         return;
     }
@@ -196,105 +188,99 @@ void GameScreen::removeMove(){
     m_movesTexts.resize(m_movesTexts.size() - 1);
 }
 
-void GameScreen::addMove(SDL_Renderer *renderer, NTTTMove move){
-    if (m_movesTexts.size() >= m_maxMoves){
+void GameScreen::addMove(SDL_Renderer *renderer, NTTTMove move) {
+    if (m_movesTexts.size() >= m_maxMoves) {
         m_excessMoves++;
         return;
     }
     const int x = m_playingFieldSize;
 
-    Text *text = new Text(renderer, std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX())
-        + ", " + std::to_string(move.getSquareY()) + ")", m_movesFont, { 255, 255, 255 }, 0,
-        0);
+    Text *text = new Text(renderer, std::to_string(move.getBoardNumber()) + " : (" + std::to_string(move.getSquareX()) + ", " + std::to_string(move.getSquareY()) + ")", m_movesFont, {255, 255, 255}, 0,
+                          0);
 
     text->set(x + 2 * PADDING_X + (int)(m_movesTexts.size() / m_amountInColumn) * m_movesWidth + m_movesWidth / 2 - text->getWidth() / 2,
-        m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (m_movesTexts.size() % m_amountInColumn) * m_movesHeight + m_movesHeight / 2 - text->getHeight() / 2);
+              m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (m_movesTexts.size() % m_amountInColumn) * m_movesHeight + m_movesHeight / 2 - text->getHeight() / 2);
 
     m_movesTexts.push_back(text);
-
 }
 
-void GameScreen::initializeWinnerDisplayText(SDL_Renderer *renderer){
-    const int x = m_playingFieldSize;
+void GameScreen::initializeWinnerDisplayText(SDL_Renderer *renderer) {
+    const int x     = m_playingFieldSize;
     const int width = m_width - x;
-    switch (m_winner.load()){
-    case 1:
-        m_winnerDisplayText = new Text(renderer, m_player1->getName(), m_guiFont, { 255, 0, 0 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
-        m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
-        break;
-    case 2:
-        m_winnerDisplayText = new Text(renderer, m_player2->getName(), m_guiFont, { 0, 0, 255 }, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
-        m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
-        break;
+    switch (m_winner.load()) {
+        case 1:
+            m_winnerDisplayText = new Text(renderer, m_player1->getName(), m_guiFont, {255, 0, 0}, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+            m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
+            break;
+        case 2:
+            m_winnerDisplayText = new Text(renderer, m_player2->getName(), m_guiFont, {0, 0, 255}, x, m_lineSizeText->getY() + m_lineSizeText->getHeight() + PADDING_Y);
+            m_winnerDisplayText->setX(x + width - PADDING_X - m_winnerDisplayText->getWidth());
+            break;
     }
 }
 
-void GameScreen::initialize(SDL_Renderer *renderer){
+void GameScreen::initialize(SDL_Renderer *renderer) {
     cleanUp();
 
-    Texture texture(renderer, "0", m_movesFont, { 0, 0, 0, 255 });
+    Texture texture(renderer, "0", m_movesFont, {0, 0, 0, 255});
 
     m_movesHeight = texture.getHeight() + 2 * PADDING_Y;
 
 
-    //Maybe temporary ----->
+    // Maybe temporary ----->
     m_game->newGame(*m_boardCount, *m_boardSize, *m_lineSize);
 
     srand(*m_gameSeed);
 
-    NTTTPlayerIce *ice = new NTTTPlayerIce();
+    NTTTPlayerIce *ice   = new NTTTPlayerIce();
     NTTTPlayerMike *mike = new NTTTPlayerMike();
 
     NTTTPlayer::OrderChoice iceOrderChoice, mikeOrderChoice;
-    iceOrderChoice = ice->chooseOrder(*m_game);
+    iceOrderChoice  = ice->chooseOrder(*m_game);
     mikeOrderChoice = mike->chooseOrder(*m_game);
 
-    if (iceOrderChoice == mikeOrderChoice){
-        if (rand() % 2 == 0){
+    if (iceOrderChoice == mikeOrderChoice) {
+        if (rand() % 2 == 0) {
             std::cout << "Ice starts" << std::endl;
             m_player1 = ice;
             m_player2 = mike;
-        }
-        else {
+        } else {
             std::cout << "Mike starts" << std::endl;
             m_player1 = mike;
             m_player2 = ice;
         }
-    }
-    else if (iceOrderChoice == NTTTPlayer::FIRST || mikeOrderChoice == NTTTPlayer::LAST){
+    } else if (iceOrderChoice == NTTTPlayer::FIRST || mikeOrderChoice == NTTTPlayer::LAST) {
         std::cout << "Ice starts" << std::endl;
         m_player1 = ice;
         m_player2 = mike;
-    }
-    else{
+    } else {
         std::cout << "Mike starts" << std::endl;
         m_player1 = mike;
         m_player2 = ice;
     }
 
-    m_gridSize = (int)ceil(sqrt(*m_boardCount));
+    m_gridSize        = (int)ceil(sqrt(*m_boardCount));
     m_boardRenderSize = (m_playingFieldSize - (1 + m_gridSize) * BOARD_PADDING) / m_gridSize;
     //<-----
 
-    const int x = m_playingFieldSize;
-    const int width = m_width - x;
-    const SDL_Color black = { 0, 0, 0, 255 };
+    const int x           = m_playingFieldSize;
+    const int width       = m_width - x;
+    const SDL_Color black = {0, 0, 0, 255};
 
-    m_player1Text = new Text(renderer, m_player1->getName(), m_headlineFont, { 255, 0, 0 }, x, PADDING_Y);
-    m_vsText = new Text(renderer, " vs ", m_headlineFont, { 0, 0, 0 }, x, PADDING_Y);
-    m_player2Text = new Text(renderer, m_player2->getName(), m_headlineFont, { 0, 0, 255 }, x, PADDING_Y);
+    m_player1Text = new Text(renderer, m_player1->getName(), m_headlineFont, {255, 0, 0}, x, PADDING_Y);
+    m_vsText      = new Text(renderer, " vs ", m_headlineFont, {0, 0, 0}, x, PADDING_Y);
+    m_player2Text = new Text(renderer, m_player2->getName(), m_headlineFont, {0, 0, 255}, x, PADDING_Y);
 
-    //Centers the title "<player1> vs <player2>", moving <player2> to a second line if the title is too wide
+    // Centers the title "<player1> vs <player2>", moving <player2> to a second line if the title is too wide
     const int titleWidth = m_player1Text->getWidth() + m_vsText->getWidth() + m_player2Text->getWidth();
-    if (titleWidth <= width - (int) PADDING_X * 2){
+    if (titleWidth <= width - (int)PADDING_X * 2) {
         m_player1Text->setX(x + (width - titleWidth) / 2);
         m_vsText->setX(m_player1Text->getX() + m_player1Text->getWidth());
         m_player2Text->setX(m_vsText->getX() + m_vsText->getWidth());
-    }
-    else{
+    } else {
         m_player1Text->setX(x + (width - (int)(m_player1Text->getWidth() + m_vsText->getWidth())) / 2);
         m_vsText->setX(m_player1Text->getX() + m_player1Text->getWidth());
-        m_player2Text->set(x + (width - (int) m_player2Text->getWidth()) / 2, m_player1Text->getY() + m_player1Text->getHeight());
+        m_player2Text->set(x + (width - (int)m_player2Text->getWidth()) / 2, m_player1Text->getY() + m_player1Text->getHeight());
     }
 
     m_boardCountText = new Text(renderer, "BoardCount: " + std::to_string(*m_boardCount), m_guiFont, black, x, m_player2Text->getY() + m_player2Text->getHeight() + PADDING_Y * 2);
@@ -312,51 +298,51 @@ void GameScreen::initialize(SDL_Renderer *renderer){
 
     TTF_SizeText(m_movesFont, (std::to_string(*m_boardCount) + "  : (8,8)").c_str(), &w, &h);
 
-    m_movesWidth = w + PADDING_X * 2; //Estimate
+    m_movesWidth = w + PADDING_X * 2; // Estimate
 
     m_amountInColumn = (int)((m_height - (m_winnerText->getY() + m_winnerText->getHeight() + 3 * PADDING_Y)) / m_movesHeight);
-    m_amountInRow = (int)((width - PADDING_X * 2) / m_movesWidth);
-    m_maxMoves = m_amountInColumn * m_amountInRow;
+    m_amountInRow    = (int)((width - PADDING_X * 2) / m_movesWidth);
+    m_maxMoves       = m_amountInColumn * m_amountInRow;
 
     m_moves.clear();
-    m_shownMoves = 0;
+    m_shownMoves             = 0;
     m_isThreadProperlyClosed = false;
-    m_isGameThreadRunning = true;
-    m_gameThread = SDL_CreateThread(manageGameStatic, "Game Thread", this);
-    if (m_gameThread == NULL){
+    m_isGameThreadRunning    = true;
+    m_gameThread             = SDL_CreateThread(manageGameStatic, "Game Thread", this);
+    if (m_gameThread == NULL) {
         std::cout << "Failed to create thread: " << SDL_GetError() << std::endl;
         m_isGameThreadRunning = false;
     }
 }
 
-void GameScreen::init(SDL_Renderer *renderer, TTF_Font* headlineFont, TTF_Font* guiFont, const unsigned int width, const unsigned int height){
-    //This function is almost empty since the gui depends on the settings (the settings has not yet been chosen)
+void GameScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Font *guiFont, const unsigned int width, const unsigned int height) {
+    // This function is almost empty since the gui depends on the settings (the settings has not yet been chosen)
     m_playingFieldSize = std::min(width, height);
-    m_headlineFont = headlineFont;
-    m_guiFont = guiFont;
-    m_width = width;
-    m_height = height;
-    m_player1 = nullptr;
-    m_player2 = nullptr;
+    m_headlineFont     = headlineFont;
+    m_guiFont          = guiFont;
+    m_width            = width;
+    m_height           = height;
+    m_player1          = nullptr;
+    m_player2          = nullptr;
 }
 
-void GameScreen::render(SDL_Renderer* renderer) const{
-    
+void GameScreen::render(SDL_Renderer *renderer) const {
+
     if (!m_isInitialized)
         return;
 
     SDL_LockMutex(m_gameMutex);
-    for (int index = 0; index < *m_boardCount; index++){
+    for (int index = 0; index < *m_boardCount; index++) {
 
-        int boardX = BOARD_PADDING * (index % m_gridSize + 1) + m_boardRenderSize * (index % m_gridSize);
-        int boardY = BOARD_PADDING * (int)(index / m_gridSize + 1) + m_boardRenderSize * (int)(index / m_gridSize);
+        int boardX     = BOARD_PADDING * (index % m_gridSize + 1) + m_boardRenderSize * (index % m_gridSize);
+        int boardY     = BOARD_PADDING * (int)(index / m_gridSize + 1) + m_boardRenderSize * (int)(index / m_gridSize);
         int squareSize = m_boardRenderSize / *m_boardSize;
 
-        if (m_moves.size() > 0){
+        if (m_moves.size() > 0) {
             const NTTTMove& move = m_moves[m_moves.size() - 1];
-            if (move.getBoardNumber() == index){
-                SDL_SetRenderDrawColor(renderer, 190, 190, 190, 255); //Color of the "last move" square
-                SDL_Rect rect = { boardX + squareSize * move.getSquareX(), boardY + squareSize * move.getSquareY(), squareSize, squareSize };
+            if (move.getBoardNumber() == index) {
+                SDL_SetRenderDrawColor(renderer, 190, 190, 190, 255); // Color of the "last move" square
+                SDL_Rect rect = {boardX + squareSize * move.getSquareX(), boardY + squareSize * move.getSquareY(), squareSize, squareSize};
                 SDL_RenderFillRect(renderer, &rect);
             }
         }
@@ -377,25 +363,24 @@ void GameScreen::render(SDL_Renderer* renderer) const{
     if (m_winnerDisplayText != nullptr)
         m_winnerDisplayText->renderText(renderer);
 
-    for (unsigned int index = 0; index < m_movesTexts.size(); index++){
-        switch (index % 2){
-        case 0:
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-            break;
-        case 1:
-            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-            break;
+    for (unsigned int index = 0; index < m_movesTexts.size(); index++) {
+        switch (index % 2) {
+            case 0:
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                break;
+            case 1:
+                SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+                break;
         }
-        const int x = m_playingFieldSize;
-        SDL_Rect rect = { (int)(x + 2 * PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth),
-            (int)(m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_amountInColumn) * m_movesHeight), m_movesWidth, m_movesHeight };
+        const int x   = m_playingFieldSize;
+        SDL_Rect rect = {(int)(x + 2 * PADDING_X + (int)(index / m_amountInColumn) * m_movesWidth),
+                         (int)(m_winnerText->getY() + m_winnerText->getHeight() + 2 * PADDING_Y + (index % m_amountInColumn) * m_movesHeight), m_movesWidth, m_movesHeight};
         SDL_RenderFillRect(renderer, &rect);
         m_movesTexts[index]->renderText(renderer);
     }
-
 }
 
-void GameScreen::input(const SDL_Event & event){
+void GameScreen::input(const SDL_Event& event) {
     if (event.type != SDL_KEYDOWN)
         return;
 
@@ -405,8 +390,8 @@ void GameScreen::input(const SDL_Event & event){
         m_backward = true;
 }
 
-//Only called when the game thread is not running, so needs no locking.
-void GameScreen::cleanUp(){
+// Only called when the game thread is not running, so needs no locking.
+void GameScreen::cleanUp() {
 
     m_moves.clear();
     m_winner = 0;
@@ -417,7 +402,7 @@ void GameScreen::cleanUp(){
     delete m_player2;
     m_player2 = nullptr;
 
-    for (unsigned int index = 0; index < m_movesTexts.size(); index++){
+    for (unsigned int index = 0; index < m_movesTexts.size(); index++) {
         delete m_movesTexts[index];
         m_movesTexts[index] = nullptr;
     }
@@ -442,5 +427,4 @@ void GameScreen::cleanUp(){
 
     delete m_vsText;
     m_vsText = nullptr;
-
 }

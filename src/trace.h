@@ -7,6 +7,11 @@
 // line.
 extern std::ostream *gpLog;
 
-#define LOG(x) do { if (gpLog) { *gpLog << x; } } while (0)
+#define LOG(x)           \
+    do {                 \
+        if (gpLog) {     \
+            *gpLog << x; \
+        }                \
+    } while (0)
 
 #endif
