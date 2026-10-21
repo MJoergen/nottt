@@ -42,8 +42,6 @@ section.
   when the field is prefilled, and clicking does not move it. Typing "5" into a
   field showing "4" gives "54". Start the cursor at the end, and move it on
   click.
-- [ ] 2. The length-limit check for text (not number) fields is inverted. It is
-  latent, because the only text field has no limit.
 - [ ] 3. **"Write log" always fails.** It writes to `logs/<name>`, but nothing
   creates `logs/`. Log names are not sanitised either, so `../x` escapes the
   directory.
