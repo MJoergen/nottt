@@ -79,9 +79,9 @@ void MainMenuScreen::init(SDL_Renderer *renderer, TTF_Font *headlineFont, TTF_Fo
     m_exitButton = new Button(renderer, "Exit", guiFont, 0, 0);
 
     const unsigned int buttonsHeight     = m_exitButton->getHeight() * 5 + PADDING_Y * 4;
-    const unsigned int halfBuffonsHeight = buttonsHeight / 2;
+    const unsigned int halfButtonsHeight = buttonsHeight / 2;
 
-    m_exitButton->set(halfWidth - m_exitButton->getWidth() / 2, halfHeight + halfBuffonsHeight - m_exitButton->getHeight());
+    m_exitButton->set(halfWidth - m_exitButton->getWidth() / 2, halfHeight + halfButtonsHeight - m_exitButton->getHeight());
     m_exitButton->registerClickFunc(onClickExitStatic, this);
 
     m_statisticsButton = new Button(renderer, "Statistics", guiFont, 0, 0);
