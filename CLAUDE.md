@@ -30,19 +30,24 @@ and TODO.md for known issues. When an item in TODO.md is fixed, remove it.
 
 ## Testing
 
-There are no automated tests. Instead:
+CI (`.github/workflows/ci.yml`) runs `make check-style`, builds with
+`EXTRA_FLAGS=-Werror`, and runs `make check-bots` and `make check-tables`. Run
+the same checks locally before showing a change:
 
-- **Bot changes:** save tournament output before the change and `cmp` it
-  afterwards. Output is deterministic (fixed seeds), so anything that should
-  not change behaviour must give byte-identical results. Cover several board
-  sizes (2–6), line sizes and board counts. Results for line size 3 are the
-  reference; the v5/v6 evaluation tables were tuned for 5×5 with line size 3.
+- **Bot changes:** `make check-bots` replays tournaments with fixed seeds and
+  compares the results and every move with the reference games in
+  `tests/bots/`. A change that should not alter behaviour must pass. For an
+  intended change, run `make update-bots`, explain the differences, and commit
+  `tests/bots/` with the change. For a closer look, compare tournament output
+  for more board sizes (2–6), line sizes and board counts. Results for line
+  size 3 are the reference; the v5/v6 evaluation tables were tuned for 5×5
+  with line size 3.
   MikeBot v1 calls `rand()` in its evaluation, so its games change whenever
   the number of nodes searched changes, even if every score stays the same.
   Compare the other bots' games in the log (`./nottt ... <logFile>`), leaving
   out the `nodes=` and `m_stat` lines.
 - **Tablebase changes:** regenerated `.bit` files must be identical to the
-  tracked ones.
+  tracked ones. `make check-tables` checks this in a temporary directory.
 - **GUI changes:** drive the app on a virtual display and take screenshots:
   - Start `Xvfb :99 -screen 0 1024x768x24` detached, then run
     `DISPLAY=:99 SDL_RENDER_DRIVER=software ./nottt < /dev/null`.

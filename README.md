@@ -167,6 +167,10 @@ tools/                      Tablebase tools and scripts
   egtb.cpp, egtb.sh         Tablebase generator
   egtb-stats.cpp            Tablebase statistics
   stats.sh                  Series of tournaments
+  check-bots.sh             Compares the bots' games with tests/bots/
+  check-tables.sh           Checks that egtb regenerates tables/
+tests/bots/                 Reference games for check-bots.sh
+.github/workflows/ci.yml    CI: style, -Werror build, and the two checks above
 assets/                     Images and font used by the GUI
 tables/                     Generated tablebases and their statistics
 docs/                       Screenshot for this README

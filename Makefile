@@ -30,7 +30,10 @@ DEFINES += -std=c++11
 DEFINES += -Wall
 
 DEFINES += -g
-DEFINES += -O3 
+DEFINES += -O3
+
+# Extra compiler flags from the command line, e.g. EXTRA_FLAGS=-Werror as in CI.
+DEFINES += $(EXTRA_FLAGS)
 
 LIBS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 
@@ -62,7 +65,7 @@ PREFIX ?= $(HOME)
 BINDIR  = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share/nottt
 
-help_line = @printf "  make %-11s %s\n"
+help_line = @printf "  make %-12s %s\n"
 
 help:
 	@echo "Targets:"
@@ -77,6 +80,11 @@ endif
 	$(help_line) clean "Remove all build output"
 	$(help_line) format "Reformat the C++ sources with clang-format"
 	$(help_line) check-style "Check layout (clang-format) and naming (clang-tidy)"
+	$(help_line) check-bots "Check that the bots play the games in tests/bots/"
+	$(help_line) update-bots "Replay the games in tests/bots/ after an intended change"
+ifeq ($(TARGET),linux)
+	$(help_line) check-tables "Check that egtb regenerates the tables in tables/"
+endif
 
 all: $(program) $(tools)
 
@@ -123,5 +131,16 @@ check-style:
 	clang-format --dry-run -Werror $(style_sources)
 	clang-tidy --quiet $(filter %.cpp,$(style_sources)) -- $(filter -std=%,$(DEFINES)) -Isrc $(INCLUDE_DIRS)
 
-.PHONY: help all install clean format check-style
+# The bots play deterministic games, so the reference games in tests/bots/
+# catch any change in their behaviour.
+check-bots: $(program)
+	tools/check-bots.sh
+
+update-bots: $(program)
+	tools/check-bots.sh --update
+
+check-tables: egtb
+	tools/check-tables.sh
+
+.PHONY: help all install clean format check-style check-bots update-bots check-tables
 
