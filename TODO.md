@@ -24,9 +24,6 @@ section.
   the `break` on `alpha >= beta` only exits the `y` loop, so the search
   continues over the remaining rows and boards. Results stay correct, but most
   of the pruning is lost with several boards.
-- [ ] 5. **Inconsistent win/loss scores.** The code uses 99999, 99990 + level and
-  ±99990 in different places, so all forced losses score the same and the bot
-  does not prefer slower losses.
 - [ ] 6. Combining per-board scores by addition has no theoretical basis. Misère
   Notakto needs a misère-quotient style combination of boards.
 - [ ] 7. Keep the loaded tablebase across games, like the hash table, and only

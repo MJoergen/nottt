@@ -9,6 +9,14 @@
 
 #include "NTTTPlayerMike.h"
 
+// Scores, relative to the player to move. A win found by the search scores
+// WIN + level, so quicker wins and slower losses are preferred, since level
+// counts down towards the leaves. A tablebase win has an unknown distance, so
+// it scores just below that. The heuristic estimate is kept below both.
+static const int WIN      = 100000;
+static const int EGTB_WIN = WIN - 100;
+static const int INFINITE = WIN + 1000;
+
 std::string NTTTPlayerMike::getName()
 { 
     std::ostringstream oss;
@@ -590,19 +598,19 @@ int Board::evaluate() const
 
             switch ((m_egtb[bits/8] >> (bits%8)) & 1)
             {
-                case true : return 99990;
-                case false: return -99990;
+                case true : return EGTB_WIN;
+                case false: return -EGTB_WIN;
                 default: assert(false);
             }
         }
     }
 
     if (numActive == 0)
-        return 99999;
+        return WIN; // The opponent killed the last board
 
     // Keep the estimate below the scores of won and lost positions,
     // however many boards there are.
-    return std::max(-99989, std::min(sum, 99989));
+    return std::max(-(EGTB_WIN-1), std::min(sum, EGTB_WIN-1));
 } // end of evaluate
 
 
@@ -621,7 +629,7 @@ int Board::alphaBeta(int alpha, int beta, int level)
     if (m_debug)
         LOG("alpha=" << std::dec << alpha << ", beta=" << beta << ", level=" << level << std::endl);
 
-    int bestVal = -99990;
+    int bestVal = -INFINITE;
 
     int numActive = 0;
     for (int board=0; board<m_boardCount; ++board)
@@ -684,7 +692,7 @@ int Board::alphaBeta(int alpha, int beta, int level)
     }
 
     if (numActive == 0) // No legal moves
-        return 99990 + level; // I've won
+        return WIN + level; // I've won
 
     return bestVal;
 } // end of alphaBeta
@@ -710,7 +718,7 @@ NTTTMove Board::findMove(const NTTTGame& game)
        level = 0;
 
     m_nodes = 0;
-    int bestVal = -999999;
+    int bestVal = -INFINITE;
     std::vector<NTTTMove> bestMoves;
 
     for (int board=0; board<m_boardCount; ++board)
@@ -728,7 +736,7 @@ NTTTMove Board::findMove(const NTTTGame& game)
                         LOG("Move " << move << std::endl);
 
                     makeMove(board, mask);
-                    int val = -alphaBeta(-99999, 99999, level);
+                    int val = -alphaBeta(-INFINITE, INFINITE, level);
                     undoMove(board, mask);
 
                     LOG("Move " << move << " => " << std::dec << val << std::endl);
@@ -746,7 +754,7 @@ NTTTMove Board::findMove(const NTTTGame& game)
             }
         }
     }
-    assert(bestVal > -999999);
+    assert(bestVal > -INFINITE);
     assert(bestMoves.size() > 0);
     NTTTMove bestMove = bestMoves[rand() % bestMoves.size()];
     LOG("nodes=" << m_nodes << std::endl);
