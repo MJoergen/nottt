@@ -2,6 +2,8 @@
 #define _NTTTPLAYERICE_H_
 
 #include "NTTTPlayer.h"
+#include <cstdint>
+#include <vector>
 
 #define NEW_VERSION 1
 
@@ -19,6 +21,9 @@
 class NTTTPlayerIce : public NTTTPlayer {
 private:
     int m_boardCount = 0, m_boardSize = 0, m_lineSize = 0;
+    std::vector<uint8_t> m_egtb;    // One bit per position. Empty if there is no tablebase.
+    int m_egtbBoardSize = 0, m_egtbLineSize = 0;    // The sizes m_egtb was loaded for.
+    void loadEgtb();
     std::vector<NTTTMove> getPossibleMoves(const NTTTGame& game) const;
     const bool isNumberEven(const int number) const;
 

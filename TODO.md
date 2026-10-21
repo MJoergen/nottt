@@ -40,8 +40,6 @@ section.
 
 ## IceBot (`NTTTPlayerIce`)
 
-- [ ] 1. It re-opens and reads its tablebase file for every lookup, which can be
-  about 25 times per board per move. Load it once.
 - [ ] 2. Without a usable tablebase it silently guesses at random. Warn, like
   MikeBot does.
 - [ ] 3. It only uses tablebases for board sizes 3–5, although `egtb-2-*.bit`

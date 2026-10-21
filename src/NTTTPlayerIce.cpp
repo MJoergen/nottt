@@ -14,6 +14,7 @@ NTTTPlayer::OrderChoice NTTTPlayerIce::chooseOrder(const NTTTGame& game)
     m_boardCount = game.getBoardCount();
     m_boardSize = game.getBoardSize();
     m_lineSize = game.getLineSize();
+    loadEgtb();
 
 #if !NEW_VERSION
     if (isNumberEven(m_lineSize * m_boardCount))
@@ -29,6 +30,46 @@ NTTTPlayer::OrderChoice NTTTPlayerIce::chooseOrder(const NTTTGame& game)
         return LAST;
 #endif
 } // end of chooseOrder
+
+/**
+ * Loads the endgame tablebase for the current board size and line size.
+ * It is kept across games, and only reloaded when the sizes change.
+ * Leaves m_egtb empty if there is no usable tablebase.
+ */
+void NTTTPlayerIce::loadEgtb()
+{
+    if (m_boardSize == m_egtbBoardSize && m_lineSize == m_egtbLineSize)
+        return;
+
+    m_egtbBoardSize = m_boardSize;
+    m_egtbLineSize = m_lineSize;
+    m_egtb.clear();
+
+    // Tablebases can only be generated for these board sizes, see egtb.cpp.
+    if (m_boardSize < 3 || m_boardSize > 5)
+        return;
+
+    std::ostringstream oss;
+    oss << "tables/egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
+    std::string filePath = oss.str();
+
+    std::ifstream inputFileStream(filePath, std::ifstream::binary);
+    if (!inputFileStream)
+        return;
+
+    inputFileStream.seekg(0, inputFileStream.end);
+    std::streamoff length = inputFileStream.tellg();
+    inputFileStream.seekg(0, inputFileStream.beg);
+
+    // One bit per position. A file of any other size is not used.
+    const std::streamoff expectedLength = (1LL << (m_boardSize * m_boardSize)) / 8;
+    if (length != expectedLength)
+        return;
+
+    m_egtb.resize(expectedLength);
+    if (!inputFileStream.read((char *) m_egtb.data(), expectedLength))
+        m_egtb.clear();
+} // end of loadEgtb
 
 const bool NTTTPlayerIce::isNumberEven(const int number) const{
     return (number%2) == 0;
@@ -196,7 +237,7 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
 
     bool isWon = false;
 
-    if (m_boardSize == 3 || m_boardSize == 4 || m_boardSize == 5){ //TODO: Change this to search for files
+    if (!m_egtb.empty()){
         unsigned int boardPosition = 0;
         for (unsigned int index = 0; index < (unsigned int)(m_boardSize * m_boardSize); index++){
             int squareX = index % m_boardSize;
@@ -206,26 +247,7 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
             }
         }
 
-        std::ostringstream oss;
-        oss << "tables/egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
-        std::string filePath = oss.str();
-
-        std::ifstream inputFileStream(filePath, std::ifstream::binary);
-
-        if (inputFileStream){
-            inputFileStream.seekg(0, inputFileStream.end);
-            std::streamoff length = inputFileStream.tellg();
-
-            // One bit per position. A file of any other size is not used.
-            const std::streamoff expectedLength = (1LL << (m_boardSize * m_boardSize)) / 8;
-            if (length == expectedLength){
-                inputFileStream.seekg(boardPosition/8, inputFileStream.beg);
-
-                char buffer;
-                if (inputFileStream.read(&buffer, 1))
-                    return ((buffer) >> (boardPosition%8)) & 1;
-            }
-        }
+        return (m_egtb[boardPosition/8] >> (boardPosition%8)) & 1;
     }
 
     //There is no usable tablebase, so guess.
