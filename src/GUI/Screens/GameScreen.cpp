@@ -74,7 +74,7 @@ int GameScreen::runGame() {
         if (gameActive) {
             srand(*m_gameSeed); // Sets the seed before every move
             NTTTPlayer *current = player == 1 ? m_player1 : m_player2;
-            move                = current->performMove(*m_game);
+            move                = current->chooseMove(*m_game);
             if (!m_game->isLegalMove(move)) {
                 // An illegal move loses the game.
                 std::cout << current->getName() << " played the illegal move " << move << std::endl;

@@ -72,7 +72,7 @@ bool NTTTPlayerIce::isNumberEven(const int number) const {
  * @param game An instance of the NTTTGame.
  * @return The player's/bot's move.
  */
-NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game) {
+NTTTMove NTTTPlayerIce::chooseMove(const NTTTGame& game) {
     unsigned int aliveBoards = 0;
 
     for (unsigned int boardNumber = 0; boardNumber < (unsigned int)m_boardCount; boardNumber++) {
@@ -86,15 +86,15 @@ NTTTMove NTTTPlayerIce::performMove(const NTTTGame& game) {
         if (board.getCurrentState() == NTTTBoard::DEAD)
             continue;
         if (isBoardWon(board))
-            return playBestMove(boardNumber, board, aliveBoards);
+            return chooseMoveOnBoard(boardNumber, board, aliveBoards);
     }
     unsigned int boardNumber = rand() % m_boardCount;
     while (game.getBoards()[boardNumber].getCurrentState() == NTTTBoard::DEAD) {
         boardNumber = rand() % m_boardCount;
     }
 
-    return playBestMove(boardNumber, NTTTBoard(game.getBoards()[boardNumber]), aliveBoards);
-} // end of performMove
+    return chooseMoveOnBoard(boardNumber, NTTTBoard(game.getBoards()[boardNumber]), aliveBoards);
+} // end of chooseMove
 
 bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const {
 
@@ -121,10 +121,10 @@ bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const {
     return isWon;
 }
 
-NTTTMove NTTTPlayerIce::playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const {
+NTTTMove NTTTPlayerIce::chooseMoveOnBoard(const int boardNumber, const NTTTBoard& board, const unsigned int aliveBoards) const {
     unsigned int numOfNonKillingMoves = 0;
     bool shouldKill                   = false;
-    if (isNumberEven(otherBoards)) {
+    if (isNumberEven(aliveBoards)) {
         shouldKill = true;
     } else {
         shouldKill = false;

@@ -36,7 +36,7 @@ static unsigned int playGame(NTTTGame& game, const std::vector<NTTTPlayer *>& pl
     while (true) {
         NTTTMove move(0, 0, 0);
         LOG(game);
-        move = players[player]->performMove(game);
+        move = players[player]->chooseMove(game);
         LOG("Player (" << player + 1 << ") " << players[player]->getName() << " played: " << move << std::endl);
 
         if (!game.isLegalMove(move)) {

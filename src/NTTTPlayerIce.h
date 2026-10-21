@@ -18,7 +18,7 @@ private:
     void loadEgtb();
     bool isNumberEven(const int number) const;
     bool isBoardWon(const NTTTBoard board) const;
-    NTTTMove playBestMove(const int boardNumber, const NTTTBoard& board, const unsigned int otherBoards) const;
+    NTTTMove chooseMoveOnBoard(const int boardNumber, const NTTTBoard& board, const unsigned int aliveBoards) const;
 
 public:
     /**
@@ -33,7 +33,7 @@ public:
      * @param game An instance of the NTTTGame.
      * @return The player's/bot's move.
      */
-    virtual NTTTMove performMove(const NTTTGame& game);
+    virtual NTTTMove chooseMove(const NTTTGame& game);
 
     virtual std::string getName();
 

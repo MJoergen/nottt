@@ -7,9 +7,10 @@
 constexpr bool DEBUG_MIKE = false;
 
 /**
- * A representation of the board using bitmasks
+ * The search state of MikeBot: every board as a bitmask of its unmarked
+ * squares, and the alpha-beta search over them.
  */
-class Board {
+class MikeSearch {
 public:
     void setVersion(int version) { m_version = version; }
 
@@ -28,8 +29,9 @@ public:
 
 private: // These methods are used internally only.
     /**
-     * Whether a board is dead. As in m_bits, unmarked has a bit set for each
-     * unmarked square, so a line is complete when none of its bits are set.
+     * Whether a board is dead. Like the entries of m_unmarked, unmarked has a
+     * bit set for each unmarked square, so a line is complete when none of its
+     * bits are set.
      */
     bool isBoardDead(uint64_t unmarked) const;
 
@@ -62,10 +64,10 @@ private: // These methods are used internally only.
     int evaluate() const;
 
     /**
-     * Perform an alpha beta search, level moves deep.
+     * Perform an alpha beta search depth moves deep.
      * Returns the score of the position for the player to move.
      */
-    int alphaBeta(int alpha, int beta, int level);
+    int alphaBeta(int alpha, int beta, int depth);
 
     /**
      * Return an estimate of a single alive board, for version 6. It classifies
@@ -77,7 +79,7 @@ private: // These methods are used internally only.
     /**
      * Clears the cache of evaluateBoardV6() results.
      */
-    void initHash();
+    void clearCache();
 
     /**
      * Loads the endgame tablebase for the current board size and line size.
@@ -87,10 +89,10 @@ private: // These methods are used internally only.
     void loadEgtb();
 
 private:
-    static constexpr int HASH_SIZE = 65536 * 16;
+    static constexpr int CACHE_SIZE = 65536 * 16;
     // Cache of evaluateBoardV6() results, and statistics about it.
-    mutable std::vector<uint64_t> m_hashBoard;
-    mutable std::vector<int> m_hashVal;
+    mutable std::vector<uint64_t> m_cacheBoard;
+    mutable std::vector<int> m_cacheValue;
 
     mutable int m_statLookup    = 0;
     mutable int m_statFound     = 0;
@@ -100,16 +102,16 @@ private:
     int m_boardCount = 0;
     int m_boardSize  = 0;
     int m_lineSize   = 0;
-    int m_maxBits    = 0;
+    int m_numSquares = 0;
     int m_nodes      = 0;
-    std::vector<uint64_t> m_bits;
+    std::vector<uint64_t> m_unmarked;
     std::vector<uint64_t> m_lines;
     bool m_debug  = DEBUG_MIKE;
     int m_version = 6;
 
     std::vector<uint8_t> m_egtb;                 // One bit per position. Empty if there is no tablebase.
     int m_egtbBoardSize = 0, m_egtbLineSize = 0; // The sizes m_egtb was loaded for.
-}; // end of class Board
+}; // end of class MikeSearch
 
 
 class NTTTPlayerMike : public NTTTPlayer {
@@ -126,16 +128,16 @@ public:
      * @param game An instance of the NTTTGame.
      * @return The player's/bot's move.
      */
-    virtual NTTTMove performMove(const NTTTGame& game);
+    virtual NTTTMove chooseMove(const NTTTGame& game);
 
     virtual std::string getName();
 
-    void setVersion(int version) { m_board.setVersion(version); }
+    void setVersion(int version) { m_search.setVersion(version); }
 
     virtual ~NTTTPlayerMike() {}
 
 private:
-    Board m_board;
+    MikeSearch m_search;
     bool m_debug = DEBUG_MIKE;
 }; // end of class NTTTPlayerMike
 

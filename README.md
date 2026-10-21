@@ -131,7 +131,7 @@ tournaments.
 | Ice | `src/NTTTPlayerIce.cpp` | Heuristic player. |
 
 New bots derive from the abstract `NTTTPlayer` class (`src/NTTTPlayer.h`) and
-implement `chooseOrder`, `performMove` and `getName`.
+implement `chooseOrder`, `chooseMove` and `getName`.
 
 ## Endgame tablebases
 

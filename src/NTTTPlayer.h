@@ -38,7 +38,7 @@ public:
      * @param game An instance of the NTTTGame.
      * @return The player's/bot's move.
      */
-    virtual NTTTMove performMove(const NTTTGame& game) = 0;
+    virtual NTTTMove chooseMove(const NTTTGame& game) = 0;
 
     virtual std::string getName() = 0;
 

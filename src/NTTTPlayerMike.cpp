@@ -11,7 +11,7 @@
 #include "DataPath.h"
 
 // Scores, relative to the player to move. A win found by the search scores
-// WIN + level, so quicker wins and slower losses are preferred, since level
+// WIN + depth, so quicker wins and slower losses are preferred, since depth
 // counts down towards the leaves. A tablebase win has an unknown distance, so
 // it scores just below that. The heuristic estimate is kept below both.
 static const int WIN      = 100000;
@@ -20,7 +20,7 @@ static const int INFINITE = WIN + 1000;
 
 std::string NTTTPlayerMike::getName() {
     std::ostringstream oss;
-    oss << "MikeBot v" << m_board.getVersion();
+    oss << "MikeBot v" << m_search.getVersion();
     return oss.str();
 }
 
@@ -40,7 +40,7 @@ static uint64_t makeLine(int x, int y, int dx, int dy, int size, int boardSize) 
 
 /**
  * This counts the number of '1' bits in the variable.
- * The bits in m_bits are the unmarked squares, so callers invert them first
+ * m_unmarked holds the unmarked squares, so callers invert them first
  * to count X's.
  */
 static int countBits(uint64_t pos) {
@@ -55,16 +55,16 @@ static int countBits(uint64_t pos) {
  * Initializes data structures, particularly bit masks for lines.
  * Called once at beginning of each new game.
  */
-void Board::init(const NTTTGame& game) {
+void MikeSearch::init(const NTTTGame& game) {
     // The cached board evaluations depend on the board size and line size,
     // so they are kept across games unless one of these changes.
-    if (m_hashBoard.empty() || game.getBoardSize() != m_boardSize || game.getLineSize() != m_lineSize)
-        initHash();
+    if (m_cacheBoard.empty() || game.getBoardSize() != m_boardSize || game.getLineSize() != m_lineSize)
+        clearCache();
 
     m_boardCount = game.getBoardCount();
     m_boardSize  = game.getBoardSize();
     m_lineSize   = game.getLineSize();
-    m_maxBits    = m_boardSize * m_boardSize;
+    m_numSquares = m_boardSize * m_boardSize;
 
     m_lines.clear();
 
@@ -100,7 +100,7 @@ static void warnEgtb(const std::string& filePath, const std::string& problem) {
  * It is kept across games, and only reloaded when the sizes change.
  * Leaves m_egtb empty if there is no usable tablebase. The search is then used instead.
  */
-void Board::loadEgtb() {
+void MikeSearch::loadEgtb() {
     if (m_boardSize == m_egtbBoardSize && m_lineSize == m_egtbLineSize)
         return;
 
@@ -123,7 +123,7 @@ void Board::loadEgtb() {
     }
 
     // One bit per position
-    std::streamoff expectedSize = (1LL << m_maxBits) / 8;
+    std::streamoff expectedSize = (1LL << m_numSquares) / 8;
 
     file.seekg(0, file.end);
     std::streamoff fileSize = file.tellg();
@@ -142,7 +142,7 @@ void Board::loadEgtb() {
 } // end of loadEgtb
 
 
-bool Board::isBoardDead(uint64_t unmarked) const {
+bool MikeSearch::isBoardDead(uint64_t unmarked) const {
     for (uint64_t lineMask : m_lines) {
         if (!(unmarked & lineMask)) {
             return true;
@@ -151,7 +151,7 @@ bool Board::isBoardDead(uint64_t unmarked) const {
     return false;
 } // end of isBoardDead
 
-void Board::getLineCounts(uint64_t unmarked, uint64_t sq, int cnt[4]) const {
+void MikeSearch::getLineCounts(uint64_t unmarked, uint64_t sq, int cnt[4]) const {
     for (uint64_t lineMask : m_lines) {
         if (!(sq & lineMask))
             continue;
@@ -168,9 +168,9 @@ void Board::getLineCounts(uint64_t unmarked, uint64_t sq, int cnt[4]) const {
  * Converts to internal bitmask representation
  * Called every time we are to make a move.
  */
-int Board::makeBits(const NTTTGame& game) {
+int MikeSearch::makeBits(const NTTTGame& game) {
     int numAlive = 0;
-    m_bits.clear();
+    m_unmarked.clear();
 
     const std::vector<NTTTBoard>& boards = game.getBoards();
 
@@ -178,7 +178,7 @@ int Board::makeBits(const NTTTGame& game) {
         const NTTTBoard& board = boards[boardNumber];
         NTTTBoard::State state = board.getCurrentState();
         if (state != NTTTBoard::ALIVE) {
-            m_bits.push_back(0UL);
+            m_unmarked.push_back(0UL);
             continue;
         }
 
@@ -197,7 +197,7 @@ int Board::makeBits(const NTTTGame& game) {
 
         if (m_debug)
             LOG(std::hex << std::setw(16) << std::setfill('0') << val << std::endl);
-        m_bits.push_back(val);
+        m_unmarked.push_back(val);
         if (val)
             numAlive++;
     }
@@ -210,9 +210,9 @@ int Board::makeBits(const NTTTGame& game) {
 /**
  * Make a move.
  */
-void Board::makeMove(int boardNumber, uint64_t mask) {
-    assert(m_bits[boardNumber] & mask);
-    m_bits[boardNumber] &= ~mask;
+void MikeSearch::makeMove(int boardNumber, uint64_t mask) {
+    assert(m_unmarked[boardNumber] & mask);
+    m_unmarked[boardNumber] &= ~mask;
 
 } // end of makeMove
 
@@ -220,13 +220,13 @@ void Board::makeMove(int boardNumber, uint64_t mask) {
 /**
  * Undo a move.
  */
-void Board::undoMove(int boardNumber, uint64_t mask) {
-    assert((~m_bits[boardNumber]) & mask);
-    m_bits[boardNumber] |= mask;
+void MikeSearch::undoMove(int boardNumber, uint64_t mask) {
+    assert((~m_unmarked[boardNumber]) & mask);
+    m_unmarked[boardNumber] |= mask;
 } // end of undoMove
 
 // These numbers are printed by egtb.cpp when it generates egtb-5-3.bit.
-static const int VALUES[64] = {
+static const int VALUES_V5[64] = {
     625, 560, 725, 770, 742, 790, 747, 708,
     741, 783, 726, 702, 672, 637, 741, 760,
     704, 780, 773, 713, 750, 691, 714, 775,
@@ -368,21 +368,21 @@ static const int VALUES_V6[1024] = {
     845, 756, 833, 750, 733, 952, 0, 0,
     744, 889, 1000, 500, 1000, 1000, 0, 0};
 
-void Board::initHash() {
-    m_hashBoard.assign(HASH_SIZE, 0);
-    m_hashVal.assign(HASH_SIZE, 0);
-} // end of initHash
+void MikeSearch::clearCache() {
+    m_cacheBoard.assign(CACHE_SIZE, 0);
+    m_cacheValue.assign(CACHE_SIZE, 0);
+} // end of clearCache
 
 // The cache uses 0 to mark an empty slot. That is never a valid key, since a
 // board with no unmarked squares is dead, and dead boards are not evaluated.
-int Board::evaluateBoardV6(uint64_t board) const {
+int MikeSearch::evaluateBoardV6(uint64_t board) const {
     uint64_t hash = board + (board >> 1) + (board >> 3) + (board >> 6) + (board >> 10) + (board >> 15);
-    hash %= HASH_SIZE;
+    hash %= CACHE_SIZE;
 
     m_statLookup++;
-    if (m_hashBoard[hash] == board) {
+    if (m_cacheBoard[hash] == board) {
         m_statFound++;
-        return m_hashVal[hash];
+        return m_cacheValue[hash];
     }
 
     int index = 0;
@@ -421,14 +421,14 @@ int Board::evaluateBoardV6(uint64_t board) const {
 
     int val = VALUES_V6[index];
 
-    if (m_hashBoard[hash]) {
+    if (m_cacheBoard[hash]) {
         m_statCollision++;
     } else {
         m_statWrote++;
     }
 
-    m_hashVal[hash]   = val;
-    m_hashBoard[hash] = board;
+    m_cacheValue[hash] = val;
+    m_cacheBoard[hash] = board;
 
     return val;
 
@@ -437,7 +437,7 @@ int Board::evaluateBoardV6(uint64_t board) const {
 /**
  * Return an estimate of the current position, relative to the player to move.
  */
-int Board::evaluate() const {
+int MikeSearch::evaluate() const {
     int numActive  = 0;
     int almostDead = 0;
     int lastActive = 0;
@@ -448,7 +448,7 @@ int Board::evaluate() const {
         sum = (rand() % 201) - 100;
 
     for (int boardNumber = 0; boardNumber < m_boardCount; ++boardNumber) {
-        if (!isBoardDead(m_bits[boardNumber])) {
+        if (!isBoardDead(m_unmarked[boardNumber])) {
             lastActive = boardNumber;
             numActive++;
 
@@ -459,12 +459,12 @@ int Board::evaluate() const {
                     for (int y = 0; y < m_boardSize; ++y) {
                         int bit       = x * m_boardSize + y;
                         uint64_t mask = 1ULL << bit;
-                        if (m_bits[boardNumber] & mask) {
-                            ((Board *)this)->makeMove(boardNumber, mask);
-                            if (!isBoardDead(m_bits[boardNumber])) {
+                        if (m_unmarked[boardNumber] & mask) {
+                            ((MikeSearch *)this)->makeMove(boardNumber, mask);
+                            if (!isBoardDead(m_unmarked[boardNumber])) {
                                 count++;
                             }
-                            ((Board *)this)->undoMove(boardNumber, mask);
+                            ((MikeSearch *)this)->undoMove(boardNumber, mask);
                         }
                     }
                 }
@@ -478,10 +478,10 @@ int Board::evaluate() const {
                     for (int y = 0; y < m_boardSize && !kills; ++y) {
                         int bit       = x * m_boardSize + y;
                         uint64_t mask = 1ULL << bit;
-                        if (m_bits[boardNumber] & mask) {
-                            ((Board *)this)->makeMove(boardNumber, mask);
-                            kills = isBoardDead(m_bits[boardNumber]);
-                            ((Board *)this)->undoMove(boardNumber, mask);
+                        if (m_unmarked[boardNumber] & mask) {
+                            ((MikeSearch *)this)->makeMove(boardNumber, mask);
+                            kills = isBoardDead(m_unmarked[boardNumber]);
+                            ((MikeSearch *)this)->undoMove(boardNumber, mask);
                             if (kills) {
                                 almostDead++;
                             }
@@ -502,10 +502,10 @@ int Board::evaluate() const {
                 for (int i = 0; i < m_boardSize * m_boardSize; ++i) {
                     uint64_t mask = 1ULL << i;
 
-                    if (!(m_bits[boardNumber] & mask)) // Is square already occupied?
+                    if (!(m_unmarked[boardNumber] & mask)) // Is square already occupied?
                         continue;
                     int cnt[4] = {0, 0, 0, 0};
-                    getLineCounts(m_bits[boardNumber], mask, cnt);
+                    getLineCounts(m_unmarked[boardNumber], mask, cnt);
 
                     assert(cnt[3] == 0);
                     if (cnt[2])
@@ -530,14 +530,14 @@ int Board::evaluate() const {
                 int par5 = sum5 & 1;
 
                 int index = (par0 << 5) + (par1 << 4) + (par2 << 3) + (par3 << 2) + (par4 << 1) + par5;
-                sum += VALUES[index];
+                sum += VALUES_V5[index];
             }
 
             if (m_version == 6) {
-                sum += evaluateBoardV6(m_bits[boardNumber]);
+                sum += evaluateBoardV6(m_unmarked[boardNumber]);
             }
 
-        } // if (!isBoardDead(m_bits[boardNumber]))
+        } // if (!isBoardDead(m_unmarked[boardNumber]))
     } // for (int boardNumber=0; boardNumber<m_boardCount; ++boardNumber)
 
     if (m_version >= 4)
@@ -545,7 +545,7 @@ int Board::evaluate() const {
 
     if (m_version >= 3) {
         if (numActive == 1 && !m_egtb.empty()) {
-            uint64_t bits = m_bits[lastActive];
+            uint64_t bits = m_unmarked[lastActive];
             assert(!isBoardDead(bits));
 
             bits = ~bits & (m_egtb.size() * 8 - 1);
@@ -571,23 +571,23 @@ int Board::evaluate() const {
 
 
 /**
- * Perform an alpha beta search, level moves deep.
+ * Perform an alpha beta search depth moves deep.
  * Returns the score of the position for the player to move.
  */
-int Board::alphaBeta(int alpha, int beta, int level) {
+int MikeSearch::alphaBeta(int alpha, int beta, int depth) {
     m_nodes++;
-    if (level == 0) {
+    if (depth == 0) {
         return evaluate();
     }
 
     if (m_debug)
-        LOG("alpha=" << std::dec << alpha << ", beta=" << beta << ", level=" << level << std::endl);
+        LOG("alpha=" << std::dec << alpha << ", beta=" << beta << ", depth=" << depth << std::endl);
 
     int bestVal = -INFINITE;
 
     int numActive = 0;
     for (int boardNumber = 0; boardNumber < m_boardCount; ++boardNumber) {
-        if (isBoardDead(m_bits[boardNumber]))
+        if (isBoardDead(m_unmarked[boardNumber]))
             continue;
 
         numActive++;
@@ -595,20 +595,20 @@ int Board::alphaBeta(int alpha, int beta, int level) {
             for (int y = 0; y < m_boardSize; ++y) {
                 int bit       = x * m_boardSize + y;
                 uint64_t mask = 1ULL << bit;
-                if (m_bits[boardNumber] & mask) {
+                if (m_unmarked[boardNumber] & mask) {
                     if (m_debug) {
                         NTTTMove move(boardNumber, x, y);
-                        for (int i = level; i < 4; ++i)
+                        for (int i = depth; i < 4; ++i)
                             LOG("  ");
                         LOG(move << std::endl);
                     }
                     makeMove(boardNumber, mask);
-                    int val = -alphaBeta(-beta, -alpha, level - 1);
+                    int val = -alphaBeta(-beta, -alpha, depth - 1);
                     undoMove(boardNumber, mask);
 
                     if (m_debug) {
                         NTTTMove move(boardNumber, x, y);
-                        for (int i = level; i < 4; ++i)
+                        for (int i = depth; i < 4; ++i)
                             LOG("  ");
                         LOG(move << " -> " << std::dec << val << std::endl);
                     }
@@ -637,7 +637,7 @@ int Board::alphaBeta(int alpha, int beta, int level) {
     }
 
     if (numActive == 0)     // No legal moves
-        return WIN + level; // I've won
+        return WIN + depth; // I've won
 
     return bestVal;
 } // end of alphaBeta
@@ -646,7 +646,7 @@ int Board::alphaBeta(int alpha, int beta, int level) {
 /**
  * Return the best move.
  */
-NTTTMove Board::findMove(const NTTTGame& game) {
+NTTTMove MikeSearch::findMove(const NTTTGame& game) {
     if (m_debug)
         LOG(game);
 
@@ -658,13 +658,13 @@ NTTTMove Board::findMove(const NTTTGame& game) {
     // and there is a tablebase, evaluate() looks it up, so no search is
     // needed. (Versions 1 and 2 don't use the tablebase, but skip the search
     // too.)
-    int level = 4;
+    int depth = 4;
     if (m_boardSize * numAlive > 4)
-        level = 2;
+        depth = 2;
     if (m_boardSize * numAlive > 6)
-        level = 0;
+        depth = 0;
     if (!m_egtb.empty() && numAlive == 1)
-        level = 0;
+        depth = 0;
 
     m_nodes     = 0;
     int bestVal = -INFINITE;
@@ -675,13 +675,13 @@ NTTTMove Board::findMove(const NTTTGame& game) {
             for (int y = 0; y < m_boardSize; ++y) {
                 int bit       = x * m_boardSize + y;
                 uint64_t mask = 1ULL << bit;
-                if (m_bits[boardNumber] & mask) {
+                if (m_unmarked[boardNumber] & mask) {
                     NTTTMove move(boardNumber, x, y);
                     if (m_debug)
                         LOG("Move " << move << std::endl);
 
                     makeMove(boardNumber, mask);
-                    int val = -alphaBeta(-INFINITE, INFINITE, level);
+                    int val = -alphaBeta(-INFINITE, INFINITE, depth);
                     undoMove(boardNumber, mask);
 
                     LOG("Move " << move << " => " << std::dec << val << std::endl);
@@ -715,7 +715,7 @@ NTTTMove Board::findMove(const NTTTGame& game) {
  * @return The player's/bot's choice of order.
  */
 NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game) {
-    m_board.init(game);
+    m_search.init(game);
     switch (rand() % 2) {
         case 0:
             return FIRST;
@@ -731,6 +731,6 @@ NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game) {
  * @param game An instance of the NTTTGame.
  * @return The player's/bot's move.
  */
-NTTTMove NTTTPlayerMike::performMove(const NTTTGame& game) {
-    return m_board.findMove(game);
-} // end of performMove
+NTTTMove NTTTPlayerMike::chooseMove(const NTTTGame& game) {
+    return m_search.findMove(game);
+} // end of chooseMove
