@@ -23,8 +23,6 @@ section.
 - [ ] 7. Keep the loaded tablebase across games, like the hash table, and only
   reload it when the board size or line size changes. It is currently re-read
   for every game, which is 4 MB for 5×5.
-- [ ] 8. `evaluate()` is `const` but casts `this` to change state. Make it
-  non-const, or make the cache `mutable`.
 
 ## IceBot (`NTTTPlayerIce`)
 

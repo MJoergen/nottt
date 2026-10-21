@@ -396,7 +396,7 @@ void Board::initHash()
 
 /**
  */
-int Board::evaluateBoardV6(uint64_t board)
+int Board::evaluateBoardV6(uint64_t board) const
 {
     uint64_t hash = board + (board >> 1) + (board >> 3) + (board >> 6) + (board >> 10) + (board >> 15);
     hash %= HASH_SIZE;
@@ -578,7 +578,7 @@ int Board::evaluate() const
 
             if (m_version == 6)
             {
-                sum += ((Board *)this)->evaluateBoardV6(m_bits[board]);
+                sum += evaluateBoardV6(m_bits[board]);
             }
 
         } // if (!isBoardDead(m_bits[board]))

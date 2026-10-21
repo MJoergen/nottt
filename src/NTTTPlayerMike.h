@@ -66,7 +66,7 @@ class Board
 
         /**
          */
-        int evaluateBoardV6(uint64_t board);
+        int evaluateBoardV6(uint64_t board) const;
 
         /**
          */
@@ -81,13 +81,14 @@ class Board
     private:
 
 #define HASH_SIZE (65536*16)
-        std::vector<uint64_t> m_hashBoard;
-        std::vector<int>      m_hashVal;
+        // Cache of evaluateBoardV6() results, and statistics about it.
+        mutable std::vector<uint64_t> m_hashBoard;
+        mutable std::vector<int>      m_hashVal;
 
-        int      m_statLookup    = 0;
-        int      m_statFound     = 0;
-        int      m_statWrote     = 0;
-        int      m_statCollision = 0;
+        mutable int m_statLookup    = 0;
+        mutable int m_statFound     = 0;
+        mutable int m_statWrote     = 0;
+        mutable int m_statCollision = 0;
 
         int m_boardCount = 0;
         int m_boardSize = 0;
