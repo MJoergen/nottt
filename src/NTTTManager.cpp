@@ -86,6 +86,20 @@ bool NTTTManager::init()
     m_redCross = new Texture(m_renderer, "assets/RedCross.png");
     m_blueCross = new Texture(m_renderer, "assets/BlueCross.png");
     m_checkMark = new Texture(m_renderer, "assets/CheckMark.png");
+    if (!m_redCross->isLoaded() || !m_blueCross->isLoaded() || !m_checkMark->isLoaded()){
+        delete m_redCross;
+        delete m_blueCross;
+        delete m_checkMark;
+        m_redCross = m_blueCross = m_checkMark = nullptr;
+        TTF_CloseFont(m_movesFont);
+        TTF_CloseFont(m_font);
+        SDL_DestroyRenderer(m_renderer);
+        SDL_DestroyWindow(m_window);
+        TTF_Quit();
+        IMG_Quit();
+        SDL_Quit();
+        return false;
+    }
     m_game = new NTTTGame();
 
     //New GUI system

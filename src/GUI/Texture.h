@@ -10,7 +10,7 @@
 class Texture {
 private:
     SDL_Texture* m_texture = NULL;
-    unsigned int m_width, m_height;
+    unsigned int m_width = 0, m_height = 0;
 public:
     Texture(SDL_Renderer *renderer, const std::string path);
     Texture(SDL_Renderer *renderer, const std::string text, TTF_Font* font, const SDL_Color textColor);
@@ -18,6 +18,7 @@ public:
     Texture(const Texture&) = delete;
     Texture& operator=(const Texture&) = delete;
     void freeTexture();
+    const bool isLoaded() const { return m_texture != NULL; }
     const unsigned int getWidth() const { return m_width; }
     const unsigned int getHeight() const { return m_height; }
     void renderTexture(SDL_Renderer *renderer) const;
