@@ -1,0 +1,11 @@
+# Build output
+*.o
+*.d
+nottt
+nottt.exe
+egtb
+egtb-stats
+
+# Profiling and tournament logs
+gmon.out
+log-*.txt

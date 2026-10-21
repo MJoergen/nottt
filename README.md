@@ -25,19 +25,13 @@ sudo apt install build-essential libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
 Then:
 
 ```sh
-make
+make                # builds nottt, egtb and egtb-stats
+make install        # copies nottt to ~/bin (override with BINDIR=...)
 ```
 
-Note that the `Makefile` currently moves the resulting `nottt` binary to
-`/home/mike/bin`; edit or remove that line to suit your setup. Setting
-`TARGET = windows` cross-compiles with MinGW (`i686-w64-mingw32-g++`).
-
-The tablebase tools are not part of the `Makefile` and are built directly:
-
-```sh
-g++ -O3 -std=c++11 -o egtb egtb.cpp
-g++ -O3 -std=c++11 -o egtb-stats egtb-stats.cpp
-```
+Setting `TARGET = windows` in the `Makefile` cross-compiles `nottt.exe` with
+MinGW (`i686-w64-mingw32-g++`). The tablebase tools use `mmap` and are only
+built on Linux.
 
 ## Running
 

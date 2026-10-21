@@ -27,7 +27,7 @@ DEFINES += -D__USE_STD_IOSTREAM
 DEFINES += -std=c++11
 DEFINES += -Wall
 
-DEFINES += -g -pg
+DEFINES += -g
 DEFINES += -O3 
 
 LIBS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_ttf -lm
@@ -47,9 +47,27 @@ else
 endif
 
 
+# The tablebase tools use mmap, and are therefore only built on Linux.
+ifeq ($(TARGET),linux)
+tools = egtb egtb-stats
+endif
+
+BINDIR ?= $(HOME)/bin
+
+all: $(program) $(tools)
+
 $(program): $(objects) Makefile
 	$(CC) -o $@ $(DEFINES) $(objects) $(LIB_DIRS) $(LIBS)
-	mv $@ /home/mike/bin
+
+egtb: egtb.cpp Makefile
+	$(CC) -o $@ $(DEFINES) $< -lstdc++
+
+egtb-stats: egtb-stats.cpp Makefile
+	$(CC) -o $@ $(DEFINES) $< -lstdc++
+
+install: $(program)
+	mkdir -p $(BINDIR)
+	cp $(program) $(BINDIR)
 
 %.d: %.cpp
 	set -e; $(CC) -M -MT $*.o $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
@@ -62,6 +80,9 @@ include $(depends)
 	$(CC) $(DEFINES) $(INCLUDE_DIRS) -c $< -o $@
 
 clean:
-	-rm $(objects)
-	-rm $(depends)
+	-rm -f $(objects)
+	-rm -f $(depends)
+	-rm -f $(program) $(tools) gmon.out
+
+.PHONY: all install clean
 
