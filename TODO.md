@@ -140,5 +140,3 @@ ordered by importance within each group.
   players (`tail -n 11`).
 - [ ] The program must be run from the repository root, because assets and
   tablebases are loaded from the current directory.
-- [ ] About 110 MB of unused files are committed: `5x5.log`, `4x4.log` and
-  `egtb-*x*.dat`.
