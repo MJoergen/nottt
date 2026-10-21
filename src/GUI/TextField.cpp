@@ -87,7 +87,7 @@ void TextField::renderTextField(SDL_Renderer *renderer, const int& time) const {
 }
 
 const bool TextField::isInside(const /* unsigned */ int& x, const /* unsigned */ int& y) const{
-    return m_x <= x && m_x + m_width >= x && m_y <= y && m_y + (int) m_texture->getHeight() + m_paddingX * 2 >= y;
+    return m_x <= x && x < m_x + (int) getWidth() && m_y <= y && y < m_y + (int) getHeight();
 }
 
 bool is_number(const std::string& s) //Checks if a string is a number

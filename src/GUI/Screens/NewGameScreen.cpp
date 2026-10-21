@@ -242,7 +242,7 @@ void NewGameScreen::input(const SDL_Event & event){
         else if (m_logNameTextField->isSelected())
             m_logNameTextField->onKeyPress(event.key.keysym);
     }
-    else if (event.type == SDL_MOUSEBUTTONDOWN){ //Responds to mouseinput
+    else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT){ //Responds to left mouse clicks
         int x, y;
         SDL_GetMouseState(&x, &y);
 

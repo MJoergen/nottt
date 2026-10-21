@@ -38,5 +38,5 @@ void Button::click() const{
 }
 
 const bool Button::isInside(const int& x, const int& y) const{
-    return m_x <= x && m_x + getWidth() >= x && m_y <= y && m_y + getHeight() >= y;
+    return m_x <= x && x < m_x + getWidth() && m_y <= y && y < m_y + getHeight();
 }

@@ -115,7 +115,7 @@ void MainMenuScreen::render(SDL_Renderer* renderer) const{ // The renderer will 
 }
 
 void MainMenuScreen::input(const SDL_Event & event){
-    if (event.type != SDL_MOUSEBUTTONDOWN)
+    if (event.type != SDL_MOUSEBUTTONDOWN || event.button.button != SDL_BUTTON_LEFT)
         return;
 
     int x, y;

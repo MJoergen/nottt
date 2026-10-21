@@ -40,9 +40,6 @@ section.
   shared flags are plain `bool`s.
 - [ ] 7. In manual mode, undoing a move after the game is over leaves the old
   winner and game-over state in place.
-- [ ] 12. `TextField::isInside()` uses the X padding for the height, so the
-  bottom few pixels cannot be clicked. Buttons accept clicks one pixel past
-  their right and bottom edges, and right and middle clicks also count.
 - [ ] 13. `srand()` is called before every move, so the bots get the same random
   sequence on every move.
 
