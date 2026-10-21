@@ -105,7 +105,7 @@ install: $(program) $(tools)
 
 build/%.d: src/%.cpp Makefile
 	@mkdir -p $(@D)
-	set -e; $(CC) -M -MT build/$*.o $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
+	set -e; $(CC) -M -MP -MT build/$*.o $(CPPFLAGS) $(DEFINES) $(INCLUDE_DIRS) $< \
 		| sed 's#\(build/$*\)\.o[ :]*#\1.o $@ : #g' > $@; \
 		[ -s $@ ] || rm -f $@
 
