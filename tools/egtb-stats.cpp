@@ -25,19 +25,6 @@ static int countBits(uint32_t pos) {
 }; // end of countBits
 
 /*
- * This prints out an ASCII representation of the board.
- */
-static void printBoard(uint32_t pos) {
-    for (unsigned int i = 0; i < g_numSquares; ++i) {
-        uint32_t mask = 1ULL << i;
-        if (pos & mask)
-            std::cout << "1";
-        else
-            std::cout << "0";
-    }
-}; // end of printBoard
-
-/*
  * This is a helper class to quickly determine
  * whether the position contains a complete line.
  *

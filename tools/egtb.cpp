@@ -239,6 +239,7 @@ static uint32_t pow(uint32_t e) {
     return res;
 }
 
+#ifdef DUMP_SOLUTIONS
 /*
  * This prints out an ASCII representation of the board.
  */
@@ -251,6 +252,7 @@ static void printBoard(uint32_t pos) {
             std::cout << "0";
     }
 }; // end of printBoard
+#endif
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
