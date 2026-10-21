@@ -214,25 +214,23 @@ const bool NTTTPlayerIce::isBoardWon(const NTTTBoard board) const{
 
         if (inputFileStream){
             inputFileStream.seekg(0, inputFileStream.end);
-            unsigned int length = inputFileStream.tellg();
-            if (length <= boardPosition/8){
-                boardPosition = 0;
+            std::streamoff length = inputFileStream.tellg();
+
+            // One bit per position. A file of any other size is not used.
+            const std::streamoff expectedLength = (1LL << (m_boardSize * m_boardSize)) / 8;
+            if (length == expectedLength){
+                inputFileStream.seekg(boardPosition/8, inputFileStream.beg);
+
+                char buffer;
+                if (inputFileStream.read(&buffer, 1))
+                    return ((buffer) >> (boardPosition%8)) & 1;
             }
-            inputFileStream.seekg(boardPosition/8, inputFileStream.beg);
-
-            char buffer;
-
-            inputFileStream.read(&buffer, 1);
-            inputFileStream.close();
-
-            if (((buffer) >> (boardPosition%8)) & 1)
-                isWon = true;
         }
 	}
-	else {
-		if (rand() % 2 == 0)
-			isWon = true;
-	}
+
+	//There is no usable tablebase, so guess.
+	if (rand() % 2 == 0)
+		isWon = true;
 
 	return isWon;
 

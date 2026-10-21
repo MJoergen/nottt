@@ -12,18 +12,6 @@
 class Board
 {
     public:
-        Board() : 
-            m_filePath(""),
-            m_fileSize(0),
-            m_egtb(nullptr) {}
-        ~Board() {
-            if (m_egtb)
-            {
-                delete [] m_egtb;
-                m_egtb = nullptr;
-            }
-        }
-
         void setVersion(int version) {m_version = version;}
 
         int getVersion() const {return m_version;}
@@ -84,6 +72,12 @@ class Board
          */
         void initHash();
 
+        /**
+         * Loads the endgame tablebase for the current board size and line size.
+         * Leaves m_egtb empty if there is no usable tablebase.
+         */
+        void loadEgtb();
+
     private:
 
 #define HASH_SIZE (65536*16)
@@ -105,9 +99,7 @@ class Board
         bool m_debug = DEBUG_MIKE;
         int  m_version = 6;
 
-        std::string m_filePath;
-        int         m_fileSize;
-        uint8_t     *m_egtb;
+        std::vector<uint8_t> m_egtb;    // One bit per position. Empty if there is no tablebase.
 }; // end of class Board
 
 

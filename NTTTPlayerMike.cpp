@@ -1,8 +1,9 @@
 #include <sstream>
 #include <iomanip>
 #include <assert.h>
-#include <assert.h>
 #include <fstream>
+#include <iostream>
+#include <set>
 #include "trace.h"
 
 #include "NTTTPlayerMike.h"
@@ -49,12 +50,6 @@ static int countBits(uint64_t pos)
  */
 void Board::init(const NTTTGame& game)
 {
-    if (m_egtb)
-    {
-        delete [] m_egtb;
-        m_egtb = nullptr;
-    }
-
     // The cached board evaluations depend on the board size and line size,
     // so they are kept across games unless one of these changes.
     if (m_hashBoard.empty() || game.getBoardSize() != m_boardSize || game.getLineSize() != m_lineSize)
@@ -82,27 +77,64 @@ void Board::init(const NTTTGame& game)
         }
     }
 
-    if (m_boardSize <= 5) {
-        std::ostringstream oss;
-        oss << "egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
-        std::string m_filePath = oss.str();
-
-        std::ifstream file(m_filePath, std::ios::binary | std::ios::in);
-
-        file.seekg (0, file.end);
-        m_fileSize = file.tellg();
-        file.seekg (0, file.beg);
-
-        m_egtb = new uint8_t[m_fileSize];
-        if (!file.read((char *) m_egtb, m_fileSize))
-        {
-            perror("read");
-            delete [] m_egtb;
-            m_egtb = nullptr;
-        }
-    }
+    loadEgtb();
 
 } // end of init
+
+/**
+ * Prints a warning about a tablebase file.
+ * Each file is only warned about once, since the tablebase is loaded for every game.
+ */
+static void warnEgtb(const std::string& filePath, const std::string& problem)
+{
+    static std::set<std::string> warned;
+    if (warned.insert(filePath).second)
+        std::cerr << "Warning: " << filePath << " " << problem << ". MikeBot plays without it." << std::endl;
+} // end of warnEgtb
+
+/**
+ * Loads the endgame tablebase for the current board size and line size.
+ * Leaves m_egtb empty if there is no usable tablebase. The search is then used instead.
+ */
+void Board::loadEgtb()
+{
+    m_egtb.clear();
+
+    // Tablebases can only be generated for these board sizes, see egtb.cpp.
+    if (m_boardSize < 2 || m_boardSize > 5)
+        return;
+
+    std::ostringstream oss;
+    oss << "egtb-" << m_boardSize << "-" << m_lineSize << ".bit";
+    std::string filePath = oss.str();
+
+    std::ifstream file(filePath, std::ios::binary | std::ios::in);
+    if (!file)
+    {
+        warnEgtb(filePath, "was not found");
+        return;
+    }
+
+    // One bit per position
+    std::streamoff expectedSize = (1LL << m_maxBits) / 8;
+
+    file.seekg(0, file.end);
+    std::streamoff fileSize = file.tellg();
+    file.seekg(0, file.beg);
+
+    if (fileSize != expectedSize)
+    {
+        warnEgtb(filePath, "has " + std::to_string(fileSize) + " bytes instead of " + std::to_string(expectedSize));
+        return;
+    }
+
+    m_egtb.resize(expectedSize);
+    if (!file.read((char *) m_egtb.data(), expectedSize))
+    {
+        warnEgtb(filePath, "could not be read");
+        m_egtb.clear();
+    }
+} // end of loadEgtb
 
 
 /**
@@ -542,12 +574,12 @@ int Board::evaluate() const
 
     if (m_version >= 3) 
     {
-        if (numActive == 1 && m_egtb != nullptr)
+        if (numActive == 1 && !m_egtb.empty())
         {
             uint64_t bits = m_bits[lastActive];
             assert(!isBoardDead(bits));
 
-            bits = ~bits & (m_fileSize*8-1);
+            bits = ~bits & (m_egtb.size()*8-1);
 
             switch ((m_egtb[bits/8] >> (bits%8)) & 1)
             {
@@ -665,7 +697,7 @@ NTTTMove Board::findMove(const NTTTGame& game)
         level = 2;
     if (m_boardSize*numAlive > 6)
         level = 0;
-    if (m_egtb && numAlive == 1)
+    if (!m_egtb.empty() && numAlive == 1)
        level = 0;
 
     m_nodes = 0;
