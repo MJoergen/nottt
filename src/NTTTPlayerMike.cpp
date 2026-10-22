@@ -141,6 +141,15 @@ void MikeSearch::loadEgtb() {
     }
 } // end of loadEgtb
 
+bool MikeSearch::isEmptyBoardWon(bool& won) const {
+    if (m_version < 3 || m_boardCount != 1 || m_egtb.empty())
+        return false;
+
+    // Position 0 is the board with no squares marked, as in evaluate().
+    won = m_egtb[0] & 1;
+    return true;
+} // end of isEmptyBoardWon
+
 
 bool MikeSearch::isBoardDead(uint64_t unmarked) const {
     for (uint64_t lineMask : m_lines) {
@@ -716,6 +725,12 @@ NTTTMove MikeSearch::findMove(const NTTTGame& game) {
  */
 NTTTPlayer::OrderChoice NTTTPlayerMike::chooseOrder(const NTTTGame& game) {
     m_search.init(game);
+
+    // With a single board, the tablebase tells who wins, so take the winning seat.
+    bool won = false;
+    if (m_search.isEmptyBoardWon(won))
+        return won ? FIRST : LAST;
+
     switch (rand() % 2) {
         case 0:
             return FIRST;

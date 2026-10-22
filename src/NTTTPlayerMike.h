@@ -26,6 +26,11 @@ public:
      */
     NTTTMove findMove(const NTTTGame& game);
 
+    /**
+     * Whether the tablebase says that the player to move wins the empty board.
+     * Only known with a tablebase, one board and version 3 or later.
+     */
+    bool isEmptyBoardWon(bool& won) const;
 
 private: // These methods are used internally only.
     /**
